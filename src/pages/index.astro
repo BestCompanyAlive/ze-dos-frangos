@@ -452,13 +452,13 @@ const menuData = {
           const dataFmt = `${dia}/${mes}/${ano}`;
 
           let msg = `Olá! Gostaria de fazer uma reserva:\n\n`;
-          msg += `👤 Nome: ${nome}\n`;
-          msg += `📞 Telefone: ${telefone}\n`;
-          msg += `📧 Email: ${email}\n`;
-          msg += `📅 Data: ${dataFmt}\n`;
-          msg += `🕐 Hora: ${hora}\n`;
-          msg += `👥 Pessoas: ${pessoas}\n`;
-          if (obs) msg += `📝 Obs: ${obs}\n`;
+          msg += `Nome: ${nome}\n`;
+          msg += `Telefone: ${telefone}\n`;
+          msg += `Email: ${email}\n`;
+          msg += `Data: ${dataFmt}\n`;
+          msg += `Hora: ${hora}\n`;
+          msg += `Pessoas: ${pessoas}\n`;
+          if (obs) msg += `Obs: ${obs}\n`;
 
           // Guardar reserva no localStorage para o backoffice
           const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
@@ -476,7 +476,22 @@ const menuData = {
           reservas.push(novaReserva);
           localStorage.setItem('reservas', JSON.stringify(reservas));
 
-          const url = `https://wa.me/351259322212?text=${encodeURIComponent(msg)}`;
+          // Ler config do backoffice
+          const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+          const waNum = cfg.whatsapp || '351913977751';
+          const formspreeId = cfg.formspree || '';
+
+          // Enviar email via Formspree (se configurado)
+          if (formspreeId) {
+            fetch(`https://formspree.io/f/${formspreeId}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ nome, telefone, email, data: dataFmt, hora, pessoas, obs })
+            });
+          }
+
+          // Abrir WhatsApp
+          const url = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
           window.open(url, '_blank');
         });
       </script>

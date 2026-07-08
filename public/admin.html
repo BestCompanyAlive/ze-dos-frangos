@@ -1286,23 +1286,6 @@ textarea { resize: vertical; min-height: 90px; }
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>Horas Disponíveis</h3></div></div>
-          <div class="card-body">
-            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="hours-list">
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">11:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">12:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">12:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">13:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">19:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">19:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">20:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">20:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">21:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
-              <button class="btn-add" onclick="showToast('Hora adicionada')">+ Hora</button>
-            </div>
-          </div>
-        </div>
-        <div class="card">
           <div class="card-header"><div><h3>Limites de Capacidade</h3><div class="card-desc">Controlo de lotação por horário</div></div></div>
           <div class="card-body">
             <div class="form-row">
@@ -1332,18 +1315,31 @@ textarea { resize: vertical; min-height: 90px; }
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>Destino das Reservas</h3><div class="card-desc">Para onde chegam os emails</div></div></div>
+          <div class="card-header"><div><h3>Destino das Reservas</h3><div class="card-desc">Configura para onde chegam as notificações</div></div></div>
           <div class="card-body">
             <div class="form-row">
               <div class="field">
-                <label>Email de Destino</label>
-                <input type="email" value="churrasqueirazedosfrangos@gmail.com" />
+                <label>Número WhatsApp <span style="font-weight:400;color:var(--muted);">(com código de país, sem espaços)</span></label>
+                <input type="tel" id="res-whatsapp" placeholder="351913977751" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Ex: 351913977751 — o cliente abre o WhatsApp ao submeter a reserva</div>
               </div>
               <div class="field">
-                <label>ID Formspree</label>
-                <input type="text" value="YOUR_FORM_ID" />
+                <label>ID Formspree <span style="font-weight:400;color:var(--muted);">(para envio de email)</span></label>
+                <input type="text" id="res-formspree" placeholder="xpwzabcd" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Regista em <strong style="color:#c9a84c;">formspree.io</strong> → New Form → copia o ID do URL</div>
               </div>
             </div>
+            <div class="form-row" style="margin-top:12px;">
+              <div class="field" style="flex:1;">
+                <label>Link de Avaliação Google <span style="font-weight:400;color:var(--muted);">(para pedir reviews aos clientes)</span></label>
+                <input type="url" id="res-google-review" placeholder="https://g.page/r/XXXXXXXXX/review" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Google Business Profile → Pedir avaliações → copiar link curto</div>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+              <button class="btn-save" onclick="saveResConfig()">Guardar configuração</button>
+            </div>
+            <p id="res-config-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
           </div>
         </div>
       </div>
@@ -1707,6 +1703,26 @@ function saveContactos() {
   showToast('Contactos guardados');
 }
 
+// ── Reservas Config ───────────────────────────────────────
+function saveResConfig() {
+  var data = {
+    whatsapp: document.getElementById('res-whatsapp').value.trim().replace(/\D/g,''),
+    formspree: document.getElementById('res-formspree').value.trim(),
+    googleReview: document.getElementById('res-google-review').value.trim()
+  };
+  localStorage.setItem('reservasConfig', JSON.stringify(data));
+  var fb = document.getElementById('res-config-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+(function() {
+  var d = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+  if (d.whatsapp) document.getElementById('res-whatsapp').value = d.whatsapp;
+  if (d.formspree) document.getElementById('res-formspree').value = d.formspree;
+  if (d.googleReview) document.getElementById('res-google-review').value = d.googleReview;
+})();
+
 // ── RESERVAS ──────────────────────────────────────────────
 let reservations = JSON.parse(localStorage.getItem('reservas') || '[]');
 
@@ -1721,6 +1737,7 @@ const statusMeta = {
   confirmada: { label: 'Confirmada',    cls: 'badge-confirmed' },
   cancelada:  { label: 'Cancelada',     cls: 'badge-cancelled' },
   noshow:     { label: 'Não apareceu', cls: 'badge-noshow'    },
+  concluida:  { label: 'Concluída',    cls: 'badge-confirmed' },
 };
 
 function renderReservations() {
@@ -1739,7 +1756,10 @@ function renderReservations() {
       ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'confirmada')">Confirmar</button>
          <button class="action-btn cancel" onclick="setStatus(${r.id},'cancelada')" style="margin-left:4px;">Cancelar</button>`
       : r.status === 'confirmada'
-      ? `<button class="action-btn cancel" onclick="setStatus(${r.id},'noshow')">Não apareceu</button>`
+      ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'concluida')" style="background:var(--green);color:#fff;border:none;">Concluída</button>
+         <button class="action-btn cancel" onclick="setStatus(${r.id},'noshow')" style="margin-left:4px;">Não apareceu</button>`
+      : r.status === 'concluida'
+      ? `<button class="action-btn" onclick="pedirAvaliacao(${r.id})" style="background:#25D366;color:#fff;border:none;padding:5px 10px;cursor:pointer;font-size:12px;border-radius:3px;">⭐ Pedir Avaliação</button>`
       : `<span style="color:var(--muted);font-size:12px;">—</span>`;
 
     return `<tr data-status="${r.status}">
@@ -1759,6 +1779,22 @@ function renderReservations() {
 function setStatus(id, newStatus) {
   const r = reservations.find(x => x.id === id);
   if (r) { r.status = newStatus; saveReservations(); renderReservations(); showToast('Estado atualizado'); }
+}
+
+function pedirAvaliacao(id) {
+  const r = reservations.find(x => x.id === id);
+  if (!r) return;
+  const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+  const reviewLink = cfg.googleReview || '';
+  if (!reviewLink) {
+    alert('Configura primeiro o Link de Avaliação Google no separador Configurações das reservas.');
+    return;
+  }
+  const phone = (r.phone || '').replace(/\D/g, '');
+  if (!phone) { alert('Este cliente não tem número de telefone registado.'); return; }
+  const firstName = (r.name || '').split(' ')[0];
+  const msg = `Olá ${firstName}! 😊\n\nEsperamos que tenha gostado da sua visita à Churrasqueira Zé dos Frangos!\n\nA sua opinião é muito importante para nós. Se tiver um momento, agradecíamos muito uma avaliação no Google — demora apenas 1 minuto:\n\n👉 ${reviewLink}\n\nMuito obrigado e até à próxima! 🙏`;
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function filterRes(filter, el) {
