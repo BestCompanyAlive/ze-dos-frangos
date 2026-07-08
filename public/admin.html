@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel de Gestão — Zé dos Frangos</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #C9A84C;
+  --gold-dim: rgba(201,168,76,0.12);
+  --sidebar-bg: #111;
+  --sidebar-text: #aaa;
+  --sidebar-active: #fff;
+  --content-bg: #F7F6F3;
+  --card-bg: #fff;
+  --border: #E5E3DE;
+  --text: #1a1a1a;
+  --muted: #888;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --input-focus: #C9A84C;
+  --radius: 6px;
+}
+
+body {
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  background: var(--content-bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* SIDEBAR */
+aside {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid #222;
+}
+.sidebar-brand .logo-tag {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.sidebar-brand .logo-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #444;
+  padding: 20px 20px 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: var(--sidebar-text);
+  font-size: 13.5px;
+  transition: color 0.2s, background 0.2s;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { color: #ddd; background: rgba(255,255,255,0.03); }
+.nav-item.active {
+  color: var(--sidebar-active);
+  border-left-color: var(--gold);
+  background: rgba(201,168,76,0.08);
+}
+.nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid #222;
+}
+.btn-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px;
+  background: var(--gold);
+  color: #111;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.btn-preview:hover { opacity: 0.85; }
+
+/* MAIN */
+main {
+  margin-left: 240px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* TOPBAR */
+.topbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.topbar-title { font-size: 15px; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.btn-save {
+  padding: 8px 20px;
+  background: var(--gold);
+  color: #111;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: opacity 0.2s;
+}
+.btn-save:hover { opacity: 0.85; }
+.save-status {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.save-status.saved { color: var(--success); }
+
+/* CONTENT AREA */
+.content { padding: 28px; flex: 1; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* CARDS */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-header h3 { font-size: 13.5px; font-weight: 600; }
+.card-header .card-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.card-body { padding: 20px; }
+
+/* FORM ELEMENTS */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+label { font-size: 11.5px; font-weight: 600; color: #555; letter-spacing: 0.04em; text-transform: uppercase; }
+
+input[type="text"], input[type="tel"], input[type="email"], input[type="time"],
+textarea, select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--text);
+  background: #FAFAF8;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  background: #fff;
+}
+textarea { resize: vertical; min-height: 90px; }
+
+/* MENU ITEMS */
+.menu-item-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 80px 36px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.menu-item-row:last-child { border-bottom: none; }
+.menu-item-row input { margin: 0; }
+.btn-remove {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-remove:hover { border-color: var(--danger); color: var(--danger); }
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 12.5px;
+  cursor: pointer;
+  background: none;
+  font-family: inherit;
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+.btn-add:hover { border-color: var(--gold); color: var(--gold); }
+
+/* HORÁRIOS */
+.hours-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 100px;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hours-row:last-child { border-bottom: none; }
+.hours-row .day-label { font-size: 13px; font-weight: 500; }
+.toggle-closed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.toggle-closed input { accent-color: var(--gold); }
+
+/* GALLERY */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.gallery-thumb {
+  aspect-ratio: 1;
+  background: var(--content-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-thumb .overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  gap: 8px;
+}
+.gallery-thumb:hover .overlay { opacity: 1; }
+.overlay-btn {
+  background: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+}
+.overlay-btn.danger { background: var(--danger); color: #fff; }
+.gallery-add {
+  aspect-ratio: 1;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.gallery-add:hover { border-color: var(--gold); color: var(--gold); }
+.gallery-add .plus { font-size: 24px; font-weight: 300; }
+
+/* DASHBOARD */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.stat-card .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.stat-card .stat-value { font-size: 28px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.stat-card .stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.stat-card .stat-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+.stat-card .stat-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; }
+
+.activity-list { list-style: none; }
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.activity-dot.green { background: var(--success); }
+.activity-dot.grey { background: #ccc; }
+.activity-text { font-size: 13px; line-height: 1.5; }
+.activity-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--text);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { color: var(--gold); }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.badge-gold { background: var(--gold-dim); color: #a07830; }
+.badge-green { background: #dcfce7; color: #15803d; }
+.badge-grey { background: #f3f4f6; color: #666; }
+
+/* SECTION DIVIDER */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.section-header h2 { font-size: 17px; font-weight: 700; }
+.section-header p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+/* TABS within panel */
+.sub-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--content-bg);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  width: fit-content;
+}
+.sub-tab {
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--muted);
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.sub-tab.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+.menu-tab-panel { display: none; }
+.menu-tab-panel.active { display: block; }
+
+/* RESERVAS TABLE */
+.res-table { width: 100%; border-collapse: collapse; }
+.res-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.res-table td {
+  padding: 12px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.res-table tr:last-child td { border-bottom: none; }
+.res-table tr:hover td { background: #fafaf8; }
+.res-name { font-weight: 600; }
+.res-phone { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.res-note { font-size: 12px; color: #888; font-style: italic; max-width: 200px; }
+
+.badge-pending  { background: #fff7ed; color: #c2540a; }
+.badge-confirmed { background: #dcfce7; color: #15803d; }
+.badge-cancelled { background: #fee2e2; color: #b91c1c; }
+.badge-noshow   { background: #f3f4f6; color: #555; }
+
+.action-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.action-btn:hover { background: var(--content-bg); }
+.action-btn.confirm { border-color: #16a34a; color: #16a34a; }
+.action-btn.confirm:hover { background: #dcfce7; }
+.action-btn.cancel { border-color: #dc2626; color: #dc2626; }
+.action-btn.cancel:hover { background: #fee2e2; }
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--muted);
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.filter-chip.active { background: var(--text); color: #fff; border-color: var(--text); }
+.filter-chip:hover:not(.active) { border-color: #aaa; color: var(--text); }
+
+.res-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.res-stat {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.res-stat .val { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.res-stat .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+.res-stat.highlight { border-color: var(--gold); background: var(--gold-dim); }
+.res-stat.highlight .val { color: #a07830; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="sidebar-brand">
+    <div class="logo-tag">Painel de Gestão</div>
+    <div class="logo-name">Zé dos Frangos</div>
+  </div>
+
+  <div class="sidebar-section-label">Principal</div>
+  <div class="nav-item active" onclick="showPanel('dashboard', this)">
+    <span class="icon">⊞</span> Dashboard
+  </div>
+  <div class="nav-item" onclick="showPanel('geral', this)">
+    <span class="icon">✎</span> Informações Gerais
+  </div>
+
+  <div class="sidebar-section-label">Conteúdo</div>
+  <div class="nav-item" onclick="showPanel('pratoDia', this)">
+    <span class="icon">★</span> Prato do Dia
+  </div>
+  <div class="nav-item" onclick="showPanel('sugestaoMes', this)">
+    <span class="icon">✦</span> Sugestão do Mês
+  </div>
+  <div class="nav-item" onclick="showPanel('ementa', this)">
+    <span class="icon">◉</span> Ementa
+  </div>
+  <div class="nav-item" onclick="showPanel('galeria', this)">
+    <span class="icon">⊡</span> Galeria de Fotos
+  </div>
+
+  <div class="sidebar-section-label">Restaurante</div>
+  <div class="nav-item" onclick="showPanel('horarios', this)">
+    <span class="icon">◷</span> Horários
+  </div>
+  <div class="nav-item" onclick="showPanel('contactos', this)">
+    <span class="icon">◎</span> Contactos
+  </div>
+  <div class="nav-item" onclick="showPanel('reservas', this)">
+    <span class="icon">◈</span> Reservas
+  </div>
+  <div class="nav-item" onclick="showPanel('takeaway', this)">
+    <span class="icon">⊕</span> Take Away
+  </div>
+
+  <div class="nav-item" onclick="showPanel('vagas', this)">
+    <span class="icon">◐</span> Vagas de Emprego
+  </div>
+
+  <div class="sidebar-section-label">Comunicação</div>
+  <div class="nav-item" onclick="showPanel('comunicacoes', this)">
+    <span class="icon">✉</span> Comunicações
+  </div>
+
+  <div class="sidebar-footer">
+    <a class="btn-preview" href="/" target="_blank">
+      ↗ Ver Site
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-right">
+      <div class="save-status" id="save-status">
+        <span>●</span> Todas as alterações guardadas
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="section-header">
+        <div>
+          <h2>Bem-vindo de volta</h2>
+          <p>Aqui pode gerir todo o conteúdo do seu site.</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Secções Editáveis</div>
+          <div class="stat-value">8</div>
+          <div class="stat-sub">Textos, fotos, contactos…</div>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pratos na Ementa</div>
+          <div class="stat-value">14</div>
+          <div class="stat-sub">3 categorias</div>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width:70%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Fotos na Galeria</div>
+          <div class="stat-value">5</div>
+          <div class="stat-sub">Fotos reais do restaurante</div>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width:42%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Estado do Site</div>
+          <div class="stat-value" style="font-size:20px;margin-top:4px;">
+            <span class="badge badge-green">✓ Online</span>
+          </div>
+          <div class="stat-sub">gilded-biscotti.netlify.app</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Atividade Recente</h3>
+              <div class="card-desc">Últimas alterações ao site</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="activity-list">
+              <li class="activity-item">
+                <div class="activity-dot green"></div>
+                <div>
+                  <div class="activity-text">Galeria atualizada com 5 fotos reais</div>
+                  <div class="activity-time">Hoje às 11:04</div>
+                </div>
+              </li>
+              <li class="activity-item">
+                <div class="activity-dot"></div>
+                <div>
+                  <div class="activity-text">Secção Take Away adicionada ao site</div>
+                  <div class="activity-time">Hoje às 10:52</div>
+                </div>
+              </li>
+              <li class="activity-item">
+                <div class="activity-dot"></div>
+                <div>
+                  <div class="activity-text">Site publicado no Netlify</div>
+                  <div class="activity-time">Hoje às 09:30</div>
+                </div>
+              </li>
+              <li class="activity-item">
+                <div class="activity-dot grey"></div>
+                <div>
+                  <div class="activity-text">Informações do restaurante preenchidas</div>
+                  <div class="activity-time">Ontem</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Acesso Rápido</h3>
+              <div class="card-desc">O que quer editar?</div>
+            </div>
+          </div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn-add" style="width:100%;justify-content:flex-start;" onclick="showPanel('ementa', document.querySelectorAll('.nav-item')[3])">
+              ◉ &nbsp;Adicionar prato à ementa
+            </button>
+            <button class="btn-add" style="width:100%;justify-content:flex-start;" onclick="showPanel('galeria', document.querySelectorAll('.nav-item')[4])">
+              ⊡ &nbsp;Adicionar foto à galeria
+            </button>
+            <button class="btn-add" style="width:100%;justify-content:flex-start;" onclick="showPanel('horarios', document.querySelectorAll('.nav-item')[5])">
+              ◷ &nbsp;Atualizar horários
+            </button>
+            <button class="btn-add" style="width:100%;justify-content:flex-start;" onclick="showPanel('contactos', document.querySelectorAll('.nav-item')[6])">
+              ◎ &nbsp;Editar contactos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRATO DO DIA -->
+    <!-- SUGESTÃO DO MÊS -->
+    <div class="panel" id="panel-sugestaoMes">
+      <div class="panel-header">
+        <div class="panel-title">Sugestão do Mês</div>
+        <div class="panel-subtitle">Destaque especial com foto — aparece em secção própria no site</div>
+      </div>
+
+      <div style="max-width:640px; display:flex; flex-direction:column; gap:20px;">
+
+        <!-- foto upload -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:8px;">Fotografia</label>
+          <div id="sugestao-preview-wrap" style="display:none;margin-bottom:10px;">
+            <img id="sugestao-admin-preview" src="" alt="preview" style="max-width:100%;max-height:220px;border-radius:4px;object-fit:cover;border:1px solid #2a2a2a;" />
+          </div>
+          <input type="file" id="sugestao-foto-input" accept="image/*" onchange="previewSugestaoFoto(event)" style="display:none;" />
+          <button onclick="document.getElementById('sugestao-foto-input').click()" style="background:#1a1a1a;border:1px solid #333;color:#aaa;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:13px;">
+            📷 Escolher foto
+          </button>
+          <span id="sugestao-foto-nome" style="margin-left:10px;font-size:12px;color:#666;"></span>
+        </div>
+
+        <!-- nome -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Nome do Prato</label>
+          <input id="sugestao-admin-nome" type="text" placeholder="ex: Frango Assado no Carvão" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:14px;" />
+        </div>
+
+        <!-- descricao -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Descrição</label>
+          <textarea id="sugestao-admin-desc" rows="3" placeholder="ex: Marinado com especiarias da casa, grelhado lentamente no carvão..." style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
+        </div>
+
+        <!-- preco -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Preço (€)</label>
+          <input id="sugestao-admin-preco" type="text" placeholder="ex: 14.50" style="width:180px;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:14px;" />
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="saveSugestaoMes()">Guardar e publicar</button>
+          <button onclick="clearSugestaoMes()" style="background:none;border:1px solid #333;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Remover sugestão</button>
+        </div>
+        <p id="sugestao-feedback" style="font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-pratoDia">
+      <div class="panel-header">
+        <div class="panel-title">Prato do Dia</div>
+        <div class="panel-subtitle">Atualiza diariamente — aparece no site em destaque na ementa</div>
+      </div>
+
+      <div style="max-width:600px;">
+        <div id="pratoDia-lista" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;"></div>
+
+        <button class="btn-add" onclick="addPratoDiaRow()" style="margin-bottom:24px;">
+          + Adicionar prato
+        </button>
+
+        <div style="margin-bottom:16px;">
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Nota extra (opcional)</label>
+          <input id="pratoDia-nota" type="text" placeholder="ex: Sujeito a disponibilidade" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:13px;" />
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="savePratoDia()">Guardar e publicar</button>
+          <button onclick="clearPratoDia()" style="background:none;border:1px solid #333;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Limpar prato do dia</button>
+        </div>
+        <p id="pratoDia-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- INFORMAÇÕES GERAIS -->
+    <div class="panel" id="panel-geral">
+      <div class="section-header">
+        <div><h2>Informações Gerais</h2><p>Textos principais que aparecem em todo o site</p></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h3>Identidade</h3></div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Nome do Restaurante</label>
+              <input type="text" id="geral-nome" value="Churrasqueira Zé dos Frangos" />
+            </div>
+            <div class="field">
+              <label>Subtítulo (nav)</label>
+              <input type="text" id="geral-subtitulo" value="Churrasqueira" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Tag / Localização (hero)</label>
+              <input type="text" id="geral-tag" value="Vila Real · Trás-os-Montes" />
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="field">
+              <label>Descrição Principal (hero)</label>
+              <textarea id="geral-desc">O melhor frango grelhado no carvão de Vila Real. Uma tradição que se mantém fiel ao sabor autêntico de Trás-os-Montes.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><h3>Secção "Sobre Nós"</h3></div></div>
+        <div class="card-body">
+          <div class="form-row full">
+            <div class="field">
+              <label>Parágrafo 1</label>
+              <textarea id="geral-sobre1">Há mais de 30 anos que servimos o melhor frango grelhado no carvão de Vila Real. A nossa tradição baseia-se em ingredientes frescos e numa técnica apurada ao longo de décadas.</textarea>
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="field">
+              <label>Parágrafo 2</label>
+              <textarea id="geral-sobre2">A Churrasqueira Zé dos Frangos é uma referência gastronómica em Trás-os-Montes, onde cada refeição é preparada com paixão e respeito pelo produto local.</textarea>
+            </div>
+          </div>
+          <div class="form-row three">
+            <div class="field">
+              <label>Estatística 1</label>
+              <input type="text" id="geral-stat1-val" value="30+" />
+              <input type="text" id="geral-stat1-lbl" placeholder="Label" value="Anos" style="margin-top:6px;" />
+            </div>
+            <div class="field">
+              <label>Estatística 2</label>
+              <input type="text" id="geral-stat2-val" value="Vila Real" />
+              <input type="text" id="geral-stat2-lbl" placeholder="Label" value="Localização" style="margin-top:6px;" />
+            </div>
+            <div class="field">
+              <label>Estatística 3</label>
+              <input type="text" id="geral-stat3-val" value="4.8★ Google" />
+              <input type="text" id="geral-stat3-lbl" placeholder="Label" value="Avaliação" style="margin-top:6px;" />
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn-save" onclick="saveGeral()">Guardar Informações</button>
+            <p id="geral-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMENTA -->
+    <div class="panel" id="panel-ementa">
+      <div class="section-header">
+        <div><h2>Ementa</h2><p>Adicione, edite ou remova pratos em cada categoria</p></div>
+      </div>
+
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchSubTab('entradas', this)">Entradas</button>
+        <button class="sub-tab" onclick="switchSubTab('carnes', this)">Carnes</button>
+        <button class="sub-tab" onclick="switchSubTab('peixe', this)">Peixe</button>
+        <button class="sub-tab" onclick="switchSubTab('sobremesas', this)">Sobremesas</button>
+      </div>
+
+      <div class="menu-tab-panel active" id="subtab-entradas">
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Entradas</h3></div>
+            <span class="badge badge-gold">9 itens</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 2fr 80px 36px;gap:10px;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Nome</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Descrição</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Preço (€)</div>
+              <div></div>
+            </div>
+            <div id="entradas-list">
+              <div class="menu-item-row"><input type="text" value="Pão" /><input type="text" value="" /><input type="text" value="1,85" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Azeitonas e Azeite" /><input type="text" value="" /><input type="text" value="1,95" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Salsicha" /><input type="text" value="" /><input type="text" value="2,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Sopa do Dia" /><input type="text" value="" /><input type="text" value="2,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Tábua Tradicional de Enchidos" /><input type="text" value="" /><input type="text" value="13,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Croquetes de Alheira" /><input type="text" value="Com molho de mostarda e mel" /><input type="text" value="5,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Crocantes de Camarão" /><input type="text" value="Com molho agridoce" /><input type="text" value="5,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Pica-pau" /><input type="text" value="" /><input type="text" value="8,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Moelas" /><input type="text" value="" /><input type="text" value="8,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+            </div>
+            <button class="btn-add" onclick="addMenuRow('entradas-list')">+ Adicionar Entrada</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-tab-panel" id="subtab-carnes">
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Carnes</h3></div>
+            <span class="badge badge-gold">9 itens</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 2fr 80px 36px;gap:10px;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Nome</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Descrição</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Preço (€)</div>
+              <div></div>
+            </div>
+            <div id="carnes-list">
+              <div class="menu-item-row"><input type="text" value="Frango de Churrasco" /><input type="text" value="" /><input type="text" value="9,00 / 14,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Posta à Moda da Casa" /><input type="text" value="" /><input type="text" value="16,00 / 28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Misto de Carne" /><input type="text" value="" /><input type="text" value="15,50 / 19,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Costeletão de Vitela" /><input type="text" value="" /><input type="text" value="28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Medalhões de Vitela" /><input type="text" value="" /><input type="text" value="16,00 / 28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Panados com Arroz Malandrinho" /><input type="text" value="" /><input type="text" value="10,00 / 15,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Bifinhos de Perú com Cogumelos" /><input type="text" value="" /><input type="text" value="10,50 / 15,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Costelinhas de Porco Grelhadas" /><input type="text" value="" /><input type="text" value="10,50 / 16,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Legumes à Brás" /><input type="text" value="Prato vegetariano" /><input type="text" value="12,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+            </div>
+            <button class="btn-add" onclick="addMenuRow('carnes-list')">+ Adicionar Prato</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-tab-panel" id="subtab-peixe">
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Peixe</h3></div>
+            <span class="badge badge-gold">11 itens</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 2fr 80px 36px;gap:10px;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Nome</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Descrição</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Preço (€)</div>
+              <div></div>
+            </div>
+            <div id="peixe-list">
+              <div class="menu-item-row"><input type="text" value="Bacalhau com Natas" /><input type="text" value="" /><input type="text" value="12,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Bacalhau na Brasa" /><input type="text" value="" /><input type="text" value="22,50 / 36,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Bacalhau à Moda da Casa" /><input type="text" value="" /><input type="text" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Polvo à Lagareiro" /><input type="text" value="" /><input type="text" value="34,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Filetes de Pescada Dourados" /><input type="text" value="Com arroz malandrinho" /><input type="text" value="10,00 / 15,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Salmão Grelhado" /><input type="text" value="" /><input type="text" value="14,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Dourada Grelhada" /><input type="text" value="" /><input type="text" value="13,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Robalo Grelhado" /><input type="text" value="" /><input type="text" value="14,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Sardinhas" /><input type="text" value="" /><input type="text" value="11,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Chocos" /><input type="text" value="" /><input type="text" value="11,50 / 19,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Espetada de Lulas" /><input type="text" value="" /><input type="text" value="13,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+            </div>
+            <button class="btn-add" onclick="addMenuRow('peixe-list')">+ Adicionar Prato</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-tab-panel" id="subtab-sobremesas">
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Sobremesas</h3></div>
+            <span class="badge badge-gold">9 itens</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 2fr 80px 36px;gap:10px;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Nome</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Descrição</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Preço (€)</div>
+              <div></div>
+            </div>
+            <div id="sobremesas-list">
+              <div class="menu-item-row"><input type="text" value="Mousse de Chocolate" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Mousse de Oreo" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Bolo de Bolacha" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Doce do Dia" /><input type="text" value="" /><input type="text" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Molotof" /><input type="text" value="" /><input type="text" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Tiramissú" /><input type="text" value="" /><input type="text" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Baba de Camelo" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Cheesecake" /><input type="text" value="" /><input type="text" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Fruta Variada" /><input type="text" value="" /><input type="text" value="2,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+            </div>
+            <button class="btn-add" onclick="addMenuRow('sobremesas-list')">+ Adicionar Sobremesa</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn-save" onclick="saveEmenta()">Guardar Ementa</button>
+        <p id="ementa-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
+      </div>
+    </div>
+
+    <!-- GALERIA -->
+    <div class="panel" id="panel-galeria">
+      <div class="section-header">
+        <div><h2>Galeria de Fotos</h2><p>Gerencie as fotos que aparecem no site</p></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Fotos Actuais</h3><div class="card-desc">5 de 12 máximo</div></div>
+          <span class="badge badge-grey">5 / 12</span>
+        </div>
+        <div class="card-body">
+          <div class="gallery-grid">
+            <div class="gallery-thumb">
+              <img src="/images/misto.jpg" alt="Grelhado misto" />
+              <div class="overlay">
+                <button class="overlay-btn">Principal</button>
+                <button class="overlay-btn danger">Remover</button>
+              </div>
+            </div>
+            <div class="gallery-thumb">
+              <img src="/images/polvo.jpg" alt="Polvo" />
+              <div class="overlay">
+                <button class="overlay-btn danger">Remover</button>
+              </div>
+            </div>
+            <div class="gallery-thumb">
+              <img src="/images/croquetes.jpg" alt="Croquetes" />
+              <div class="overlay">
+                <button class="overlay-btn danger">Remover</button>
+              </div>
+            </div>
+            <div class="gallery-thumb">
+              <img src="/images/bacalhau.jpg" alt="Bacalhau" />
+              <div class="overlay">
+                <button class="overlay-btn danger">Remover</button>
+              </div>
+            </div>
+            <div class="gallery-thumb">
+              <img src="/images/bacalhaunatas.jpg" alt="Bacalhau com natas" />
+              <div class="overlay">
+                <button class="overlay-btn danger">Remover</button>
+              </div>
+            </div>
+            <div class="gallery-add" onclick="showToast('Funcionalidade disponível na versão completa')">
+              <div class="plus">+</div>
+              <div>Adicionar foto</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><h3>Foto Principal (Hero)</h3><div class="card-desc">Imagem de fundo da página inicial</div></div></div>
+        <div class="card-body">
+          <div style="display:flex;gap:16px;align-items:center;">
+            <img src="/images/misto.jpg" alt="Hero" style="width:120px;height:80px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);" />
+            <div>
+              <div style="font-size:13px;font-weight:500;margin-bottom:4px;">misto.jpg</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Foto actual da página principal</div>
+              <button class="btn-add" onclick="showToast('Funcionalidade disponível na versão completa')">⊡ Alterar foto</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HORÁRIOS -->
+    <div class="panel" id="panel-horarios">
+      <div class="section-header">
+        <div><h2>Horários de Funcionamento</h2><p>Defina os horários que aparecem no site e no Google</p></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h3>Horário Semanal</h3></div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:120px 1fr 1fr 120px;gap:10px;margin-bottom:10px;">
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Dia</div>
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Abertura</div>
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Fecho</div>
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Encerrado</div>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Segunda</div>
+            <input type="time" id="hora-segunda-open" value="" disabled style="opacity:0.3;" />
+            <input type="time" id="hora-segunda-close" value="" disabled style="opacity:0.3;" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-segunda" checked onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Terça</div>
+            <input type="time" id="hora-terca-open" value="11:30" />
+            <input type="time" id="hora-terca-close" value="22:30" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-terca" onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Quarta</div>
+            <input type="time" id="hora-quarta-open" value="11:30" />
+            <input type="time" id="hora-quarta-close" value="22:30" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-quarta" onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Quinta</div>
+            <input type="time" id="hora-quinta-open" value="11:30" />
+            <input type="time" id="hora-quinta-close" value="22:30" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-quinta" onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Sexta</div>
+            <input type="time" id="hora-sexta-open" value="11:30" />
+            <input type="time" id="hora-sexta-close" value="22:30" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-sexta" onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Sábado</div>
+            <input type="time" id="hora-sabado-open" value="11:30" />
+            <input type="time" id="hora-sabado-close" value="22:30" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-sabado" onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+          <div class="hours-row">
+            <div class="day-label">Domingo</div>
+            <input type="time" id="hora-domingo-open" value="11:30" />
+            <input type="time" id="hora-domingo-close" value="15:00" />
+            <label class="toggle-closed"><input type="checkbox" id="enc-domingo" onchange="toggleDay(this)" /> Encerrado</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><h3>Nota sobre Horários</h3><div class="card-desc">Texto adicional que aparece na secção de contactos</div></div></div>
+        <div class="card-body">
+          <div class="form-row full">
+            <div class="field">
+              <label>Observação</label>
+              <input type="text" id="horarios-nota" value="Domingo: só almoço · Segunda: encerrado" />
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn-save" onclick="saveHorarios()">Guardar Horários</button>
+            <p id="horarios-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACTOS -->
+    <div class="panel" id="panel-contactos">
+      <div class="section-header">
+        <div><h2>Contactos</h2><p>Morada, telefone e redes sociais</p></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h3>Informações de Contacto</h3></div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Telefone</label>
+              <input type="tel" id="contactos-telefone" value="913 977 751" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="contactos-email" value="churrasqueirazedosfrangos@gmail.com" />
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="field">
+              <label>Morada — Linha 1</label>
+              <input type="text" id="contactos-morada" value="Largo do Pioledo, nº 14 R/C" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Código Postal e Cidade</label>
+              <input type="text" id="contactos-cp" value="5000-596 Vila Real" />
+            </div>
+            <div class="field">
+              <label>País</label>
+              <input type="text" id="contactos-pais" value="Portugal" />
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn-save" onclick="saveContactos()">Guardar Contactos</button>
+            <p id="contactos-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><h3>Redes Sociais</h3></div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Facebook URL</label>
+              <input type="text" value="https://www.facebook.com/churrasqueirazedosfrangos" />
+            </div>
+            <div class="field">
+              <label>Instagram URL</label>
+              <input type="text" value="https://www.instagram.com/churrasqueirazedosfrangos" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>WhatsApp (número)</label>
+              <input type="tel" value="351913977751" />
+            </div>
+            <div class="field">
+              <label>Google Maps Link</label>
+              <input type="text" value="https://maps.google.com/?q=Largo+do+Pioledo+Vila+Real" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <button class="btn-save" onclick="saveContactos()">Guardar Contactos</button>
+        <p id="contactos-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- RESERVAS -->
+    <div class="panel" id="panel-reservas">
+      <div class="section-header">
+        <div><h2>Reservas</h2><p>Gestão e histórico de todas as reservas</p></div>
+      </div>
+
+      <div class="sub-tabs" style="margin-bottom:20px;">
+        <button class="sub-tab active" onclick="switchResTab('gestao', this)">Gestão</button>
+        <button class="sub-tab" onclick="switchResTab('config', this)">Configuração</button>
+      </div>
+
+      <!-- GESTÃO -->
+      <div id="res-gestao">
+        <div class="res-stats">
+          <div class="res-stat highlight">
+            <div class="val" id="stat-pending">3</div>
+            <div class="lbl">Pendentes</div>
+          </div>
+          <div class="res-stat">
+            <div class="val" id="stat-today">2</div>
+            <div class="lbl">Hoje</div>
+          </div>
+          <div class="res-stat">
+            <div class="val" id="stat-confirmed">8</div>
+            <div class="lbl">Confirmadas</div>
+          </div>
+          <div class="res-stat">
+            <div class="val" id="stat-total">14</div>
+            <div class="lbl">Este Mês</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" style="flex-wrap:wrap;gap:12px;">
+            <div><h3>Histórico de Reservas</h3><div class="card-desc">Clique em confirmar ou cancelar para atualizar o estado</div></div>
+            <div class="filter-bar">
+              <button class="filter-chip active" onclick="filterRes('todas', this)">Todas</button>
+              <button class="filter-chip" onclick="filterRes('pendente', this)">Pendentes</button>
+              <button class="filter-chip" onclick="filterRes('confirmada', this)">Confirmadas</button>
+              <button class="filter-chip" onclick="filterRes('cancelada', this)">Canceladas</button>
+              <button class="filter-chip" onclick="filterRes('noshow', this)">Não apareceu</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="res-table" id="res-table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Hora</th>
+                  <th>Cliente</th>
+                  <th>Pessoas</th>
+                  <th>Nota</th>
+                  <th>Estado</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="res-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFIGURAÇÃO -->
+      <div id="res-config" style="display:none;">
+        <div class="card">
+          <div class="card-header"><div><h3>Texto da Secção</h3></div></div>
+          <div class="card-body">
+            <div class="form-row full">
+              <div class="field">
+                <label>Mensagem de Apoio</label>
+                <input type="text" value="Confirmaremos a sua reserva por telefone. Também pode ligar para 259 322 212." />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Horas Disponíveis</h3></div></div>
+          <div class="card-body">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="hours-list">
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">11:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">12:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">12:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">13:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">19:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">19:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">20:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">20:30 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;">21:00 <span onclick="this.parentElement.remove()" style="color:var(--muted);cursor:pointer;margin-left:4px;">✕</span></div>
+              <button class="btn-add" onclick="showToast('Hora adicionada')">+ Hora</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Limites de Capacidade</h3><div class="card-desc">Controlo de lotação por horário</div></div></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field">
+                <label>Máximo de pessoas por slot (meia hora)</label>
+                <input type="number" value="20" min="1" max="100" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Ex: se às 20:00 já houver 20 pessoas reservadas, o slot fecha automaticamente</div>
+              </div>
+              <div class="field">
+                <label>Máximo de pessoas por reserva online</label>
+                <input type="number" value="4" min="1" max="20" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Grupos maiores têm de contactar por telefone</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Prazo mínimo — Almoço (horas antes)</label>
+                <input type="number" value="4" min="1" max="24" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Almoço começa às 11:30 — prazo fecha às 7:30</div>
+              </div>
+              <div class="field">
+                <label>Prazo mínimo — Jantar (horas antes)</label>
+                <input type="number" value="4" min="1" max="24" />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Jantar começa às 19:00 — prazo fecha às 15:00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Destino das Reservas</h3><div class="card-desc">Para onde chegam os emails</div></div></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field">
+                <label>Email de Destino</label>
+                <input type="email" value="churrasqueirazedosfrangos@gmail.com" />
+              </div>
+              <div class="field">
+                <label>ID Formspree</label>
+                <input type="text" value="YOUR_FORM_ID" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAKE AWAY -->
+    <div class="panel" id="panel-takeaway">
+      <div class="panel-header">
+        <div class="panel-title">Take Away / Encomendas Grandes</div>
+        <div class="panel-subtitle">Pratos de difícil confeção disponíveis para encomenda — mínimos por produto</div>
+      </div>
+
+      <div style="max-width:640px; display:flex; flex-direction:column; gap:20px;">
+
+        <!-- nota explicativa -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Nota para o cliente <span style="color:#555;">(aparece em destaque no site)</span></label>
+          <textarea id="takeaway-admin-nota" rows="3" placeholder="ex: O take away destina-se apenas a encomendas de grupo. O frango de churrasco requer no mínimo 4 unidades. O cabrito assado tem de ser encomendado com antecedência." style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
+        </div>
+
+        <!-- frango -->
+        <div style="background:#161616; border:1px solid #2a2a2a; border-radius:4px; padding:16px 20px;">
+          <p style="font-size:12px;color:#c9a84c;text-transform:uppercase;letter-spacing:.15em;margin-bottom:12px;">Frango de Churrasco</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Preço por unidade (€)</label>
+              <input id="takeaway-frango-preco" type="text" placeholder="10,50" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:13px;" />
+            </div>
+            <div>
+              <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Quantidade mínima</label>
+              <input id="takeaway-frango-min" type="number" min="1" placeholder="4" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:13px;" />
+            </div>
+          </div>
+        </div>
+
+        <!-- cabrito -->
+        <div style="background:#161616; border:1px solid #2a2a2a; border-radius:4px; padding:16px 20px;">
+          <p style="font-size:12px;color:#c9a84c;text-transform:uppercase;letter-spacing:.15em;margin-bottom:12px;">Cabrito Assado</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Preço / etiqueta</label>
+              <input id="takeaway-cabrito-preco" type="text" placeholder="Sob consulta" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:13px;" />
+            </div>
+            <div>
+              <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Nota do produto</label>
+              <input id="takeaway-cabrito-nota" type="text" placeholder="Encomenda prévia obrigatória" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:13px;" />
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="saveTakeaway()">Guardar e publicar</button>
+        </div>
+        <p id="takeaway-feedback" style="font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- VAGAS DE EMPREGO -->
+    <div class="panel" id="panel-vagas">
+      <div class="panel-header">
+        <div class="panel-title">Vagas de Emprego</div>
+        <div class="panel-subtitle">Vagas ativas aparecem no site. Sem vagas ativas, a secção desaparece.</div>
+      </div>
+
+      <div style="max-width:700px;">
+        <div id="vagas-admin-lista" style="display:flex;flex-direction:column;gap:16px;margin-bottom:20px;"></div>
+
+        <button class="btn-add" onclick="addVaga()" style="margin-bottom:24px;">+ Adicionar vaga</button>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="saveVagas()">Guardar e publicar</button>
+        </div>
+        <p id="vagas-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- COMUNICAÇÕES -->
+    <div class="panel" id="panel-comunicacoes">
+      <div class="section-header">
+        <div><h2>Comunicações</h2><p>Emails automáticos e avisos para clientes</p></div>
+      </div>
+
+      <!-- AVISO FÉRIAS / LOTAÇÃO -->
+      <div class="card">
+        <div class="card-header" style="justify-content:space-between;">
+          <div>
+            <h3>Aviso no Site — Férias ou Lotação</h3>
+            <div class="card-desc">Mostra uma mensagem informativa no formulário de reservas</div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
+            <input type="checkbox" id="notice-toggle" onchange="toggleNotice(this)" style="accent-color:var(--gold);width:16px;height:16px;" />
+            Ativar aviso
+          </label>
+        </div>
+        <div class="card-body">
+          <div class="form-row full">
+            <div class="field">
+              <label>Mensagem para os clientes</label>
+              <input type="text" id="notice-msg" value="Estamos de férias de 14 a 22 de agosto. Reservas retomam a 23 de agosto. Obrigado!" />
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;">Esta mensagem aparece no site junto ao formulário de reservas quando o aviso está ativo</div>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:8px;">
+            <div style="padding:12px 16px;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:var(--radius);">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Pré-visualização no site</div>
+              <div id="notice-preview" style="font-size:13px;color:#a07830;font-style:italic;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMAIL PÓS-VISITA -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Email Pós-Visita — Pedido de Avaliação</h3>
+            <div class="card-desc">Enviado automaticamente ao cliente após a sua visita</div>
+          </div>
+          <span class="badge badge-green">Automático</span>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Enviar (horas após a reserva)</label>
+              <input type="number" value="24" min="1" max="72" />
+            </div>
+            <div class="field">
+              <label>Assunto do Email</label>
+              <input type="text" value="Obrigado pela sua visita ao Zé dos Frangos 🐔" />
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="field">
+              <label>Corpo do Email</label>
+              <textarea style="min-height:130px;">Olá {{nome}},
+
+Obrigado por nos ter visitado! Esperamos que tenha gostado da sua refeição.
+
+A sua opinião é muito importante para nós. Demora apenas 1 minuto:
+
+👉 Deixe a sua avaliação no Google: [link Google Reviews]
+
+Até breve,
+Equipa Zé dos Frangos</textarea>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Variáveis disponíveis: <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">{{nome}}</code> <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">{{data}}</code> <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">{{hora}}</code></div>
+            <button class="btn-add" onclick="showToast('Email de teste enviado para churrasqueirazedosfrangos@gmail.com')">✉ Enviar email de teste</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMAIL BROADCAST -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Email para Todos os Clientes</h3>
+            <div class="card-desc">Envie um aviso pontual a todos os clientes com reservas anteriores</div>
+          </div>
+          <span class="badge badge-grey">Manual</span>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Assunto</label>
+              <input type="text" placeholder="Ex: Estamos de volta! Férias terminaram." />
+            </div>
+            <div class="field">
+              <label>Destinatários</label>
+              <select class="form-input" style="background:#fafaf8;">
+                <option>Todos os clientes (47)</option>
+                <option>Últimos 30 dias (12)</option>
+                <option>Com reserva confirmada (31)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="field">
+              <label>Mensagem</label>
+              <textarea style="min-height:100px;" placeholder="Ex: Boas notícias! Regressámos das férias e estamos prontos para vos receber. As reservas estão abertas para agosto. Até breve!"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:8px;align-items:center;">
+            <button class="btn-add" onclick="showToast('Email de teste enviado')">✉ Testar</button>
+            <button style="padding:8px 20px;background:var(--gold);color:#111;border:none;border-radius:var(--radius);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;" onclick="showToast('Email enviado a 47 clientes!')">Enviar a Todos</button>
+            <span style="font-size:11px;color:var(--muted);">Requer integração com Mailchimp ou Brevo na versão completa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toast-msg">Alterações guardadas</span>
+</div>
+
+<script>
+function showPanel(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
+  const titles = {
+    dashboard: 'Dashboard',
+    geral: 'Informações Gerais',
+    ementa: 'Ementa',
+    galeria: 'Galeria de Fotos',
+    horarios: 'Horários',
+    contactos: 'Contactos',
+    reservas: 'Reservas',
+    takeaway: 'Take Away',
+    comunicacoes: 'Comunicações',
+  };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+}
+
+function switchSubTab(id, el) {
+  document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.menu-tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('subtab-' + id).classList.add('active');
+}
+
+function removeRow(btn) {
+  btn.closest('.menu-item-row').remove();
+  showToast('Prato removido');
+}
+
+function addMenuRow(listId) {
+  const list = document.getElementById(listId);
+  const row = document.createElement('div');
+  row.className = 'menu-item-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Nome do prato" />
+    <input type="text" placeholder="Descrição" />
+    <input type="text" placeholder="0,00" />
+    <button class="btn-remove" onclick="removeRow(this)">✕</button>
+  `;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function toggleDay(checkbox) {
+  const row = checkbox.closest('.hours-row');
+  const inputs = row.querySelectorAll('input[type="time"]');
+  inputs.forEach(i => {
+    i.disabled = checkbox.checked;
+    i.style.opacity = checkbox.checked ? '0.3' : '1';
+  });
+}
+
+let toastTimer;
+function showToast(msg = 'Alterações guardadas com sucesso') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  const status = document.getElementById('save-status');
+  status.textContent = '● Guardado agora mesmo';
+  status.className = 'save-status saved';
+  setTimeout(() => {
+    status.textContent = '● Todas as alterações guardadas';
+    status.className = 'save-status';
+  }, 3000);
+}
+
+function saveAll() { showToast('Alterações guardadas com sucesso'); }
+
+// ── GUARDAR GERAL ─────────────────────────────────────
+function saveGeral() {
+  function val(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  const data = {
+    sobreP1: val('geral-sobre1'),
+    sobreP2: val('geral-sobre2'),
+    stats: [
+      { val: val('geral-stat1-val'), lbl: val('geral-stat1-lbl') },
+      { val: val('geral-stat2-val'), lbl: val('geral-stat2-lbl') },
+      { val: val('geral-stat3-val'), lbl: val('geral-stat3-lbl') },
+    ],
+  };
+  localStorage.setItem('siteGeral', JSON.stringify(data));
+  const fb = document.getElementById('geral-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  showToast('Informações gerais guardadas');
+}
+
+// ── GUARDAR EMENTA ────────────────────────────────────
+function getListItems(listId) {
+  const rows = document.querySelectorAll('#' + listId + ' .menu-item-row');
+  const items = [];
+  rows.forEach(function(row) {
+    const inputs = row.querySelectorAll('input[type="text"]');
+    const nome = inputs[0] ? inputs[0].value.trim() : '';
+    const desc = inputs[1] ? inputs[1].value.trim() : '';
+    const preco = inputs[2] ? inputs[2].value.trim() : '';
+    if (nome) items.push({ nome: nome, desc: desc, preco: preco });
+  });
+  return items;
+}
+
+function saveEmenta() {
+  const data = {
+    entradas: getListItems('entradas-list'),
+    carnes: getListItems('carnes-list'),
+    peixe: getListItems('peixe-list'),
+    sobremesas: getListItems('sobremesas-list'),
+  };
+  localStorage.setItem('menuData', JSON.stringify(data));
+  const fb = document.getElementById('ementa-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  showToast('Ementa guardada');
+}
+
+// ── GUARDAR HORÁRIOS ──────────────────────────────────
+function saveHorarios() {
+  const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+  const data = {};
+  dias.forEach(function(d) {
+    var encEl = document.getElementById('enc-' + d);
+    var openEl = document.getElementById('hora-' + d + '-open');
+    var closeEl = document.getElementById('hora-' + d + '-close');
+    data[d] = {
+      encerrado: encEl ? encEl.checked : false,
+      open: openEl ? openEl.value : '',
+      close: closeEl ? closeEl.value : '',
+    };
+  });
+  data.nota = document.getElementById('horarios-nota').value;
+  localStorage.setItem('siteHorarios', JSON.stringify(data));
+  const fb = document.getElementById('horarios-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  showToast('Horários guardados');
+}
+
+// ── GUARDAR CONTACTOS ─────────────────────────────────
+function saveContactos() {
+  const morada = document.getElementById('contactos-morada').value;
+  const cp = document.getElementById('contactos-cp').value;
+  const pais = document.getElementById('contactos-pais').value;
+  const tel = document.getElementById('contactos-telefone').value;
+  const email = document.getElementById('contactos-email').value;
+  const data = {
+    telefone: tel,
+    email: email,
+    morada: morada + '<br />' + cp + '<br />' + pais,
+    contacto: tel + '<br />' + email,
+  };
+  localStorage.setItem('siteContactos', JSON.stringify(data));
+  const fb = document.getElementById('contactos-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  showToast('Contactos guardados');
+}
+
+// ── RESERVAS ──────────────────────────────────────────────
+let reservations = JSON.parse(localStorage.getItem('reservas') || '[]');
+
+function saveReservations() {
+  localStorage.setItem('reservas', JSON.stringify(reservations));
+}
+
+let currentFilter = 'todas';
+
+const statusMeta = {
+  pendente:   { label: 'Pendente',      cls: 'badge-pending'   },
+  confirmada: { label: 'Confirmada',    cls: 'badge-confirmed' },
+  cancelada:  { label: 'Cancelada',     cls: 'badge-cancelled' },
+  noshow:     { label: 'Não apareceu', cls: 'badge-noshow'    },
+};
+
+function renderReservations() {
+  const tbody = document.getElementById('res-tbody');
+  const today = '2026-07-07';
+  const filtered = currentFilter === 'todas'
+    ? reservations
+    : reservations.filter(r => r.status === currentFilter);
+
+  tbody.innerHTML = filtered.sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time)).map(r => {
+    const m = statusMeta[r.status];
+    const d = new Date(r.date);
+    const dateStr = d.toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric' });
+    const isToday = r.date === today;
+    const actions = r.status === 'pendente'
+      ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'confirmada')">Confirmar</button>
+         <button class="action-btn cancel" onclick="setStatus(${r.id},'cancelada')" style="margin-left:4px;">Cancelar</button>`
+      : r.status === 'confirmada'
+      ? `<button class="action-btn cancel" onclick="setStatus(${r.id},'noshow')">Não apareceu</button>`
+      : `<span style="color:var(--muted);font-size:12px;">—</span>`;
+
+    return `<tr data-status="${r.status}">
+      <td><span style="font-weight:${isToday?'600':'400'};color:${isToday?'var(--gold)':'inherit'}">${dateStr}${isToday?' <span style="font-size:10px;background:var(--gold-dim);color:#a07830;padding:1px 5px;border-radius:3px;">Hoje</span>':''}</span></td>
+      <td style="font-variant-numeric:tabular-nums;">${r.time}</td>
+      <td><div class="res-name">${r.name}</div><div class="res-phone">${r.phone}</div></td>
+      <td style="text-align:center;">${r.guests}</td>
+      <td><div class="res-note">${r.note || '<span style="color:#ccc">—</span>'}</div></td>
+      <td><span class="badge ${m.cls}">${m.label}</span></td>
+      <td style="white-space:nowrap;">${actions}</td>
+    </tr>`;
+  }).join('');
+
+  updateResStats();
+}
+
+function setStatus(id, newStatus) {
+  const r = reservations.find(x => x.id === id);
+  if (r) { r.status = newStatus; saveReservations(); renderReservations(); showToast('Estado atualizado'); }
+}
+
+function filterRes(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderReservations();
+}
+
+function updateResStats() {
+  const today = '2026-07-07';
+  document.getElementById('stat-pending').textContent   = reservations.filter(r => r.status === 'pendente').length;
+  document.getElementById('stat-today').textContent     = reservations.filter(r => r.date === today).length;
+  document.getElementById('stat-confirmed').textContent = reservations.filter(r => r.status === 'confirmada').length;
+  document.getElementById('stat-total').textContent     = reservations.length;
+}
+
+function switchResTab(tab, el) {
+  document.querySelectorAll('#panel-reservas .sub-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('res-gestao').style.display = tab === 'gestao' ? 'block' : 'none';
+  document.getElementById('res-config').style.display = tab === 'config' ? 'block' : 'none';
+}
+
+// Init reservations on load
+renderReservations();
+
+// ── Carregar dados guardados no painel Geral ──────────
+(function() {
+  var d = JSON.parse(localStorage.getItem('siteGeral') || '{}');
+  if (d.nome) document.getElementById('geral-nome').value = d.nome;
+  if (d.subtitulo) document.getElementById('geral-subtitulo').value = d.subtitulo;
+  if (d.tag) document.getElementById('geral-tag').value = d.tag;
+  if (d.desc) document.getElementById('geral-desc').value = d.desc;
+  if (d.sobre1) document.getElementById('geral-sobre1').value = d.sobre1;
+  if (d.sobre2) document.getElementById('geral-sobre2').value = d.sobre2;
+  if (d.stat1val) document.getElementById('geral-stat1-val').value = d.stat1val;
+  if (d.stat1lbl) document.getElementById('geral-stat1-lbl').value = d.stat1lbl;
+  if (d.stat2val) document.getElementById('geral-stat2-val').value = d.stat2val;
+  if (d.stat2lbl) document.getElementById('geral-stat2-lbl').value = d.stat2lbl;
+  if (d.stat3val) document.getElementById('geral-stat3-val').value = d.stat3val;
+  if (d.stat3lbl) document.getElementById('geral-stat3-lbl').value = d.stat3lbl;
+})();
+
+// ── Carregar dados guardados nos Contactos ────────────
+(function() {
+  var d = JSON.parse(localStorage.getItem('siteContactos') || '{}');
+  if (d.telefone) document.getElementById('contactos-telefone').value = d.telefone;
+  if (d.email) document.getElementById('contactos-email').value = d.email;
+  if (d.morada) document.getElementById('contactos-morada').value = d.morada;
+  if (d.cp) document.getElementById('contactos-cp').value = d.cp;
+  if (d.pais) document.getElementById('contactos-pais').value = d.pais;
+})();
+
+// ── COMUNICAÇÕES ──────────────────────────────────────────
+function toggleNotice(checkbox) {
+  const msg = document.getElementById('notice-msg').value;
+  document.getElementById('notice-preview').textContent = checkbox.checked ? msg : '';
+}
+
+document.getElementById('notice-msg').addEventListener('input', function() {
+  if (document.getElementById('notice-toggle').checked) {
+    document.getElementById('notice-preview').textContent = this.value;
+  }
+});
+
+// ── Prato do Dia ─────────────────────────────────────
+function addPratoDiaRow(nome, preco) {
+  const lista = document.getElementById('pratoDia-lista');
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;align-items:center;';
+  row.innerHTML = `
+    <input type="text" placeholder="Nome do prato" value="${nome||''}"
+      style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:13px;" />
+    <input type="text" placeholder="Preço (ex: 9,50)" value="${preco||''}"
+      style="width:110px;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:10px 12px;border-radius:4px;font-size:13px;" />
+    <button onclick="this.parentElement.remove()"
+      style="background:none;border:none;color:#555;cursor:pointer;font-size:18px;padding:0 4px;">✕</button>
+  `;
+  lista.appendChild(row);
+}
+
+function savePratoDia() {
+  const rows = document.querySelectorAll('#pratoDia-lista > div');
+  const pratos = [];
+  rows.forEach(function(row) {
+    const inputs = row.querySelectorAll('input');
+    const nome = inputs[0].value.trim();
+    const preco = inputs[1].value.trim();
+    if (nome) pratos.push({ nome, preco });
+  });
+  const nota = document.getElementById('pratoDia-nota').value.trim();
+  localStorage.setItem('pratoDia', JSON.stringify({ pratos, nota }));
+  const fb = document.getElementById('pratoDia-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+function clearPratoDia() {
+  localStorage.removeItem('pratoDia');
+  document.getElementById('pratoDia-lista').innerHTML = '';
+  document.getElementById('pratoDia-nota').value = '';
+}
+
+// Carregar dados existentes ao abrir o painel
+(function() {
+  const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
+  if (data.pratos && data.pratos.length > 0) {
+    data.pratos.forEach(function(p) { addPratoDiaRow(p.nome, p.preco); });
+  } else {
+    addPratoDiaRow();
+  }
+  if (data.nota) document.getElementById('pratoDia-nota').value = data.nota;
+})();
+
+// ── Vagas de Emprego ─────────────────────────────────
+function vagaCardHTML(v, idx) {
+  return `
+  <div style="background:#161616;border:1px solid #2a2a2a;border-radius:4px;padding:20px;" id="vaga-card-${idx}">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <span style="font-size:12px;color:#c9a84c;text-transform:uppercase;letter-spacing:.15em;">Vaga ${idx+1}</span>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#aaa;cursor:pointer;">
+          <input type="checkbox" ${v.ativa ? 'checked' : ''} onchange="toggleVagaAtiva(${idx},this)" style="accent-color:#c9a84c;" /> Ativa
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c9a84c;cursor:pointer;">
+          <input type="checkbox" ${v.urgente ? 'checked' : ''} onchange="toggleVagaUrgente(${idx},this)" style="accent-color:#c9a84c;" /> Urgente
+        </label>
+        <button onclick="removeVaga(${idx})" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;">✕</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Título da vaga</label>
+        <input value="${v.titulo||''}" oninput="updateVaga(${idx},'titulo',this.value)" placeholder="ex: Cozinheiro/a" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:13px;" />
+      </div>
+      <div>
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Local / Regime</label>
+        <input value="${v.local||''}" oninput="updateVaga(${idx},'local',this.value)" placeholder="ex: Vila Real · Tempo inteiro · Presencial" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:13px;" />
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">O que procuramos <span style="color:#555;">(uma por linha)</span></label>
+        <textarea oninput="updateVaga(${idx},'procura',this.value)" rows="5" placeholder="Experiência mínima de 2 anos..." style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:12px;resize:vertical;">${v.procura||''}</textarea>
+      </div>
+      <div>
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">O que oferecemos <span style="color:#555;">(uma por linha)</span></label>
+        <textarea oninput="updateVaga(${idx},'oferece',this.value)" rows="5" placeholder="Contrato de trabalho..." style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;color:#eee;padding:8px 12px;border-radius:4px;font-size:12px;resize:vertical;">${v.oferece||''}</textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+var vagasData = JSON.parse(localStorage.getItem('vagasEmprego') || '[]');
+
+function renderVagasAdmin() {
+  var lista = document.getElementById('vagas-admin-lista');
+  if (!lista) return;
+  lista.innerHTML = vagasData.map(function(v, i) { return vagaCardHTML(v, i); }).join('');
+}
+
+function addVaga() {
+  vagasData.push({ titulo:'', local:'', procura:'', oferece:'', ativa:true, urgente:false });
+  renderVagasAdmin();
+}
+
+function removeVaga(idx) {
+  vagasData.splice(idx, 1);
+  renderVagasAdmin();
+}
+
+function updateVaga(idx, field, val) {
+  vagasData[idx][field] = val;
+}
+
+function toggleVagaAtiva(idx, el) { vagasData[idx].ativa = el.checked; }
+function toggleVagaUrgente(idx, el) { vagasData[idx].urgente = el.checked; }
+
+function saveVagas() {
+  localStorage.setItem('vagasEmprego', JSON.stringify(vagasData));
+  var fb = document.getElementById('vagas-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+(function() { renderVagasAdmin(); })();
+
+// ── Take Away ────────────────────────────────────────
+function saveTakeaway() {
+  var data = {
+    nota: document.getElementById('takeaway-admin-nota').value.trim(),
+    frango: {
+      preco: document.getElementById('takeaway-frango-preco').value.trim(),
+      min: document.getElementById('takeaway-frango-min').value.trim()
+    },
+    cabrito: {
+      preco: document.getElementById('takeaway-cabrito-preco').value.trim(),
+      nota: document.getElementById('takeaway-cabrito-nota').value.trim()
+    }
+  };
+  localStorage.setItem('siteTakeaway', JSON.stringify(data));
+  var fb = document.getElementById('takeaway-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+(function() {
+  var d = JSON.parse(localStorage.getItem('siteTakeaway') || '{}');
+  if (d.nota) document.getElementById('takeaway-admin-nota').value = d.nota;
+  if (d.frango) {
+    if (d.frango.preco) document.getElementById('takeaway-frango-preco').value = d.frango.preco;
+    if (d.frango.min) document.getElementById('takeaway-frango-min').value = d.frango.min;
+  }
+  if (d.cabrito) {
+    if (d.cabrito.preco) document.getElementById('takeaway-cabrito-preco').value = d.cabrito.preco;
+    if (d.cabrito.nota) document.getElementById('takeaway-cabrito-nota').value = d.cabrito.nota;
+  }
+})();
+
+// ── Sugestão do Mês ──────────────────────────────────
+var _sugestaoFotoBase64 = null;
+var _sugestaoMarkedForRemoval = false;
+
+function previewSugestaoFoto(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('sugestao-foto-nome').textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _sugestaoFotoBase64 = e.target.result;
+    var preview = document.getElementById('sugestao-admin-preview');
+    preview.src = _sugestaoFotoBase64;
+    document.getElementById('sugestao-preview-wrap').style.display = '';
+    _sugestaoMarkedForRemoval = false;
+    document.getElementById('sugestao-admin-nome').style.opacity = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveSugestaoMes() {
+  if (_sugestaoMarkedForRemoval) {
+    localStorage.removeItem('sugestaoMes');
+    _sugestaoMarkedForRemoval = false;
+    _sugestaoFotoBase64 = null;
+    var fb = document.getElementById('sugestao-feedback');
+    fb.textContent = 'Sugestão removida.';
+    fb.style.display = '';
+    setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
+    return;
+  }
+  var nome = document.getElementById('sugestao-admin-nome').value.trim();
+  var desc = document.getElementById('sugestao-admin-desc').value.trim();
+  var preco = document.getElementById('sugestao-admin-preco').value.trim();
+  if (!nome) { alert('Insere o nome do prato.'); return; }
+  var existing = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+  var data = {
+    nome: nome,
+    desc: desc,
+    preco: preco,
+    foto: _sugestaoFotoBase64 || existing.foto || null
+  };
+  localStorage.setItem('sugestaoMes', JSON.stringify(data));
+  var fb = document.getElementById('sugestao-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+function clearSugestaoMes() {
+  _sugestaoMarkedForRemoval = true;
+  document.getElementById('sugestao-admin-nome').value = '';
+  document.getElementById('sugestao-admin-desc').value = '';
+  document.getElementById('sugestao-admin-preco').value = '';
+  document.getElementById('sugestao-admin-preview').src = '';
+  document.getElementById('sugestao-preview-wrap').style.display = 'none';
+  document.getElementById('sugestao-foto-nome').textContent = '(clica em Guardar para confirmar remoção)';
+  _sugestaoFotoBase64 = null;
+}
+
+// Pré-carregar dados existentes da sugestão
+(function() {
+  var data = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+  if (data.nome) document.getElementById('sugestao-admin-nome').value = data.nome;
+  if (data.desc) document.getElementById('sugestao-admin-desc').value = data.desc;
+  if (data.preco) document.getElementById('sugestao-admin-preco').value = data.preco;
+  if (data.foto) {
+    _sugestaoFotoBase64 = data.foto;
+    document.getElementById('sugestao-admin-preview').src = data.foto;
+    document.getElementById('sugestao-preview-wrap').style.display = '';
+    document.getElementById('sugestao-foto-nome').textContent = '(foto guardada)';
+  }
+})();
+</script>
+</body>
+</html>

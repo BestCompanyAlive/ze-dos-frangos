@@ -1,0 +1,939 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const menuData = {
+  entradas: [
+    { nome: 'Pão', desc: '', preco: '1,85' },
+    { nome: 'Azeitonas e Azeite', desc: '', preco: '1,95' },
+    { nome: 'Salsicha', desc: '', preco: '2,00' },
+    { nome: 'Sopa do Dia', desc: '', preco: '2,00' },
+    { nome: 'Tábua Tradicional de Enchidos', desc: '', preco: '13,50' },
+    { nome: 'Croquetes de Alheira', desc: 'Com molho de mostarda e mel', preco: '5,50' },
+    { nome: 'Crocantes de Camarão', desc: 'Com molho agridoce', preco: '5,50' },
+    { nome: 'Pica-pau', desc: '', preco: '8,00' },
+    { nome: 'Moelas', desc: '', preco: '8,00' },
+  ],
+  principais: [
+    { nome: 'Frango de Churrasco', desc: '', preco: '9,00 / 14,00' },
+    { nome: 'Posta à Moda da Casa', desc: '', preco: '16,00 / 28,50' },
+    { nome: 'Misto de Carne', desc: '', preco: '15,50 / 19,50' },
+    { nome: 'Costeletão de Vitela', desc: '', preco: '28,50' },
+    { nome: 'Medalhões de Vitela', desc: '', preco: '16,00 / 28,50' },
+    { nome: 'Panados com Arroz Malandrinho', desc: '', preco: '10,00 / 15,00' },
+    { nome: 'Bifinhos de Perú com Cogumelos', desc: '', preco: '10,50 / 15,50' },
+    { nome: 'Costelinhas de Porco Grelhadas', desc: '', preco: '10,50 / 16,00' },
+    { nome: 'Legumes à Brás', desc: 'Prato vegetariano', preco: '12,00' },
+  ],
+  peixe: [
+    { nome: 'Bacalhau com Natas', desc: '', preco: '12,00' },
+    { nome: 'Bacalhau na Brasa', desc: '', preco: '22,50 / 36,00' },
+    { nome: 'Bacalhau à Moda da Casa', desc: '', preco: '24,00' },
+    { nome: 'Polvo à Lagareiro', desc: '', preco: '34,50' },
+    { nome: 'Filetes de Pescada Dourados', desc: 'Com arroz malandrinho', preco: '10,00 / 15,00' },
+    { nome: 'Salmão Grelhado', desc: '', preco: '14,50' },
+    { nome: 'Dourada Grelhada', desc: '', preco: '13,00' },
+    { nome: 'Robalo Grelhado', desc: '', preco: '14,00' },
+    { nome: 'Sardinhas', desc: '', preco: '11,50' },
+    { nome: 'Chocos', desc: '', preco: '11,50 / 19,00' },
+    { nome: 'Espetada de Lulas', desc: '', preco: '13,00' },
+  ],
+  sobremesas: [
+    { nome: 'Mousse de Chocolate', desc: '', preco: '3,00' },
+    { nome: 'Mousse de Oreo', desc: '', preco: '3,00' },
+    { nome: 'Bolo de Bolacha', desc: '', preco: '3,00' },
+    { nome: 'Doce do Dia', desc: '', preco: '3,50' },
+    { nome: 'Molotof', desc: '', preco: '4,00' },
+    { nome: 'Tiramissú', desc: '', preco: '4,00' },
+    { nome: 'Baba de Camelo', desc: '', preco: '3,00' },
+    { nome: 'Cheesecake', desc: '', preco: '4,00' },
+    { nome: 'Fruta Variada', desc: '', preco: '2,50' },
+  ],
+};
+---
+
+<Layout title="Churrasqueira Zé dos Frangos — Vila Real" description="Frango de churrasco grelhado no carvão em Vila Real. Especialidade da casa desde há décadas. Largo do Pioledo, nº 14, Vila Real.">
+  <!-- NAV -->
+  <nav
+    id="main-nav"
+    class="fixed top-0 left-0 right-0 z-50 px-6 py-5"
+    style="background: rgba(13,13,13,0.3); backdrop-filter: blur(4px);"
+  >
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-3">
+        <img src="/images/logo.png" alt="Zé dos Frangos" class="w-12 h-12 object-contain" />
+        <div class="hidden sm:block text-left">
+          <div class="text-gold text-xs tracking-[0.3em] uppercase" style="font-family: Playfair Display, serif;">Churrasqueira</div>
+          <div class="text-xl font-light tracking-widest text-white">ZÉ DOS FRANGOS</div>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8" style="font-family: Playfair Display, serif;">
+        <a href="#sobre" class="nav-link">Sobre</a>
+        <a href="#ementa" class="nav-link">Ementa</a>
+        <a href="#contactos" class="nav-link" onclick="document.getElementById('contactos').scrollIntoView({behavior:'smooth'});return false;">Contactos</a>
+        <a href="#reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
+        <a href="#takeaway" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem; background: #c9a84c; color: #0d0d0d; border-color: #c9a84c;">Take Away</a>
+      </div>
+
+      <button id="menu-btn" class="md:hidden text-white" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div
+      id="mobile-menu"
+      class="hidden md:hidden absolute top-full left-0 right-0 py-6 px-6 flex flex-col gap-5 text-center"
+      style="background: rgba(13,13,13,0.97); font-family: Playfair Display, serif;"
+    >
+      <a href="#sobre" class="nav-link">Sobre</a>
+      <a href="#ementa" class="nav-link">Ementa</a>
+      <a href="#contactos" class="nav-link">Contactos</a>
+      <a href="#reservas" class="nav-link text-gold">Reservar</a>
+      <a href="#takeaway" class="nav-link" style="color: #c9a84c;">Take Away</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section
+    id="hero"
+    class="hero-bg relative flex items-center justify-center min-h-screen text-center px-6"
+    style="background-image: url('/images/misto.jpg');"
+  >
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.72) 100%);"></div>
+
+    <div class="relative z-10 max-w-3xl">
+      <img
+        src="/images/logo.png"
+        alt="Zé dos Frangos — Restaurante & Churrasqueira, desde 1996"
+        class="mx-auto mb-8 w-32 h-32 md:w-40 md:h-40 object-contain"
+        style="filter: drop-shadow(0 0 30px rgba(201,168,76,0.35));"
+      />
+      <p class="text-gold tracking-[0.4em] text-xs uppercase mb-6" style="font-family: Playfair Display, serif;">
+        Vila Real · Trás-os-Montes
+      </p>
+      <h1 class="text-5xl md:text-7xl font-light text-white leading-tight mb-4">
+        Churrasqueira<br /><em class="text-gold-light not-italic font-extralight">Zé dos Frangos</em>
+      </h1>
+      <div class="w-16 h-px bg-gold mx-auto my-6"></div>
+      <p class="text-lg font-light text-gray-300 max-w-xl mx-auto leading-relaxed">
+        O melhor frango grelhado no carvão de Vila Real. Uma tradição que se mantém fiel ao sabor autêntico de Trás-os-Montes.
+      </p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#reservas" class="btn-gold">Reservar Mesa</a>
+        <a href="#ementa" class="btn-gold" style="border-color: rgba(255,255,255,0.3); color: white;">Ver Ementa</a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SOBRE NÓS -->
+  <section id="sobre" class="py-28 px-6" style="background: #0d0d0d;">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <div class="reveal relative">
+        <img
+          src="/images/bacalhaunatas.jpg"
+          alt="Frango grelhado no carvão"
+          class="w-full h-96 object-cover"
+          style="filter: brightness(0.9);"
+        />
+        <div class="absolute -bottom-6 -right-6 w-32 h-32 border border-gold hidden md:block" style="z-index: -1;"></div>
+      </div>
+
+      <div class="reveal">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">A Nossa História</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white leading-tight mb-6">
+          Sabor Autêntico<br /><em class="text-gold-light not-italic">desde Sempre</em>
+        </h2>
+        <div class="w-12 h-px bg-gold mb-8"></div>
+        <p id="sobre-p1" class="text-gray-400 leading-relaxed mb-5 font-light">
+          No coração de Vila Real, a Churrasqueira Zé dos Frangos é uma referência gastronómica transmontana. O nosso frango grelhado lentamente no carvão, com piri-piri da casa, é a especialidade que faz as pessoas regressar geração após geração.
+        </p>
+        <p id="sobre-p2" class="text-gray-400 leading-relaxed font-light">
+          Trabalhamos com produtos regionais de qualidade: frango do campo, carne mirandesa, legumes frescos. Uma cozinha simples, honesta e cheia de sabor — como sempre foi em Trás-os-Montes.
+        </p>
+        <div class="mt-10 grid grid-cols-3 gap-6 text-center">
+          <div>
+            <div id="stat-val-1" class="text-3xl font-light text-gold">30+</div>
+            <div id="stat-lbl-1" class="text-xs text-gray-400 mt-1 tracking-wide" style="font-family: Playfair Display, serif;">Anos</div>
+          </div>
+          <div>
+            <div id="stat-val-2" class="text-3xl font-light text-gold">Vila Real</div>
+            <div id="stat-lbl-2" class="text-xs text-gray-400 mt-1 tracking-wide" style="font-family: Playfair Display, serif;">Localização</div>
+          </div>
+          <div>
+            <div id="stat-val-3" class="text-3xl font-light text-gold">4.8★ Google</div>
+            <div id="stat-lbl-3" class="text-xs text-gray-400 mt-1 tracking-wide" style="font-family: Playfair Display, serif;">Avaliação</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <div class="py-16 px-6 text-center" style="background: #111;">
+    <p class="text-gold text-2xl md:text-3xl font-light italic">
+      "Frango grelhado no carvão como o de antigamente."
+    </p>
+    <p class="text-gray-400 text-xs tracking-widest mt-3 uppercase" style="font-family: Playfair Display, serif;">
+      — Churrasqueira Zé dos Frangos, Vila Real
+    </p>
+  </div>
+
+  <!-- SUGESTÃO DO MÊS -->
+  <div id="sugestao-mes-box" style="display:none;">
+    <section style="position:relative; min-height: 480px; display:flex; align-items:stretch; overflow:hidden;">
+      <!-- Foto -->
+      <div id="sugestao-img-wrap" class="hidden md:block" style="width:50%; position:relative; min-height:480px; background:#111;">
+        <img id="sugestao-img" src="" alt="Sugestão do Mês" style="width:100%; height:100%; object-fit:cover; display:block;" />
+      </div>
+      <!-- Conteúdo -->
+      <div style="flex:1; background:#0d0d0d; display:flex; align-items:center; padding: 4rem 3rem; position:relative;">
+        <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #c9a84c, rgba(201,168,76,0.1));"></div>
+        <div style="max-width:480px;">
+          <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Sugestão do Mês</p>
+          <h2 id="sugestao-nome" class="text-4xl md:text-5xl font-light text-white leading-tight mb-4"></h2>
+          <div style="width:40px; height:1px; background:#c9a84c; margin-bottom:1.5rem;"></div>
+          <p id="sugestao-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
+          <div style="display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;">
+            <span id="sugestao-preco" class="text-gold text-3xl font-light" style="font-family: Playfair Display, serif;"></span>
+            <a href="#reservas" class="btn-gold" style="font-size:0.7rem; padding:0.5rem 1.5rem;">Reservar Mesa</a>
+          </div>
+        </div>
+      </div>
+      <!-- Img mobile como background -->
+      <div id="sugestao-img-mobile" class="md:hidden absolute inset-0" style="z-index:0; opacity:0.15;"></div>
+    </section>
+  </div>
+
+  <!-- EMENTA -->
+  <section id="ementa" class="py-28 px-6" style="background: #0d0d0d; position: relative; background-image: url('/images/polvo.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
+    <div class="max-w-5xl mx-auto relative" style="z-index: 1;">
+      <div class="text-center reveal mb-16">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Os Nossos Pratos</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Ementa</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6"></div>
+      </div>
+
+      <!-- PRATO DO DIA -->
+      <div id="prato-dia-box" class="reveal mb-12" style="display:none;">
+        <div style="border: 1px solid rgba(201,168,76,0.4); background: rgba(201,168,76,0.06); border-radius: 4px; padding: 24px 32px;">
+          <p class="text-gold text-xs tracking-[0.3em] uppercase mb-4" style="font-family: Playfair Display, serif;">Prato do Dia</p>
+          <div id="prato-dia-lista" class="flex flex-col gap-3"></div>
+          <p id="prato-dia-nota" class="text-gray-400 text-xs mt-4 font-light" style="display:none;"></p>
+        </div>
+      </div>
+
+      <div class="flex justify-center gap-2 mb-12 flex-wrap">
+        <button class="menu-tab active" data-tab="entradas">Entradas</button>
+        <button class="menu-tab" data-tab="principais">Carnes</button>
+        <button class="menu-tab" data-tab="peixe">Peixe</button>
+        <button class="menu-tab" data-tab="sobremesas">Sobremesas</button>
+      </div>
+
+      {(['entradas','principais','peixe','sobremesas'] as const).map((cat, i) => (
+        <div class="menu-panel grid md:grid-cols-2 gap-x-12" data-panel={cat} style={i > 0 ? 'display:none' : ''}>
+          {menuData[cat].map((item) => (
+            <div class="reveal flex justify-between items-baseline gap-4 py-4 border-b" style="border-color: #222;">
+              <div>
+                <h3 class="text-white font-light text-sm">{item.nome}</h3>
+                {item.desc && <p class="text-gray-400 text-xs mt-0.5">{item.desc}</p>}
+              </div>
+              <span class="text-gold whitespace-nowrap text-sm shrink-0" style="font-family: Playfair Display, serif;">{item.preco} €</span>
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <p class="text-center text-gray-400 text-xs mt-10 tracking-wide" style="font-family: Playfair Display, serif;">
+        IVA incluído à taxa em vigor · Ementa sujeita a alterações sazonais
+      </p>
+    </div>
+  </section>
+
+  <!-- RESERVAS -->
+  <section id="reservas" class="py-28 px-6" style="position: relative; background-image: url('/images/croquetes.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
+    <div class="max-w-2xl mx-auto relative" style="z-index: 1;">
+      <div class="text-center reveal mb-14">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Reserve a Sua Mesa</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Reservas</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6 mb-6"></div>
+        <p class="text-gray-400 font-light">Confirmaremos a sua reserva por telefone. Também pode ligar para <span class="text-gold">259 322 212</span>.</p>
+      </div>
+
+      <!-- WhatsApp CTA -->
+      <div class="reveal text-center mb-8">
+        <a
+          href="https://wa.me/351259322212?text=Olá,%20gostava%20de%20fazer%20uma%20reserva%20na%20Churrasqueira%20Zé%20dos%20Frangos."
+          target="_blank"
+          class="btn-gold"
+          style="background: #25D366; border-color: #25D366; color: white; display: inline-flex; align-items: center; gap: 0.5rem;"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Reservar via WhatsApp
+        </a>
+      </div>
+
+      <div class="reveal text-center text-gray-400 text-xs mb-8 tracking-widest uppercase" style="font-family: Playfair Display, serif;">
+        — ou preencha o formulário —
+      </div>
+
+      <!-- Aviso grupos grandes -->
+      <div class="reveal mb-6 text-center">
+        <p class="text-xs text-gray-400" style="font-family: Playfair Display, serif;">
+          Reservas online disponíveis para <span class="text-gold font-semibold">grupos até 4 pessoas</span>.<br/>
+          Para grupos maiores, contacte-nos por telefone ou WhatsApp.
+        </p>
+      </div>
+
+      <!-- Aviso lotação / férias (oculto por defeito, ativado pelo admin) -->
+      <div id="res-notice" class="reveal mb-6 hidden">
+        <div style="border: 1px solid #c9a84c33; background: rgba(201,168,76,0.06); border-radius: 6px; padding: 16px; text-align: center;">
+          <p id="res-notice-msg" class="text-gold text-sm font-light"></p>
+        </div>
+      </div>
+
+      <form
+        id="reserva-form"
+        action="https://formspree.io/f/YOUR_FORM_ID"
+        method="POST"
+        class="reveal flex flex-col gap-4"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
+            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Email</label>
+          <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data</label>
+            <input type="date" id="res-data" name="data" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Hora</label>
+            <select id="res-hora" name="hora" class="form-input" required>
+              <option value="" style="background:#1a1a1a">Escolher</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Pessoas</label>
+            <select name="pessoas" class="form-input" required>
+              {['1','2','3','4'].map(n => (
+                <option value={n} style="background:#1a1a1a">{n}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <!-- Aviso hora inválida -->
+        <div id="hora-aviso" class="hidden" style="color:#c9a84c; font-size:12px; text-align:center; font-family:Montserrat,sans-serif; letter-spacing:0.05em;"></div>
+        <!-- Aviso lotação -->
+        <div id="lotacao-aviso" class="hidden" style="color:#ef4444; font-size:12px; text-align:center; font-family:Montserrat,sans-serif;"></div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações</label>
+          <textarea name="obs" placeholder="Alergias, ocasião especial, preferências..." class="form-input h-28 resize-none"></textarea>
+        </div>
+        <div class="text-center mt-4">
+          <button type="submit" id="res-submit" class="btn-gold">Confirmar Reserva</button>
+        </div>
+      </form>
+
+      <script>
+        // ── Slots disponíveis e capacidade ──────────────────
+        const SLOTS = {
+          almoco:  ['11:30','12:00','12:30','13:00','13:30'],
+          jantar:  ['19:00','19:30','20:00','20:30','21:00'],
+        };
+        const CAPACITY_PER_SLOT = 20; // pessoas por meia hora
+        const CUTOFF_HOURS = 4;       // horas de antecedência
+        const DINNER_START = 19;      // hora a partir da qual é jantar
+
+        // Reservas já feitas (num sistema real viria de uma API)
+        const bookedSlots: Record<string,number> = {};
+
+        const dataInput  = document.getElementById('res-data') as HTMLInputElement;
+        const horaSelect = document.getElementById('res-hora') as HTMLSelectElement;
+        const aviso      = document.getElementById('hora-aviso') as HTMLElement;
+        const lotacao    = document.getElementById('lotacao-aviso') as HTMLElement;
+        const submitBtn  = document.getElementById('res-submit') as HTMLButtonElement;
+
+        // Data mínima = hoje
+        const today = new Date();
+        dataInput.min = today.toISOString().split('T')[0];
+
+        function populateSlots() {
+          const dateVal = dataInput.value;
+          horaSelect.innerHTML = '<option value="" style="background:#1a1a1a">Escolher</option>';
+          aviso.classList.add('hidden');
+          lotacao.classList.add('hidden');
+          submitBtn.disabled = false;
+          if (!dateVal) return;
+
+          const now = new Date();
+          const selected = new Date(dateVal + 'T00:00:00');
+          const isToday = selected.toDateString() === now.toDateString();
+
+          const allSlots = [...SLOTS.almoco, ...SLOTS.jantar];
+          allSlots.forEach(slot => {
+            const [hh, mm] = slot.split(':').map(Number);
+            // Calcular cutoff: se jantar, cutoff = DINNER_START - CUTOFF_HOURS
+            const cutoffHour = hh >= DINNER_START ? DINNER_START - CUTOFF_HOURS : 8;
+            const slotDate = new Date(dateVal + `T${slot}:00`);
+            const cutoffDate = new Date(dateVal + `T${String(cutoffHour).padStart(2,'0')}:00:00`);
+
+            if (isToday && now >= cutoffDate) return; // passou o prazo
+
+            const key = `${dateVal}_${slot}`;
+            const ocupadas = bookedSlots[key] || 0;
+            if (ocupadas >= CAPACITY_PER_SLOT) return; // slot cheio
+
+            const opt = document.createElement('option');
+            opt.value = slot;
+            opt.style.background = '#1a1a1a';
+            opt.textContent = slot + (ocupadas > 0 ? ` (${CAPACITY_PER_SLOT - ocupadas} lug. livres)` : '');
+            horaSelect.appendChild(opt);
+          });
+
+          if (horaSelect.options.length === 1) {
+            aviso.textContent = isToday
+              ? 'Para reservas de hoje, o prazo já encerrou. Contacte-nos por telefone: 259 322 212.'
+              : 'Não há horários disponíveis para esta data.';
+            aviso.classList.remove('hidden');
+            submitBtn.disabled = true;
+          }
+        }
+
+        horaSelect.addEventListener('change', () => {
+          lotacao.classList.add('hidden');
+          const key = `${dataInput.value}_${horaSelect.value}`;
+          const ocupadas = bookedSlots[key] || 0;
+          if (ocupadas >= CAPACITY_PER_SLOT) {
+            lotacao.textContent = 'Este horário já não tem disponibilidade. Escolha outro.';
+            lotacao.classList.remove('hidden');
+            submitBtn.disabled = true;
+          } else {
+            submitBtn.disabled = false;
+          }
+        });
+
+        dataInput.addEventListener('change', populateSlots);
+        populateSlots();
+
+        // ── Submeter reserva via WhatsApp ───────────────────
+        const form = document.getElementById('reserva-form') as HTMLFormElement;
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const nome     = (form.querySelector('[name="nome"]') as HTMLInputElement).value;
+          const telefone = (form.querySelector('[name="telefone"]') as HTMLInputElement).value;
+          const email    = (form.querySelector('[name="email"]') as HTMLInputElement).value;
+          const data     = (form.querySelector('[name="data"]') as HTMLInputElement).value;
+          const hora     = (form.querySelector('[name="hora"]') as HTMLSelectElement).value;
+          const pessoas  = (form.querySelector('[name="pessoas"]') as HTMLSelectElement).value;
+          const obs      = (form.querySelector('[name="obs"]') as HTMLTextAreaElement).value;
+
+          const [ano, mes, dia] = data.split('-');
+          const dataFmt = `${dia}/${mes}/${ano}`;
+
+          let msg = `Olá! Gostaria de fazer uma reserva:\n\n`;
+          msg += `👤 Nome: ${nome}\n`;
+          msg += `📞 Telefone: ${telefone}\n`;
+          msg += `📧 Email: ${email}\n`;
+          msg += `📅 Data: ${dataFmt}\n`;
+          msg += `🕐 Hora: ${hora}\n`;
+          msg += `👥 Pessoas: ${pessoas}\n`;
+          if (obs) msg += `📝 Obs: ${obs}\n`;
+
+          // Guardar reserva no localStorage para o backoffice
+          const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+          const novaReserva = {
+            id: Date.now(),
+            date: data,
+            time: hora,
+            name: nome,
+            phone: telefone,
+            email: email,
+            guests: parseInt(pessoas),
+            note: obs,
+            status: 'pendente'
+          };
+          reservas.push(novaReserva);
+          localStorage.setItem('reservas', JSON.stringify(reservas));
+
+          const url = `https://wa.me/351259322212?text=${encodeURIComponent(msg)}`;
+          window.open(url, '_blank');
+        });
+      </script>
+    </div>
+  </section>
+
+  <!-- TAKE AWAY -->
+  <section id="takeaway" class="py-28 px-6" style="position: relative; background-image: url('/images/bacalhau.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
+    <div class="max-w-2xl mx-auto relative" style="z-index: 1;">
+      <div class="text-center reveal mb-14">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Leve para Casa</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Take Away</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6 mb-6"></div>
+        <p class="text-gray-400 font-light">Encomende online e venha buscar à hora que quiser. Pronto e quentinho.</p>
+      </div>
+
+      <!-- nota de backoffice -->
+      <div id="takeaway-nota-wrap" class="reveal mb-10" style="display:none;">
+        <p id="takeaway-nota" class="text-center text-gray-400 font-light leading-relaxed" style="font-size:0.95rem; border-left: 3px solid rgba(201,168,76,0.5); padding-left: 1.2rem; text-align:left;"></p>
+      </div>
+
+      <form
+        action="https://formspree.io/f/YOUR_FORM_ID"
+        method="POST"
+        class="reveal flex flex-col gap-4"
+      >
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
+            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data de Levantamento</label>
+            <input type="date" name="data" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Hora de Levantamento</label>
+            <select name="hora" class="form-input" required>
+              <option value="" style="background:#1a1a1a">Escolher hora</option>
+              <optgroup label="Almoço" style="background:#1a1a1a">
+                {['12:00','12:30','13:00','13:30','14:00','14:30'].map(h => (
+                  <option value={h} style="background:#1a1a1a">{h}</option>
+                ))}
+              </optgroup>
+              <optgroup label="Jantar" style="background:#1a1a1a">
+                {['19:00','19:30','20:00','20:30','21:00','21:30','22:00'].map(h => (
+                  <option value={h} style="background:#1a1a1a">{h}</option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-3" style="font-family: Playfair Display, serif;">Escolha os Pratos</label>
+          <div class="flex flex-col gap-2">
+            {[
+              { id: 'frango', nome: 'Frango de Churrasco', sub: 'Mínimo 4 un.', preco: '10,50 € / un.', min: 4, field: 'qty_frango' },
+              { id: 'cabrito', nome: 'Cabrito Assado', sub: 'Encomenda prévia obrigatória', preco: 'Sob consulta', min: 1, field: 'qty_cabrito' },
+            ].map(prato => (
+              <label class="flex items-center gap-3 py-3 px-4 cursor-pointer" style="border: 1px solid #2a2a2a;">
+                <input type="checkbox" name="pratos" value={prato.nome} style="accent-color: #c9a84c; width: 16px; height: 16px; flex-shrink:0;" />
+                <div class="flex-1 min-w-0">
+                  <span class="text-gray-300 text-sm font-light">{prato.nome}</span>
+                  <span class="text-gray-400 text-xs ml-2" style="font-family: Playfair Display, serif;">{prato.sub}</span>
+                </div>
+                <input type="number" name={prato.field} min={prato.min} step="1" placeholder={prato.min > 1 ? `mín. ${prato.min}` : '0'} onclick="event.stopPropagation()" class="form-input" style="width: 80px; flex-shrink:0;" />
+                <span class="text-gold text-sm whitespace-nowrap" style="font-family: Playfair Display, serif; min-width:90px; text-align:right;">{prato.preco}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações</label>
+          <textarea name="obs" placeholder="Ex: sem piri-piri num dos frangos, entrega em evento às 13h..." class="form-input h-24 resize-none"></textarea>
+        </div>
+
+        <div class="text-center mt-2">
+          <button type="submit" class="btn-gold">Confirmar Encomenda</button>
+        </div>
+      </form>
+
+      <p id="takeaway-rodape" class="text-center text-gray-400 text-xs mt-6 tracking-wide" style="font-family: Playfair Display, serif;">
+        Encomendas com antecedência mínima de 24h · Sujeito a disponibilidade · Confirmaremos por telefone
+      </p>
+    </div>
+  </section>
+
+  <!-- RECRUTAMENTO -->
+  <section id="recrutamento" class="py-28 px-6" style="position: relative; background-image: url('/images/misto.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
+    <div class="max-w-4xl mx-auto relative" style="z-index: 1;">
+      <div class="text-center reveal mb-16">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Junte-se a Nós</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Trabalhe Connosco</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6 mb-6"></div>
+        <p class="text-gray-400 font-light max-w-lg mx-auto">Somos uma equipa apaixonada pela cozinha transmontana. Se partilha os nossos valores, gostaríamos de o conhecer.</p>
+      </div>
+
+      <!-- VAGAS EM ABERTO (dinâmico) -->
+      <div id="vagas-wrap" class="reveal mb-12" style="display:none;">
+        <p class="text-gold text-xs tracking-[0.25em] uppercase mb-4" style="font-family: Playfair Display, serif;">Vagas em Aberto</p>
+        <div id="vagas-lista" class="flex flex-col gap-4"></div>
+      </div>
+
+      <script>
+        (function() {
+          var vagas = JSON.parse(localStorage.getItem('vagasEmprego') || '[]').filter(function(v) { return v.ativa; });
+          if (!vagas.length) return;
+          document.getElementById('vagas-wrap').style.display = '';
+          var lista = document.getElementById('vagas-lista');
+          vagas.forEach(function(v) {
+            var procura = (v.procura || '').split('\n').filter(Boolean);
+            var oferece = (v.oferece || '').split('\n').filter(Boolean);
+            var urgente = v.urgente ? '<span style="background:rgba(201,168,76,0.12);color:#c9a84c;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;font-family:\'Playfair Display\',serif;">Urgente</span>' : '';
+            var card = document.createElement('div');
+            card.style.cssText = 'border:1px solid #2a2a2a;background:#141414;';
+            card.innerHTML =
+              '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6" style="border-bottom:1px solid #2a2a2a;">' +
+                '<div>' +
+                  '<div class="flex items-center gap-3 mb-2">' +
+                    '<span class="text-white text-lg font-light tracking-wide">' + v.titulo + '</span>' + urgente +
+                  '</div>' +
+                  '<p class="text-gray-400 text-sm font-light">' + (v.local || '') + '</p>' +
+                '</div>' +
+                '<a href="#form-candidatura" class="btn-gold whitespace-nowrap" style="font-size:0.7rem;padding:0.5rem 1.5rem;">Candidatar-me</a>' +
+              '</div>' +
+              '<div class="p-6 grid md:grid-cols-2 gap-8">' +
+                (procura.length ? '<div><h4 class="text-white text-xs tracking-widest uppercase mb-4" style="font-family:\'Playfair Display\',serif;">O que procuramos</h4><ul class="space-y-2">' + procura.map(function(i){ return '<li class="flex items-start gap-3 text-gray-400 text-sm font-light"><span class="text-gold mt-0.5" style="flex-shrink:0;">—</span>' + i + '</li>'; }).join('') + '</ul></div>' : '') +
+                (oferece.length ? '<div><h4 class="text-white text-xs tracking-widest uppercase mb-4" style="font-family:\'Playfair Display\',serif;">O que oferecemos</h4><ul class="space-y-2">' + oferece.map(function(i){ return '<li class="flex items-start gap-3 text-gray-400 text-sm font-light"><span class="text-gold mt-0.5" style="flex-shrink:0;">—</span>' + i + '</li>'; }).join('') + '</ul></div>' : '') +
+              '</div>';
+            lista.appendChild(card);
+          });
+        })();
+      </script>
+
+      <!-- FORMULÁRIO DE CANDIDATURA -->
+      <div id="form-candidatura" class="reveal">
+        <div class="text-center mb-10">
+          <p class="text-gold text-xs tracking-[0.25em] uppercase mb-3" style="font-family: Playfair Display, serif;">Candidatura</p>
+          <h3 class="text-white text-2xl font-light">Envie a Sua Candidatura</h3>
+          <p class="text-gray-400 text-sm mt-3 font-light">Para a vaga aberta ou candidatura espontânea — analisamos todas.</p>
+        </div>
+
+        <form
+          id="candidatura-form"
+          class="flex flex-col gap-4"
+        >
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome Completo</label>
+              <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+              <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Email</label>
+            <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Função Pretendida</label>
+              <select name="funcao" class="form-input" required>
+                <option value="" style="background:#1a1a1a">Escolher</option>
+                <option value="Cozinheiro/a" style="background:#1a1a1a">Cozinheiro/a (vaga aberta)</option>
+                <option value="Ajudante de Cozinha" style="background:#1a1a1a">Ajudante de Cozinha</option>
+                <option value="Empregado/a de Mesa" style="background:#1a1a1a">Empregado/a de Mesa</option>
+                <option value="Outra / Espontânea" style="background:#1a1a1a">Outra / Candidatura Espontânea</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Anos de Experiência</label>
+              <select name="experiencia" class="form-input" required>
+                <option value="" style="background:#1a1a1a">Escolher</option>
+                <option value="Menos de 1 ano" style="background:#1a1a1a">Menos de 1 ano</option>
+                <option value="1 a 3 anos" style="background:#1a1a1a">1 a 3 anos</option>
+                <option value="3 a 5 anos" style="background:#1a1a1a">3 a 5 anos</option>
+                <option value="Mais de 5 anos" style="background:#1a1a1a">Mais de 5 anos</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Apresentação / Motivação</label>
+            <textarea name="mensagem" placeholder="Conte-nos um pouco sobre si, a sua experiência e por que gostaria de trabalhar connosco..." class="form-input h-32 resize-none" required></textarea>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Disponibilidade</label>
+            <select name="disponibilidade" class="form-input">
+              <option value="" style="background:#1a1a1a">Escolher</option>
+              <option value="Imediata" style="background:#1a1a1a">Imediata</option>
+              <option value="2 semanas" style="background:#1a1a1a">2 semanas</option>
+              <option value="1 mês" style="background:#1a1a1a">1 mês</option>
+              <option value="A combinar" style="background:#1a1a1a">A combinar</option>
+            </select>
+          </div>
+
+          <p class="text-gray-400 text-xs font-light" style="font-family: Playfair Display, serif;">
+            Pode também enviar o seu CV para <span class="text-gold">churrasqueirazedosfrangos@gmail.com</span> com o assunto "Candidatura".
+          </p>
+
+          <div class="text-center mt-2">
+            <button type="submit" class="btn-gold">Enviar Candidatura</button>
+          </div>
+        </form>
+
+        <script>
+          document.getElementById('candidatura-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const f = this;
+            const nome           = f.querySelector('[name="nome"]').value;
+            const telefone       = f.querySelector('[name="telefone"]').value;
+            const email          = f.querySelector('[name="email"]').value;
+            const funcao         = f.querySelector('[name="funcao"]').value;
+            const experiencia    = f.querySelector('[name="experiencia"]').value;
+            const mensagem       = f.querySelector('[name="mensagem"]').value;
+            const disponibilidade = f.querySelector('[name="disponibilidade"]').value;
+
+            const subject = encodeURIComponent(`Candidatura — ${funcao} | ${nome}`);
+            const body = encodeURIComponent(
+              `Nova candidatura recebida pelo site:\n\n` +
+              `Nome: ${nome}\n` +
+              `Telefone: ${telefone}\n` +
+              `Email do candidato: ${email}\n` +
+              `Função pretendida: ${funcao}\n` +
+              `Experiência: ${experiencia}\n` +
+              `Disponibilidade: ${disponibilidade}\n\n` +
+              `Apresentação:\n${mensagem}`
+            );
+
+            window.location.href = `mailto:pedrommfelix@gmail.com?subject=${subject}&body=${body}`;
+          });
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ── Sugestão do Mês ─────────────────────────────────
+    (function() {
+      var d = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+      if (!d.nome) return;
+      var box = document.getElementById('sugestao-mes-box');
+      document.getElementById('sugestao-nome').textContent = d.nome;
+      document.getElementById('sugestao-desc').textContent = d.desc || '';
+      document.getElementById('sugestao-preco').textContent = d.preco ? d.preco + ' €' : '';
+      if (d.foto) {
+        var img = document.getElementById('sugestao-img');
+        img.src = d.foto;
+        var mobile = document.getElementById('sugestao-img-mobile');
+        mobile.style.backgroundImage = 'url(' + d.foto + ')';
+        mobile.style.backgroundSize = 'cover';
+        mobile.style.backgroundPosition = 'center';
+      } else {
+        document.getElementById('sugestao-img-wrap').style.display = 'none';
+      }
+      box.style.display = '';
+    })();
+  </script>
+
+  <script>
+    // ── Prato do Dia ────────────────────────────────────
+    (function() {
+      const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
+      if (!data.pratos || data.pratos.length === 0) return;
+      const box = document.getElementById('prato-dia-box');
+      const lista = document.getElementById('prato-dia-lista');
+      const nota = document.getElementById('prato-dia-nota');
+      if (!box || !lista) return;
+      data.pratos.forEach(function(p) {
+        if (!p.nome) return;
+        const el = document.createElement('div');
+        el.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:8px 0;border-bottom:1px solid rgba(201,168,76,0.15);';
+        el.innerHTML = '<span style="color:white;font-weight:300;font-size:0.9rem;">' + p.nome + '</span>' +
+          (p.preco ? '<span style="color:#c9a84c;font-size:0.85rem;white-space:nowrap;font-family:Montserrat,sans-serif;">' + p.preco + ' €</span>' : '');
+        lista.appendChild(el);
+      });
+      if (data.nota) {
+        nota.textContent = data.nota;
+        nota.style.display = '';
+      }
+      box.style.display = '';
+    })();
+  </script>
+
+  <!-- FOOTER / CONTACTOS -->
+  <footer id="contactos" style="background: #0a0a0a; border-top: 1px solid #1a1a1a;">
+
+    <!-- Aviso de férias -->
+    <div style="background: rgba(201,168,76,0.08); border-bottom: 1px solid rgba(201,168,76,0.2); padding: 14px 24px; text-align: center;">
+      <p class="text-gold text-xs tracking-widest" style="font-family: Playfair Display, serif; letter-spacing: 0.15em;">
+        FÉRIAS DE VERÃO — Encerrados de <strong>14 a 22 de agosto</strong>. Reabrimos a <strong>23 de agosto</strong>. Obrigado pela compreensão.
+      </p>
+    </div>
+
+    <!-- Contactos -->
+    <div class="px-6 py-16 max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <a href="#hero">
+          <img src="/images/logo.png" alt="Zé dos Frangos" class="w-16 h-16 mx-auto object-contain mb-6" />
+        </a>
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-2" style="font-family: Playfair Display, serif;">Encontre-nos</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-12 mb-12 text-center">
+        <div>
+          <svg class="text-gold mx-auto mb-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+          <h3 class="text-white text-xs tracking-widest uppercase mb-3" style="font-family: Playfair Display, serif;">Morada</h3>
+          <p id="footer-morada" class="text-gray-400 font-light text-sm leading-loose">Largo do Pioledo, nº 14 R/C<br />5000-596 Vila Real<br />Portugal</p>
+        </div>
+        <div>
+          <svg class="text-gold mx-auto mb-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <h3 class="text-white text-xs tracking-widest uppercase mb-3" style="font-family: Playfair Display, serif;">Horários</h3>
+          <p id="footer-horario" class="text-gray-400 font-light text-sm leading-loose">
+            Terça a Sábado<br />
+            Almoço: 11h30 – 15h00<br />
+            Jantar: 19h00 – 22h30
+          </p>
+          <p id="footer-horario-nota" class="text-gray-400 font-light text-xs leading-loose mt-2">
+            Domingo: só almoço (sem jantar)<br />
+            Segunda: encerrado
+          </p>
+        </div>
+        <div>
+          <svg class="text-gold mx-auto mb-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+          <h3 class="text-white text-xs tracking-widest uppercase mb-3" style="font-family: Playfair Display, serif;">Contacto</h3>
+          <p class="text-gray-400 font-light text-sm leading-loose">
+            <span id="footer-telefone">913 977 751</span><br />churrasqueirazedosfrangos@gmail.com
+          </p>
+          <div class="flex justify-center gap-4 mt-4">
+            <a href="https://www.facebook.com/churrasqueirazedosfrangos" target="_blank" class="text-gray-400 hover:text-gold transition-colors" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/churrasqueirazedosfrangos" target="_blank" class="text-gray-400 hover:text-gold transition-colors" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="w-full h-56 mb-12" style="border: 1px solid #1a1a1a; overflow: hidden;">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3008.5!2d-7.7447!3d41.3006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd25a5b0f2e5e5e5%3A0x0!2sLargo+do+Pioledo%2C+Vila+Real!5e0!3m2!1spt!2spt!4v1"
+          width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg) saturate(0.3);"
+          allowfullscreen loading="lazy"
+        ></iframe>
+      </div>
+
+      <!-- Links e copyright -->
+      <div class="border-t text-center pt-8" style="border-color:#1a1a1a;">
+        <div class="flex justify-center gap-8 mb-4" style="font-family: Playfair Display, serif;">
+          <a href="#sobre" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Sobre</a>
+          <a href="#ementa" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Ementa</a>
+          <a href="#reservas" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Reservas</a>
+          <a href="#recrutamento" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Trabalhe Connosco</a>
+        </div>
+        <p class="text-gray-700 text-xs tracking-wide" style="font-family: Playfair Display, serif;">
+          © 2025 Churrasqueira Zé dos Frangos. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Carregar dados do Admin (localStorage) ──────────
+    (function() {
+      // --- siteGeral ---
+      try {
+        var geral = JSON.parse(localStorage.getItem('siteGeral') || '{}');
+        var p1t = geral.sobreP1 || geral.sobre1;
+        var p2t = geral.sobreP2 || geral.sobre2;
+        if (p1t) { var p1 = document.getElementById('sobre-p1'); if (p1) p1.textContent = p1t; }
+        if (p2t) { var p2 = document.getElementById('sobre-p2'); if (p2) p2.textContent = p2t; }
+        // stats array format (from saveGeral)
+        if (geral.stats && geral.stats.length) {
+          geral.stats.forEach(function(s, i) {
+            var v = document.getElementById('stat-val-' + (i+1)); if (v) v.textContent = s.val;
+            var l = document.getElementById('stat-lbl-' + (i+1)); if (l) l.textContent = s.lbl;
+          });
+        } else {
+          if (geral.stat1val) { var sv = document.getElementById('stat-val-1'); if (sv) sv.textContent = geral.stat1val; }
+          if (geral.stat1lbl) { var sl = document.getElementById('stat-lbl-1'); if (sl) sl.textContent = geral.stat1lbl; }
+          if (geral.stat2val) { var sv2 = document.getElementById('stat-val-2'); if (sv2) sv2.textContent = geral.stat2val; }
+          if (geral.stat2lbl) { var sl2 = document.getElementById('stat-lbl-2'); if (sl2) sl2.textContent = geral.stat2lbl; }
+          if (geral.stat3val) { var sv3 = document.getElementById('stat-val-3'); if (sv3) sv3.textContent = geral.stat3val; }
+          if (geral.stat3lbl) { var sl3 = document.getElementById('stat-lbl-3'); if (sl3) sl3.textContent = geral.stat3lbl; }
+        }
+      } catch(e) {}
+
+      // --- menuData ---
+      try {
+        var menu = JSON.parse(localStorage.getItem('menuData') || 'null');
+        if (menu) {
+          var catMap = { entradas: 'entradas', carnes: 'principais', peixe: 'peixe', sobremesas: 'sobremesas' };
+          Object.keys(catMap).forEach(function(key) {
+            var panelId = catMap[key];
+            var panel = document.querySelector('[data-panel="' + panelId + '"]');
+            if (!panel || !menu[key]) return;
+            panel.innerHTML = '';
+            menu[key].forEach(function(item) {
+              var div = document.createElement('div');
+              div.className = 'reveal flex justify-between items-baseline gap-4 py-4 border-b';
+              div.style.borderColor = '#222';
+              var descHtml = item.desc ? '<p class="text-gray-400 text-xs mt-0.5">' + item.desc + '</p>' : '';
+              div.innerHTML = '<div><h3 class="text-white font-light text-sm">' + item.nome + '</h3>' + descHtml + '</div>' +
+                '<span class="text-gold whitespace-nowrap text-sm shrink-0" style="font-family:Montserrat,sans-serif;">' + item.preco + ' €</span>';
+              panel.appendChild(div);
+            });
+          });
+        }
+      } catch(e) {}
+
+      // --- takeaway nota ---
+      try {
+        var ta = JSON.parse(localStorage.getItem('siteTakeaway') || '{}');
+        if (ta.nota) {
+          var notaEl = document.getElementById('takeaway-nota');
+          var notaWrap = document.getElementById('takeaway-nota-wrap');
+          if (notaEl && notaWrap) { notaEl.textContent = ta.nota; notaWrap.style.display = ''; }
+        }
+      } catch(e) {}
+
+      // --- siteContactos ---
+      try {
+        var contactos = JSON.parse(localStorage.getItem('siteContactos') || '{}');
+        if (contactos.telefone) {
+          var phoneEl = document.getElementById('footer-telefone');
+          if (phoneEl) phoneEl.textContent = contactos.telefone;
+        }
+        if (contactos.morada) {
+          var moradaEl = document.getElementById('footer-morada');
+          if (moradaEl) moradaEl.innerHTML = contactos.morada;
+        }
+      } catch(e) {}
+    })();
+  </script>
+</Layout>

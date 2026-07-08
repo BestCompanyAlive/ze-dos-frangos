@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0d0d0d;
+    color: #e8e0d0;
+    font-family: 'Lora', Georgia, serif;
+  }
+}
+
+/* Gold utilities */
+.text-gold { color: #c9a84c; }
+.text-gold-light { color: #e8c97a; }
+.bg-gold { background-color: #c9a84c; }
+.border-gold { border-color: #c9a84c; }
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Nav links */
+.nav-link {
+  position: relative;
+  color: #e8e0d0;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  transition: color 0.3s;
+  text-decoration: none;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #c9a84c;
+  transition: width 0.3s;
+}
+.nav-link:hover { color: #c9a84c; }
+.nav-link:hover::after { width: 100%; }
+
+/* Hero */
+.hero-bg {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Menu tabs */
+.menu-tab {
+  cursor: pointer;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid transparent;
+  color: #a0967e;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  transition: all 0.3s;
+  background: none;
+  font-family: inherit;
+}
+.menu-tab.active,
+.menu-tab:hover {
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+
+/* Gallery */
+.gallery-item { overflow: hidden; }
+.gallery-item img { transition: transform 0.5s ease; }
+.gallery-item:hover img { transform: scale(1.08); }
+
+/* Form */
+.form-input {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #e8e0d0;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.3s;
+}
+.form-input:focus { border-color: #c9a84c; }
+.form-input::placeholder { color: #6b6352; }
+
+/* Button */
+.btn-gold {
+  background: transparent;
+  border: 1px solid #c9a84c;
+  color: #c9a84c;
+  padding: 0.85rem 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  display: inline-block;
+  text-decoration: none;
+}
+.btn-gold:hover {
+  background: #c9a84c;
+  color: #0d0d0d;
+}
