@@ -1,0 +1,311 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Apoio — Churrasqueira Zé dos Frangos" description="Perdidos e achados e recrutamento da Churrasqueira Zé dos Frangos, Vila Real.">
+
+  <!-- NAV -->
+  <nav
+    id="main-nav"
+    class="fixed top-0 left-0 right-0 z-50 px-6 py-5"
+    style="background: rgba(13,13,13,0.3); backdrop-filter: blur(4px);"
+  >
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src="/images/logo.png" alt="Zé dos Frangos" class="w-12 h-12 object-contain" />
+        <div class="hidden sm:block text-left">
+          <div class="text-gold text-xs tracking-[0.3em] uppercase" style="font-family: Playfair Display, serif;">Churrasqueira</div>
+          <div class="text-xl font-light tracking-widest text-white">ZÉ DOS FRANGOS</div>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8" style="font-family: Playfair Display, serif;">
+        <a href="/#sobre" class="nav-link">Sobre</a>
+        <a href="/#ementa" class="nav-link">Ementa</a>
+        <a href="/#contactos" class="nav-link">Contactos</a>
+        <a href="/#reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
+        <a href="/ajuda" class="nav-link" style="color:#c9a84c;">Apoio</a>
+      </div>
+
+      <button id="menu-btn" class="md:hidden text-white" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div
+      id="mobile-menu"
+      class="hidden md:hidden absolute top-full left-0 right-0 py-6 px-6 flex flex-col gap-5 text-center"
+      style="background: rgba(13,13,13,0.97); font-family: Playfair Display, serif;"
+    >
+      <a href="/#sobre" class="nav-link">Sobre</a>
+      <a href="/#ementa" class="nav-link">Ementa</a>
+      <a href="/#contactos" class="nav-link">Contactos</a>
+      <a href="/#reservas" class="nav-link text-gold">Reservar</a>
+      <a href="/ajuda" class="nav-link" style="color:#c9a84c;">Apoio</a>
+    </div>
+  </nav>
+
+  <!-- HERO SIMPLES -->
+  <div class="pt-28 pb-16 px-6 text-center" style="background:#0d0d0d; border-bottom:1px solid #1a1a1a;">
+    <p class="text-gold tracking-[0.35em] text-xs uppercase mb-3" style="font-family: Playfair Display, serif;">Churrasqueira Zé dos Frangos</p>
+    <h1 class="text-4xl md:text-5xl font-light text-white mb-4">Apoio</h1>
+    <div class="w-12 h-px bg-gold mx-auto"></div>
+  </div>
+
+  <!-- ══ PERDIDOS E ACHADOS ══════════════════════════════════════════ -->
+  <section id="perdidos" class="py-24 px-6" style="position:relative; background-image:url('/images/croquetes.jpg'); background-size:cover; background-position:center; background-attachment:fixed;">
+    <div class="absolute inset-0" style="background:rgba(13,13,13,0.88);"></div>
+    <div class="max-w-2xl mx-auto relative" style="z-index:1;">
+      <div class="text-center mb-14">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Esqueceu algo?</p>
+        <h2 class="text-3xl md:text-4xl font-light text-white mb-6">Perdidos e Achados</h2>
+        <div class="w-12 h-px bg-gold mx-auto mb-6"></div>
+        <p class="text-gray-400 font-light text-sm max-w-md mx-auto">Preencha o formulário e entraremos em contacto consigo o mais breve possível. A sua mensagem será enviada diretamente para o WhatsApp do restaurante.</p>
+      </div>
+
+      <form id="perdidos-form" class="flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
+            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data em que esteve no restaurante</label>
+          <input type="date" name="data" class="form-input" required />
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Item Perdido</label>
+          <input type="text" name="item" placeholder="Ex: carteira preta, casaco azul, óculos..." class="form-input" required />
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações (opcional)</label>
+          <textarea name="obs" placeholder="Algum detalhe adicional que nos ajude a identificar o objeto..." class="form-input h-24 resize-none"></textarea>
+        </div>
+
+        <div class="text-center mt-2">
+          <button type="submit" class="btn-gold">Enviar via WhatsApp</button>
+        </div>
+      </form>
+
+      <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #c9a84c55;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
+        <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#c9a84c;margin-bottom:8px;">Mensagem enviada!</p>
+        <p class="text-gray-300 text-sm font-light">A sua mensagem foi enviada via WhatsApp. Entraremos em contacto brevemente.</p>
+      </div>
+
+      <script>
+        document.getElementById('perdidos-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          var f = this;
+          var nome  = f.querySelector('[name="nome"]').value;
+          var tel   = f.querySelector('[name="telefone"]').value;
+          var data  = f.querySelector('[name="data"]').value;
+          var item  = f.querySelector('[name="item"]').value;
+          var obs   = f.querySelector('[name="obs"]').value;
+
+          var partes = data.split('-');
+          var dataFmt = partes.length === 3 ? partes[2] + '/' + partes[1] + '/' + partes[0] : data;
+
+          var msg =
+            'Olá! Perdi um objeto no restaurante e gostaria de saber se foi encontrado:\n\n' +
+            'Nome: ' + nome + '\n' +
+            'Telefone: ' + tel + '\n' +
+            'Data da visita: ' + dataFmt + '\n' +
+            'Item perdido: ' + item +
+            (obs ? '\nObservações: ' + obs : '');
+
+          var cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+          var waNum = cfg.whatsapp || '351913977751';
+
+          window.open('https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg), '_blank');
+
+          f.style.display = 'none';
+          document.getElementById('perdidos-sucesso').classList.remove('hidden');
+        });
+      </script>
+    </div>
+  </section>
+
+  <!-- DIVISOR -->
+  <div style="height:1px;background:linear-gradient(to right,transparent,#2a2a2a,transparent);"></div>
+
+  <!-- ══ RECRUTAMENTO ═══════════════════════════════════════════════ -->
+  <section id="recrutamento" class="py-24 px-6" style="position:relative; background-image:url('/images/misto.jpg'); background-size:cover; background-position:center; background-attachment:fixed;">
+    <div class="absolute inset-0" style="background:rgba(13,13,13,0.88);"></div>
+    <div class="max-w-4xl mx-auto relative" style="z-index:1;">
+      <div class="text-center mb-16">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Junte-se a Nós</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Trabalhe Connosco</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6 mb-6"></div>
+        <p class="text-gray-400 font-light max-w-lg mx-auto">Somos uma equipa apaixonada pela cozinha transmontana. Se partilha os nossos valores, gostaríamos de o conhecer.</p>
+      </div>
+
+      <!-- VAGAS EM ABERTO (dinâmico) -->
+      <div id="vagas-wrap" class="mb-12" style="display:none;">
+        <p class="text-gold text-xs tracking-[0.25em] uppercase mb-4" style="font-family: Playfair Display, serif;">Vagas em Aberto</p>
+        <div id="vagas-lista" class="flex flex-col gap-4"></div>
+      </div>
+
+      <script>
+        (function() {
+          var vagas = JSON.parse(localStorage.getItem('vagasEmprego') || '[]').filter(function(v) { return v.ativa; });
+          if (!vagas.length) return;
+          document.getElementById('vagas-wrap').style.display = '';
+          var lista = document.getElementById('vagas-lista');
+          vagas.forEach(function(v) {
+            var procura = (v.procura || '').split('\n').filter(Boolean);
+            var oferece = (v.oferece || '').split('\n').filter(Boolean);
+            var urgente = v.urgente ? '<span style="background:rgba(201,168,76,0.12);color:#c9a84c;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;font-family:\'Playfair Display\',serif;">Urgente</span>' : '';
+            var card = document.createElement('div');
+            card.style.cssText = 'border:1px solid #2a2a2a;background:#141414;';
+            card.innerHTML =
+              '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6" style="border-bottom:1px solid #2a2a2a;">' +
+                '<div>' +
+                  '<div class="flex items-center gap-3 mb-2">' +
+                    '<span class="text-white text-lg font-light tracking-wide">' + v.titulo + '</span>' + urgente +
+                  '</div>' +
+                  '<p class="text-gray-400 text-sm font-light">' + (v.local || '') + '</p>' +
+                '</div>' +
+                '<a href="#form-candidatura" class="btn-gold whitespace-nowrap" style="font-size:0.7rem;padding:0.5rem 1.5rem;">Candidatar-me</a>' +
+              '</div>' +
+              '<div class="p-6 grid md:grid-cols-2 gap-8">' +
+                (procura.length ? '<div><h4 class="text-white text-xs tracking-widest uppercase mb-4" style="font-family:\'Playfair Display\',serif;">O que procuramos</h4><ul class="space-y-2">' + procura.map(function(i){ return '<li class="flex items-start gap-3 text-gray-400 text-sm font-light"><span class="text-gold mt-0.5" style="flex-shrink:0;">—</span>' + i + '</li>'; }).join('') + '</ul></div>' : '') +
+                (oferece.length ? '<div><h4 class="text-white text-xs tracking-widest uppercase mb-4" style="font-family:\'Playfair Display\',serif;">O que oferecemos</h4><ul class="space-y-2">' + oferece.map(function(i){ return '<li class="flex items-start gap-3 text-gray-400 text-sm font-light"><span class="text-gold mt-0.5" style="flex-shrink:0;">—</span>' + i + '</li>'; }).join('') + '</ul></div>' : '') +
+              '</div>';
+            lista.appendChild(card);
+          });
+        })();
+      </script>
+
+      <!-- FORMULÁRIO DE CANDIDATURA -->
+      <div id="form-candidatura">
+        <div class="text-center mb-10">
+          <p class="text-gold text-xs tracking-[0.25em] uppercase mb-3" style="font-family: Playfair Display, serif;">Candidatura</p>
+          <h3 class="text-white text-2xl font-light">Envie a Sua Candidatura</h3>
+          <p class="text-gray-400 text-sm mt-3 font-light">Para a vaga aberta ou candidatura espontânea — analisamos todas.</p>
+        </div>
+
+        <form id="candidatura-form" class="flex flex-col gap-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome Completo</label>
+              <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+              <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Email</label>
+            <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Função Pretendida</label>
+              <select name="funcao" class="form-input" required>
+                <option value="" style="background:#1a1a1a">Escolher</option>
+                <option value="Cozinheiro/a" style="background:#1a1a1a">Cozinheiro/a</option>
+                <option value="Ajudante de Cozinha" style="background:#1a1a1a">Ajudante de Cozinha</option>
+                <option value="Empregado/a de Mesa" style="background:#1a1a1a">Empregado/a de Mesa</option>
+                <option value="Outra / Espontânea" style="background:#1a1a1a">Outra / Candidatura Espontânea</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Anos de Experiência</label>
+              <select name="experiencia" class="form-input" required>
+                <option value="" style="background:#1a1a1a">Escolher</option>
+                <option value="Menos de 1 ano" style="background:#1a1a1a">Menos de 1 ano</option>
+                <option value="1 a 3 anos" style="background:#1a1a1a">1 a 3 anos</option>
+                <option value="3 a 5 anos" style="background:#1a1a1a">3 a 5 anos</option>
+                <option value="Mais de 5 anos" style="background:#1a1a1a">Mais de 5 anos</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Apresentação / Motivação</label>
+            <textarea name="mensagem" placeholder="Conte-nos um pouco sobre si, a sua experiência e por que gostaria de trabalhar connosco..." class="form-input h-32 resize-none" required></textarea>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Disponibilidade</label>
+            <select name="disponibilidade" class="form-input">
+              <option value="" style="background:#1a1a1a">Escolher</option>
+              <option value="Imediata" style="background:#1a1a1a">Imediata</option>
+              <option value="2 semanas" style="background:#1a1a1a">2 semanas</option>
+              <option value="1 mês" style="background:#1a1a1a">1 mês</option>
+              <option value="A combinar" style="background:#1a1a1a">A combinar</option>
+            </select>
+          </div>
+
+          <p class="text-gray-400 text-xs font-light" style="font-family: Playfair Display, serif;">
+            Pode também enviar o seu CV para <span class="text-gold">churrasqueirazedosfrangos@gmail.com</span> com o assunto "Candidatura".
+          </p>
+
+          <div class="text-center mt-2">
+            <button type="submit" class="btn-gold">Enviar Candidatura</button>
+          </div>
+        </form>
+
+        <div id="candidatura-sucesso" class="hidden" style="margin-top:24px;border:1px solid #c9a84c55;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
+          <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#c9a84c;margin-bottom:8px;">Candidatura enviada!</p>
+          <p class="text-gray-300 text-sm font-light">Recebemos a sua candidatura e entraremos em contacto em breve.</p>
+        </div>
+
+        <script>
+          document.getElementById('candidatura-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var f = this;
+            var nome           = f.querySelector('[name="nome"]').value;
+            var telefone       = f.querySelector('[name="telefone"]').value;
+            var email          = f.querySelector('[name="email"]').value;
+            var funcao         = f.querySelector('[name="funcao"]').value;
+            var experiencia    = f.querySelector('[name="experiencia"]').value;
+            var mensagem       = f.querySelector('[name="mensagem"]').value;
+            var disponibilidade = f.querySelector('[name="disponibilidade"]').value;
+
+            var subject = encodeURIComponent('Candidatura — ' + funcao + ' | ' + nome);
+            var body = encodeURIComponent(
+              'Nova candidatura recebida pelo site:\n\n' +
+              'Nome: ' + nome + '\n' +
+              'Telefone: ' + telefone + '\n' +
+              'Email do candidato: ' + email + '\n' +
+              'Função pretendida: ' + funcao + '\n' +
+              'Experiência: ' + experiencia + '\n' +
+              'Disponibilidade: ' + disponibilidade + '\n\n' +
+              'Apresentação:\n' + mensagem
+            );
+
+            window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + subject + '&body=' + body;
+
+            f.style.display = 'none';
+            document.getElementById('candidatura-sucesso').classList.remove('hidden');
+          });
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER SIMPLES -->
+  <footer class="py-10 px-6 text-center" style="background:#080808;border-top:1px solid #1a1a1a;">
+    <p class="text-gray-600 text-xs tracking-widest uppercase" style="font-family: Playfair Display, serif;">
+      © 2025 Churrasqueira Zé dos Frangos · Vila Real
+    </p>
+    <a href="/" class="text-gold text-xs mt-3 inline-block tracking-widest hover:underline" style="font-family: Playfair Display, serif;">← Voltar ao site</a>
+  </footer>
+
+</Layout>

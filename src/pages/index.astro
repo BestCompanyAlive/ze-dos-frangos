@@ -73,6 +73,7 @@ const menuData = {
         <a href="#contactos" class="nav-link" onclick="document.getElementById('contactos').scrollIntoView({behavior:'smooth'});return false;">Contactos</a>
         <a href="#reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
         <a href="#takeaway" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem; background: #c9a84c; color: #0d0d0d; border-color: #c9a84c;">Take Away</a>
+        <a href="/ajuda" class="nav-link">Apoio</a>
       </div>
 
       <button id="menu-btn" class="md:hidden text-white" aria-label="Menu">
@@ -94,6 +95,7 @@ const menuData = {
       <a href="#contactos" class="nav-link">Contactos</a>
       <a href="#reservas" class="nav-link text-gold">Reservar</a>
       <a href="#takeaway" class="nav-link" style="color: #c9a84c;">Take Away</a>
+      <a href="/ajuda" class="nav-link">Apoio</a>
     </div>
   </nav>
 
@@ -233,6 +235,7 @@ const menuData = {
         <button class="menu-tab" data-tab="principais">Carnes</button>
         <button class="menu-tab" data-tab="peixe">Peixe</button>
         <button class="menu-tab" data-tab="sobremesas">Sobremesas</button>
+        <button class="menu-tab" data-tab="grupos">Menus de Grupo</button>
       </div>
 
       {(['entradas','principais','peixe','sobremesas'] as const).map((cat, i) => (
@@ -248,6 +251,32 @@ const menuData = {
           ))}
         </div>
       ))}
+
+      <!-- Menus de Grupo (lido do localStorage) -->
+      <div class="menu-panel" data-panel="grupos" style="display:none;">
+        <div id="grupos-lista" class="flex flex-col gap-8"></div>
+        <p id="grupos-vazio" class="text-gray-500 text-sm text-center py-8" style="display:none;">Brevemente disponível. Contacte-nos para informações.</p>
+      </div>
+      <script>
+        (function() {
+          var grupos = JSON.parse(localStorage.getItem('menuGrupos') || '[]');
+          var lista = document.getElementById('grupos-lista');
+          var vazio = document.getElementById('grupos-vazio');
+          if (!grupos.length) { vazio.style.display = ''; return; }
+          grupos.forEach(function(g) {
+            var el = document.createElement('div');
+            el.style.cssText = 'border:1px solid #2a2a2a; padding:28px 32px;';
+            el.innerHTML =
+              '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">' +
+                '<h3 style="font-family:Playfair Display,serif;font-size:1.1rem;color:#fff;font-weight:400;">' + g.nome + '</h3>' +
+                (g.preco ? '<span style="font-family:Playfair Display,serif;color:#c9a84c;font-size:1rem;">' + g.preco + ' €<span style="font-size:0.7rem;color:#888;margin-left:4px;">/ pessoa</span></span>' : '') +
+              '</div>' +
+              (g.desc ? '<p style="color:#9ca3af;font-size:0.82rem;line-height:1.7;white-space:pre-line;">' + g.desc + '</p>' : '') +
+              (g.minPessoas ? '<p style="margin-top:10px;font-size:0.75rem;color:#666;text-transform:uppercase;letter-spacing:.1em;">Mínimo ' + g.minPessoas + ' pessoas</p>' : '');
+            lista.appendChild(el);
+          });
+        })();
+      </script>
 
       <p class="text-center text-gray-400 text-xs mt-10 tracking-wide" style="font-family: Playfair Display, serif;">
         IVA incluído à taxa em vigor · Ementa sujeita a alterações sazonais
@@ -354,6 +383,12 @@ const menuData = {
           <button type="submit" id="res-submit" class="btn-gold">Confirmar Reserva</button>
         </div>
       </form>
+
+      <!-- Mensagem de sucesso (oculta por defeito) -->
+      <div id="reserva-sucesso" class="hidden reveal" style="margin-top: 24px; border: 1px solid #c9a84c55; background: rgba(201,168,76,0.07); border-radius: 6px; padding: 28px; text-align: center;">
+        <p style="font-family: Playfair Display, serif; font-size: 1.3rem; color: #c9a84c; margin-bottom: 8px;">Reserva recebida!</p>
+        <p class="text-gray-300 text-sm font-light">A sua reserva foi enviada com sucesso. Entraremos em contacto para confirmar.</p>
+      </div>
 
       <script>
         // ── Slots disponíveis e capacidade ──────────────────
@@ -493,6 +528,11 @@ const menuData = {
           // Abrir WhatsApp
           const url = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
           window.open(url, '_blank');
+
+          // Mostrar mensagem de sucesso
+          form.style.display = 'none';
+          const sucesso = document.getElementById('reserva-sucesso');
+          if (sucesso) sucesso.classList.remove('hidden');
         });
       </script>
     </div>
