@@ -31,6 +31,7 @@ body {
   display: flex;
   min-height: 100vh;
   font-size: 14px;
+  overflow-x: hidden;
 }
 
 /* SIDEBAR */
@@ -541,6 +542,57 @@ textarea { resize: vertical; min-height: 90px; }
 .res-stat .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
 .res-stat.highlight { border-color: var(--gold); background: var(--gold-dim); }
 .res-stat.highlight .val { color: #a07830; }
+
+/* ── Responsive mobile ── */
+@media (max-width: 768px) {
+  aside {
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: 100;
+  }
+  aside.mobile-open {
+    transform: translateX(0);
+  }
+  main {
+    margin-left: 0;
+    min-width: 0;
+    width: 100%;
+  }
+  .topbar {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+  .topbar-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .save-status {
+    display: none;
+  }
+  .content {
+    padding: 16px;
+    min-width: 0;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .panel-title {
+    font-size: 18px;
+  }
+  .panel {
+    min-width: 0;
+  }
+  /* Botão hamburger mobile */
+  #mobile-sidebar-btn {
+    display: flex !important;
+  }
+}
+@media (min-width: 769px) {
+  #mobile-sidebar-btn { display: none !important; }
+  #mobile-sidebar-overlay { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -566,6 +618,9 @@ textarea { resize: vertical; min-height: 90px; }
   </div>
   <div class="nav-item" onclick="showPanel('sugestaoMes', this)">
     <span class="icon">✦</span> Sugestão do Mês
+  </div>
+  <div class="nav-item" onclick="showPanel('vinhoMes', this)">
+    <span class="icon">🍷</span> Vinho do Mês
   </div>
   <div class="nav-item" onclick="showPanel('ementa', this)">
     <span class="icon">◉</span> Ementa
@@ -594,8 +649,14 @@ textarea { resize: vertical; min-height: 90px; }
 </aside>
 
 <!-- MAIN -->
+<!-- Overlay mobile -->
+<div id="mobile-sidebar-overlay" onclick="closeMobileSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;"></div>
+
 <main>
   <div class="topbar">
+    <button id="mobile-sidebar-btn" onclick="toggleMobileSidebar()" style="display:none;background:none;border:none;cursor:pointer;padding:4px 8px 4px 0;flex-shrink:0;" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="topbar-title" id="topbar-title">Dashboard</div>
     <div class="topbar-right">
       <div class="save-status" id="save-status">
@@ -753,27 +814,77 @@ textarea { resize: vertical; min-height: 90px; }
       </div>
     </div>
 
+    <div class="panel" id="panel-vinhoMes">
+      <div class="panel-header">
+        <div class="panel-title">Vinho do Mês</div>
+        <div class="panel-subtitle">Destaque especial com foto — aparece em secção própria no site</div>
+      </div>
+
+      <div style="max-width:640px; display:flex; flex-direction:column; gap:20px;">
+
+        <!-- foto upload -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:8px;">Fotografia</label>
+          <div id="vinho-preview-wrap" style="display:none;margin-bottom:10px;">
+            <img id="vinho-admin-preview" src="" alt="preview" style="max-width:100%;max-height:220px;border-radius:4px;object-fit:cover;border:1px solid #2a2a2a;" />
+          </div>
+          <input type="file" id="vinho-foto-input" accept="image/*" onchange="previewVinhoFoto(event)" style="display:none;" />
+          <button onclick="document.getElementById('vinho-foto-input').click()" style="background:#fff;border:1px solid #e5e3de;color:#666;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:13px;">
+            📷 Escolher foto
+          </button>
+          <span id="vinho-foto-nome" style="margin-left:10px;font-size:12px;color:#666;"></span>
+        </div>
+
+        <!-- nome -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Nome do Vinho</label>
+          <input id="vinho-admin-nome" type="text" placeholder="ex: Quinta do Crasto Reserva 2022" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+        </div>
+
+        <!-- descricao -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Descrição</label>
+          <textarea id="vinho-admin-desc" rows="3" placeholder="ex: Vinho tinto do Douro, notas de frutos vermelhos maduros e especiarias..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
+        </div>
+
+        <!-- preco -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Preço (€)</label>
+          <input id="vinho-admin-preco" type="text" placeholder="ex: 18.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="saveVinhoMes()">Guardar e publicar</button>
+          <button onclick="clearVinhoMes()" style="background:none;border:1px solid #333;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Remover vinho</button>
+        </div>
+        <p id="vinho-feedback" style="font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
     <div class="panel" id="panel-pratoDia">
       <div class="panel-header">
         <div class="panel-title">Prato do Dia</div>
-        <div class="panel-subtitle">Atualiza diariamente — aparece no site em destaque na ementa</div>
+        <div class="panel-subtitle">Atualiza semanalmente — aparece no site em destaque na ementa</div>
       </div>
 
-      <div style="max-width:600px;">
-        <div id="pratoDia-lista" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;"></div>
+      <div style="max-width:640px;">
+        <!-- Período -->
+        <div style="margin-bottom:24px;">
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Período (ex: 7 a 10 de Julho)</label>
+          <input id="pratoDia-periodo" type="text" placeholder="7 a 10 de Julho"
+            style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;" />
+        </div>
 
-        <button class="btn-add" onclick="addPratoDiaRow()" style="margin-bottom:24px;">
-          + Adicionar prato
-        </button>
+        <!-- Dias -->
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+          <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Pratos por dia (máx. 2 por dia)</div>
 
-        <div style="margin-bottom:16px;">
-          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Nota extra (opcional)</label>
-          <input id="pratoDia-nota" type="text" placeholder="ex: Sujeito a disponibilidade" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;" />
+          <div id="pratoDia-dias" style="display:flex;flex-direction:column;gap:12px;"></div>
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;">
           <button class="btn-save" onclick="savePratoDia()">Guardar e publicar</button>
-          <button onclick="clearPratoDia()" style="background:none;border:1px solid #333;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Limpar prato do dia</button>
+          <button onclick="clearPratoDia()" style="background:none;border:1px solid #ccc;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Limpar</button>
         </div>
         <p id="pratoDia-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
       </div>
@@ -1283,11 +1394,23 @@ Equipa Zé dos Frangos</textarea>
 </div>
 
 <script>
+function toggleMobileSidebar() {
+  var aside = document.querySelector('aside');
+  var overlay = document.getElementById('mobile-sidebar-overlay');
+  aside.classList.toggle('mobile-open');
+  overlay.style.display = aside.classList.contains('mobile-open') ? '' : 'none';
+}
+function closeMobileSidebar() {
+  document.querySelector('aside').classList.remove('mobile-open');
+  document.getElementById('mobile-sidebar-overlay').style.display = 'none';
+}
+
 function showPanel(id, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
   el.classList.add('active');
+  closeMobileSidebar();
   const titles = {
     dashboard: 'Dashboard',
     geral: 'Informações Gerais',
@@ -1550,7 +1673,43 @@ function renderReservations() {
 
 function setStatus(id, newStatus) {
   const r = reservations.find(x => x.id === id);
-  if (r) { r.status = newStatus; saveReservations(); renderReservations(); showToast('Estado atualizado'); }
+  if (!r) return;
+  r.status = newStatus;
+  saveReservations();
+  renderReservations();
+
+  if (newStatus === 'confirmada' && r.email) {
+    const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+    const formspreeId = cfg.formspree || '';
+    if (!formspreeId) { showToast('Estado atualizado (sem Formspree configurado — email não enviado)'); return; }
+    const firstName = (r.name || '').split(' ')[0];
+    fetch('https://formspree.io/f/' + formspreeId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _replyto: r.email,
+        email: r.email,
+        _subject: 'Reserva Confirmada — Churrasqueira Zé dos Frangos',
+        mensagem:
+          'Olá ' + firstName + ',\n\n' +
+          'A sua reserva na Churrasqueira Zé dos Frangos foi confirmada!\n\n' +
+          'Data: ' + r.date + '\n' +
+          'Hora: ' + r.time + '\n' +
+          'Pessoas: ' + r.guests + '\n\n' +
+          'Se precisar de alterar ou cancelar, contacte-nos:\n' +
+          'Telefone / WhatsApp: ' + (cfg.whatsapp || '') + '\n\n' +
+          'Até breve!\nChurrasqueira Zé dos Frangos'
+      })
+    })
+    .then(res => {
+      if (res.ok) showToast('Estado atualizado · Email de confirmação enviado');
+      else showToast('Estado atualizado · Falha no envio do email');
+    })
+    .catch(() => showToast('Estado atualizado · Sem ligação para enviar email'));
+    return;
+  }
+
+  showToast('Estado atualizado');
 }
 
 function pedirAvaliacao(id) {
@@ -1625,32 +1784,64 @@ document.getElementById('notice-msg').addEventListener('input', function() {
 });
 
 // ── Prato do Dia ─────────────────────────────────────
-function addPratoDiaRow(nome, preco) {
-  const lista = document.getElementById('pratoDia-lista');
-  const row = document.createElement('div');
-  row.style.cssText = 'display:flex;gap:8px;align-items:center;';
-  row.innerHTML = `
-    <input type="text" placeholder="Nome do prato" value="${nome||''}"
-      style="flex:1;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;" />
-    <input type="text" placeholder="Preço (ex: 9,50)" value="${preco||''}"
-      style="width:110px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;" />
-    <button onclick="this.parentElement.remove()"
-      style="background:none;border:none;color:#555;cursor:pointer;font-size:18px;padding:0 4px;">✕</button>
-  `;
-  lista.appendChild(row);
+const DIAS_SEMANA = [
+  { key: 'terca',  label: 'Terça-Feira'  },
+  { key: 'quarta', label: 'Quarta-Feira' },
+  { key: 'quinta', label: 'Quinta-Feira' },
+  { key: 'sexta',  label: 'Sexta-Feira'  },
+];
+
+function buildPratoDiaForm(data) {
+  const container = document.getElementById('pratoDia-dias');
+  container.innerHTML = '';
+  const inp = 'background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:9px 12px;border-radius:4px;font-size:13px;flex:1;';
+  DIAS_SEMANA.forEach(function(d) {
+    const pratos = (data.dias && data.dias[d.key]) || ['', ''];
+    const ativo = data.ativos ? data.ativos[d.key] !== false : true;
+    const block = document.createElement('div');
+    block.id = 'dia-block-' + d.key;
+    block.style.cssText = 'background:#f9f8f6;border:1px solid #e5e3de;border-radius:6px;padding:14px 16px;transition:opacity .2s;' + (ativo ? '' : 'opacity:0.45;');
+    block.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+        '<span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555;">' + d.label + '</span>' +
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;">' +
+          '<span style="font-size:11px;color:#888;" id="dia-label-' + d.key + '">' + (ativo ? 'Ativo' : 'Inativo') + '</span>' +
+          '<div style="position:relative;width:36px;height:20px;">' +
+            '<input type="checkbox" data-toggle="' + d.key + '" ' + (ativo ? 'checked' : '') + ' style="opacity:0;width:0;height:0;position:absolute;" onchange="toggleDia(\'' + d.key + '\',this.checked)" />' +
+            '<div id="dia-track-' + d.key + '" style="position:absolute;inset:0;border-radius:20px;background:' + (ativo ? '#c9a84c' : '#ccc') + ';transition:background .2s;"></div>' +
+            '<div id="dia-thumb-' + d.key + '" style="position:absolute;top:3px;left:' + (ativo ? '19px' : '3px') + ';width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s;"></div>' +
+          '</div>' +
+        '</label>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        '<input type="text" data-dia="' + d.key + '" data-idx="0" placeholder="Prato 1" value="' + (pratos[0]||'') + '" style="' + inp + '" />' +
+        '<input type="text" data-dia="' + d.key + '" data-idx="1" placeholder="Prato 2" value="' + (pratos[1]||'') + '" style="' + inp + '" />' +
+      '</div>';
+    container.appendChild(block);
+  });
+}
+
+function toggleDia(key, ativo) {
+  document.getElementById('dia-block-' + key).style.opacity = ativo ? '1' : '0.45';
+  document.getElementById('dia-label-' + key).textContent = ativo ? 'Ativo' : 'Inativo';
+  document.getElementById('dia-track-' + key).style.background = ativo ? '#c9a84c' : '#ccc';
+  document.getElementById('dia-thumb-' + key).style.left = ativo ? '19px' : '3px';
 }
 
 function savePratoDia() {
-  const rows = document.querySelectorAll('#pratoDia-lista > div');
-  const pratos = [];
-  rows.forEach(function(row) {
-    const inputs = row.querySelectorAll('input');
-    const nome = inputs[0].value.trim();
-    const preco = inputs[1].value.trim();
-    if (nome) pratos.push({ nome, preco });
+  const periodo = document.getElementById('pratoDia-periodo').value.trim();
+  const dias = {};
+  const ativos = {};
+  document.querySelectorAll('#pratoDia-dias input[data-dia]').forEach(function(inp) {
+    const dia = inp.dataset.dia;
+    const idx = parseInt(inp.dataset.idx);
+    if (!dias[dia]) dias[dia] = ['', ''];
+    dias[dia][idx] = inp.value.trim();
   });
-  const nota = document.getElementById('pratoDia-nota').value.trim();
-  localStorage.setItem('pratoDia', JSON.stringify({ pratos, nota }));
+  document.querySelectorAll('#pratoDia-dias input[data-toggle]').forEach(function(cb) {
+    ativos[cb.dataset.toggle] = cb.checked;
+  });
+  localStorage.setItem('pratoDia', JSON.stringify({ periodo, dias, ativos }));
   const fb = document.getElementById('pratoDia-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -1658,19 +1849,15 @@ function savePratoDia() {
 
 function clearPratoDia() {
   localStorage.removeItem('pratoDia');
-  document.getElementById('pratoDia-lista').innerHTML = '';
-  document.getElementById('pratoDia-nota').value = '';
+  document.getElementById('pratoDia-periodo').value = '';
+  buildPratoDiaForm({});
 }
 
 // Carregar dados existentes ao abrir o painel
 (function() {
   const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
-  if (data.pratos && data.pratos.length > 0) {
-    data.pratos.forEach(function(p) { addPratoDiaRow(p.nome, p.preco); });
-  } else {
-    addPratoDiaRow();
-  }
-  if (data.nota) document.getElementById('pratoDia-nota').value = data.nota;
+  if (data.periodo) document.getElementById('pratoDia-periodo').value = data.periodo;
+  buildPratoDiaForm(data);
 })();
 
 // ── Vagas de Emprego ─────────────────────────────────
@@ -1765,6 +1952,78 @@ function saveTakeaway() {
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
 }
 
+
+// ── Vinho do Mês ─────────────────────────────────────
+var _vinhoFotoBase64 = null;
+var _vinhoMarkedForRemoval = false;
+
+function previewVinhoFoto(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('vinho-foto-nome').textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _vinhoFotoBase64 = e.target.result;
+    var preview = document.getElementById('vinho-admin-preview');
+    preview.src = _vinhoFotoBase64;
+    document.getElementById('vinho-preview-wrap').style.display = '';
+    _vinhoMarkedForRemoval = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveVinhoMes() {
+  if (_vinhoMarkedForRemoval) {
+    localStorage.removeItem('vinhoMes');
+    _vinhoMarkedForRemoval = false;
+    _vinhoFotoBase64 = null;
+    var fb = document.getElementById('vinho-feedback');
+    fb.textContent = 'Vinho removido.';
+    fb.style.display = '';
+    setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
+    return;
+  }
+  var nome = document.getElementById('vinho-admin-nome').value.trim();
+  var desc = document.getElementById('vinho-admin-desc').value.trim();
+  var preco = document.getElementById('vinho-admin-preco').value.trim();
+  if (!nome) { alert('Insere o nome do vinho.'); return; }
+  var existing = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+  var data = {
+    nome: nome,
+    desc: desc,
+    preco: preco,
+    foto: _vinhoFotoBase64 || existing.foto || null
+  };
+  localStorage.setItem('vinhoMes', JSON.stringify(data));
+  var fb = document.getElementById('vinho-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+function clearVinhoMes() {
+  _vinhoMarkedForRemoval = true;
+  document.getElementById('vinho-admin-nome').value = '';
+  document.getElementById('vinho-admin-desc').value = '';
+  document.getElementById('vinho-admin-preco').value = '';
+  document.getElementById('vinho-admin-preview').src = '';
+  document.getElementById('vinho-preview-wrap').style.display = 'none';
+  document.getElementById('vinho-foto-nome').textContent = '(clica em Guardar para confirmar remoção)';
+  _vinhoFotoBase64 = null;
+}
+
+// Pré-carregar dados existentes do vinho
+(function() {
+  var data = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+  if (data.nome) document.getElementById('vinho-admin-nome').value = data.nome;
+  if (data.desc) document.getElementById('vinho-admin-desc').value = data.desc;
+  if (data.preco) document.getElementById('vinho-admin-preco').value = data.preco;
+  if (data.foto) {
+    _vinhoFotoBase64 = data.foto;
+    document.getElementById('vinho-admin-preview').src = data.foto;
+    document.getElementById('vinho-preview-wrap').style.display = '';
+    document.getElementById('vinho-foto-nome').textContent = '(foto guardada)';
+  }
+})();
 
 // ── Sugestão do Mês ──────────────────────────────────
 var _sugestaoFotoBase64 = null;

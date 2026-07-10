@@ -48,6 +48,21 @@ const menuData = {
     { nome: 'Cheesecake', desc: '', preco: '4,00' },
     { nome: 'Fruta Variada', desc: '', preco: '2,50' },
   ],
+  fimdesemana: [
+    { nome: 'Cabrito Assado no Forno', desc: '', preco: '28,00' },
+    { nome: 'Leitão Assado no Forno', desc: '', preco: '24,00' },
+    { nome: 'Vitela Assada no Forno', desc: '', preco: '11,00 / 17,50' },
+    { nome: 'Pernil Assado no Forno', desc: '', preco: '24,00' },
+    { nome: 'Tripas à Moda da Casa', desc: '', preco: '12,50' },
+    { nome: 'Cozido à Portuguesa', desc: '', preco: '19,50' },
+  ],
+  acompanhamentos: [
+    { nome: 'Salada Mista', desc: '', preco: '3,50' },
+    { nome: 'Arroz', desc: '', preco: '3,00' },
+    { nome: 'Batata Frita', desc: '', preco: '3,00' },
+    { nome: 'Feijão Preto', desc: '', preco: '3,00' },
+    { nome: 'Legumes Salteados', desc: '', preco: '3,50' },
+  ],
 };
 ---
 
@@ -72,7 +87,6 @@ const menuData = {
         <a href="#ementa" class="nav-link">Ementa</a>
         <a href="#contactos" class="nav-link" onclick="document.getElementById('contactos').scrollIntoView({behavior:'smooth'});return false;">Contactos</a>
         <a href="#reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
-        <a href="#takeaway" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem; background: #c9a84c; color: #0d0d0d; border-color: #c9a84c;">Take Away</a>
         <a href="/ajuda" class="nav-link">Apoio</a>
       </div>
 
@@ -94,7 +108,6 @@ const menuData = {
       <a href="#ementa" class="nav-link">Ementa</a>
       <a href="#contactos" class="nav-link">Contactos</a>
       <a href="#reservas" class="nav-link text-gold">Reservar</a>
-      <a href="#takeaway" class="nav-link" style="color: #c9a84c;">Take Away</a>
       <a href="/ajuda" class="nav-link">Apoio</a>
     </div>
   </nav>
@@ -211,8 +224,34 @@ const menuData = {
     </section>
   </div>
 
+  <!-- VINHO DO MÊS -->
+  <div id="vinho-mes-box" style="display:none;">
+    <section style="position:relative; min-height: 480px; display:flex; align-items:stretch; overflow:hidden;">
+      <!-- Conteúdo -->
+      <div style="flex:1; background:#0a0a0a; display:flex; align-items:center; padding: 4rem 3rem; position:relative;">
+        <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #c9a84c, rgba(201,168,76,0.1));"></div>
+        <div style="max-width:480px; position:relative; z-index:1;">
+          <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Vinho do Mês</p>
+          <h2 id="vinho-nome" class="text-4xl md:text-5xl font-light text-white leading-tight mb-4"></h2>
+          <div style="width:40px; height:1px; background:#c9a84c; margin-bottom:1.5rem;"></div>
+          <p id="vinho-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
+          <div style="display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;">
+            <span id="vinho-preco" class="text-gold text-3xl font-light" style="font-family: Playfair Display, serif;"></span>
+            <a href="#reservas" class="btn-gold" style="font-size:0.7rem; padding:0.5rem 1.5rem;">Reservar Mesa</a>
+          </div>
+        </div>
+        <!-- Img mobile como background -->
+        <div id="vinho-img-mobile" class="md:hidden absolute inset-0" style="z-index:0; opacity:0.15;"></div>
+      </div>
+      <!-- Foto -->
+      <div id="vinho-img-wrap" class="hidden md:block" style="width:50%; position:relative; min-height:480px; background:#111;">
+        <img id="vinho-img" src="" alt="Vinho do Mês" style="width:100%; height:100%; object-fit:cover; display:block;" />
+      </div>
+    </section>
+  </div>
+
   <!-- EMENTA -->
-  <section id="ementa" class="py-28 px-6" style="background: #0d0d0d; position: relative; background-image: url('/images/polvo.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <section id="ementa" class="py-28 px-6" style="background: #0d0d0d; position: relative; background-image: url('/images/polvo.jpg'); background-size: cover; background-position: center; background-attachment: scroll;">
     <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
     <div class="max-w-5xl mx-auto relative" style="z-index: 1;">
       <div class="text-center reveal mb-16">
@@ -223,22 +262,55 @@ const menuData = {
 
       <!-- PRATO DO DIA -->
       <div id="prato-dia-box" class="reveal mb-12" style="display:none;">
-        <div style="border: 1px solid rgba(201,168,76,0.4); background: rgba(201,168,76,0.06); border-radius: 4px; padding: 24px 32px;">
-          <p class="text-gold text-xs tracking-[0.3em] uppercase mb-4" style="font-family: Playfair Display, serif;">Prato do Dia</p>
-          <div id="prato-dia-lista" class="flex flex-col gap-3"></div>
-          <p id="prato-dia-nota" class="text-gray-400 text-xs mt-4 font-light" style="display:none;"></p>
+        <div style="border: 1px solid rgba(201,168,76,0.35); background: rgba(201,168,76,0.05); border-radius: 6px; padding: 28px 32px;">
+          <!-- Cabeçalho -->
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid rgba(201,168,76,0.2);">
+            <p style="font-family: Playfair Display, serif; color:#c9a84c; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; font-weight:700;">Prato do Dia</p>
+            <span id="prato-dia-periodo" style="font-family: Playfair Display, serif; color:#888; font-size:0.75rem; font-style:italic;"></span>
+          </div>
+
+          <!-- Dias da semana -->
+          <div id="prato-dia-dias" style="display:flex; flex-direction:column; gap:0;"></div>
+
+          <!-- Preços fixos -->
+          <div class="prato-precos-grid" style="display:grid; gap:12px; margin-top:20px; padding-top:20px; border-top:1px solid rgba(201,168,76,0.2);">
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:14px 16px; text-align:center;">
+              <div style="font-size:1.3rem; font-weight:700; color:#c9a84c; font-family:Playfair Display,serif; line-height:1;">11,5€</div>
+              <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#888; margin:6px 0 4px;">Sala</div>
+              <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5;">Inclui: Pão, Sopa, Prato, Bebida e Café<br><span style="color:#c9a84c80;">Sobremesa +1€</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:14px 16px; text-align:center;">
+              <div style="font-size:1.3rem; font-weight:700; color:#c9a84c; font-family:Playfair Display,serif; line-height:1;">9€</div>
+              <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#888; margin:6px 0 4px;">Take-Away</div>
+              <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5;">Inclui: Prato</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:14px 16px; text-align:center;">
+              <div style="font-size:1.3rem; font-weight:700; color:#c9a84c; font-family:Playfair Display,serif; line-height:1;">+1€</div>
+              <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#888; margin:6px 0 4px;">Sobremesa do Dia</div>
+              <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5; font-style:italic;">Solicitar disponibilidade do dia</div>
+            </div>
+          </div>
+
+          <!-- Notas -->
+          <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:0.65rem; color:#666; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:3px; padding:3px 8px;">Disponível apenas ao almoço</span>
+            <span style="font-size:0.65rem; color:#666; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:3px; padding:3px 8px;">Disponibilidade limitada</span>
+            <span style="font-size:0.65rem; color:#666; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:3px; padding:3px 8px;">Dose individual</span>
+          </div>
         </div>
       </div>
 
-      <div class="flex justify-center gap-2 mb-12 flex-wrap">
+      <div class="flex gap-2 mb-12" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;flex-wrap:nowrap;justify-content:flex-start;" id="ementa-tabs">
         <button class="menu-tab active" data-tab="entradas">Entradas</button>
         <button class="menu-tab" data-tab="principais">Carnes</button>
         <button class="menu-tab" data-tab="peixe">Peixe</button>
         <button class="menu-tab" data-tab="sobremesas">Sobremesas</button>
+        <button class="menu-tab" data-tab="fimdesemana">Fim de Semana</button>
+        <button class="menu-tab" data-tab="acompanhamentos">Acompanhamentos</button>
         <button class="menu-tab" data-tab="grupos">Menus de Grupo</button>
       </div>
 
-      {(['entradas','principais','peixe','sobremesas'] as const).map((cat, i) => (
+      {(['entradas','principais','peixe','sobremesas','fimdesemana','acompanhamentos'] as const).map((cat, i) => (
         <div class="menu-panel grid md:grid-cols-2 gap-x-12" data-panel={cat} style={i > 0 ? 'display:none' : ''}>
           {menuData[cat].map((item) => (
             <div class="reveal flex justify-between items-baseline gap-4 py-4 border-b" style="border-color: #222;">
@@ -285,7 +357,7 @@ const menuData = {
   </section>
 
   <!-- RESERVAS -->
-  <section id="reservas" class="py-28 px-6" style="position: relative; background-image: url('/images/croquetes.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <section id="reservas" class="py-28 px-6" style="position: relative; background-image: url('/images/croquetes.jpg'); background-size: cover; background-position: center; background-attachment: scroll;">
     <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
     <div class="max-w-2xl mx-auto relative" style="z-index: 1;">
       <div class="text-center reveal mb-14">
@@ -295,24 +367,6 @@ const menuData = {
         <p class="text-gray-400 font-light">Confirmaremos a sua reserva por telefone. Também pode ligar para <span class="text-gold">259 322 212</span>.</p>
       </div>
 
-      <!-- WhatsApp CTA -->
-      <div class="reveal text-center mb-8">
-        <a
-          href="https://wa.me/351259322212?text=Olá,%20gostava%20de%20fazer%20uma%20reserva%20na%20Churrasqueira%20Zé%20dos%20Frangos."
-          target="_blank"
-          class="btn-gold"
-          style="background: #25D366; border-color: #25D366; color: white; display: inline-flex; align-items: center; gap: 0.5rem;"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Reservar via WhatsApp
-        </a>
-      </div>
-
-      <div class="reveal text-center text-gray-400 text-xs mb-8 tracking-widest uppercase" style="font-family: Playfair Display, serif;">
-        — ou preencha o formulário —
-      </div>
 
       <!-- Aviso grupos grandes -->
       <div class="reveal mb-6 text-center">
@@ -335,7 +389,7 @@ const menuData = {
         method="POST"
         class="reveal flex flex-col gap-4"
       >
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid sm:grid-cols-2 gap-4">
           <div>
             <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
             <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
@@ -349,24 +403,39 @@ const menuData = {
           <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Email</label>
           <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data</label>
-            <input type="date" id="res-data" name="data" class="form-input" required />
-          </div>
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data</label>
+          <input type="date" id="res-data" name="data" class="form-input" required />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Hora</label>
-            <select id="res-hora" name="hora" class="form-input" required>
-              <option value="" style="background:#1a1a1a">Escolher</option>
-            </select>
+            <input type="hidden" id="res-hora" name="hora" />
+            <div id="res-hora-dropdown" style="position:relative;">
+              <div id="res-hora-btn" class="form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                <span id="res-hora-label" style="color:#6b7280;">Escolher</span>
+                <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+              </div>
+              <div id="res-hora-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;max-height:200px;overflow-y:auto;">
+                <div id="res-hora-hint" style="padding:10px 14px;font-size:12px;color:#6b7280;font-style:italic;">Selecione primeiro a data</div>
+              </div>
+            </div>
           </div>
           <div>
             <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Pessoas</label>
-            <select name="pessoas" class="form-input" required>
-              {['1','2','3','4'].map(n => (
-                <option value={n} style="background:#1a1a1a">{n}</option>
-              ))}
-            </select>
+            <input type="hidden" name="pessoas" id="res-pessoas" value="2" />
+            <div id="res-pessoas-dropdown" style="position:relative;">
+              <div id="res-pessoas-btn" class="form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                <span id="res-pessoas-label" style="color:#e5e3de;">2</span>
+                <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+              </div>
+              <div id="res-pessoas-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;">
+                <div class="res-cso" data-value="1" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">1 pessoa</div>
+                <div class="res-cso" data-value="2" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">2 pessoas</div>
+                <div class="res-cso" data-value="3" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">3 pessoas</div>
+                <div class="res-cso" data-value="4" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;">4 pessoas</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -376,11 +445,25 @@ const menuData = {
         <div id="lotacao-aviso" class="hidden" style="color:#ef4444; font-size:12px; text-align:center; font-family:Montserrat,sans-serif;"></div>
 
         <div>
+          <label class="flex items-center gap-2 cursor-pointer select-none" style="opacity: 0.55;">
+            <input type="checkbox" name="cadeira_bebe" style="accent-color: #c9a84c; width: 13px; height: 13px; flex-shrink: 0;" />
+            <span style="font-size: 0.72rem; color: #9ca3af; letter-spacing: 0.04em;">Necessito de cadeira de bebé</span>
+          </label>
+        </div>
+
+        <div>
           <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações</label>
           <textarea name="obs" placeholder="Alergias, ocasião especial, preferências..." class="form-input h-28 resize-none"></textarea>
         </div>
-        <div class="text-center mt-4">
-          <button type="submit" id="res-submit" class="btn-gold">Confirmar Reserva</button>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+          <button type="button" id="res-submit-email" class="btn-gold" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+            Reservar por e-mail
+          </button>
+          <button type="button" id="res-submit-whatsapp" class="btn-gold" style="background:#25D366;border-color:#25D366;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Reservar por WhatsApp
+          </button>
         </div>
       </form>
 
@@ -403,11 +486,60 @@ const menuData = {
         // Reservas já feitas (num sistema real viria de uma API)
         const bookedSlots: Record<string,number> = {};
 
-        const dataInput  = document.getElementById('res-data') as HTMLInputElement;
-        const horaSelect = document.getElementById('res-hora') as HTMLSelectElement;
-        const aviso      = document.getElementById('hora-aviso') as HTMLElement;
-        const lotacao    = document.getElementById('lotacao-aviso') as HTMLElement;
-        const submitBtn  = document.getElementById('res-submit') as HTMLButtonElement;
+        const dataInput   = document.getElementById('res-data') as HTMLInputElement;
+        const horaInput   = document.getElementById('res-hora') as HTMLInputElement;
+        const horaBtn     = document.getElementById('res-hora-btn') as HTMLElement;
+        const horaLabel   = document.getElementById('res-hora-label') as HTMLElement;
+        const horaList    = document.getElementById('res-hora-list') as HTMLElement;
+        const aviso       = document.getElementById('hora-aviso') as HTMLElement;
+        const lotacao     = document.getElementById('lotacao-aviso') as HTMLElement;
+        const submitEmail = document.getElementById('res-submit-email') as HTMLButtonElement;
+        const submitWA    = document.getElementById('res-submit-whatsapp') as HTMLButtonElement;
+        function setSubmitDisabled(v: boolean) { submitEmail.disabled = v; submitWA.disabled = v; }
+
+        // ── Custom dropdown PESSOAS ──────────────────────────
+        const pessoasInput = document.getElementById('res-pessoas') as HTMLInputElement;
+        const pessoasBtn   = document.getElementById('res-pessoas-btn') as HTMLElement;
+        const pessoasList  = document.getElementById('res-pessoas-list') as HTMLElement;
+        pessoasBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          horaList.style.display = 'none';
+          pessoasList.style.display = pessoasList.style.display === 'none' ? '' : 'none';
+        });
+        pessoasList.querySelectorAll('.res-cso').forEach(opt => {
+          opt.addEventListener('click', () => {
+            const el = opt as HTMLElement;
+            pessoasInput.value = el.dataset.value!;
+            (pessoasBtn.querySelector('#res-pessoas-label') as HTMLElement).textContent = el.textContent!.trim();
+            (pessoasBtn.querySelector('#res-pessoas-label') as HTMLElement).style.color = '#e5e3de';
+            pessoasList.style.display = 'none';
+          });
+        });
+
+        // ── Custom dropdown HORA ─────────────────────────────
+        horaBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          pessoasList.style.display = 'none';
+          if (!horaInput.disabled) horaList.style.display = horaList.style.display === 'none' ? '' : 'none';
+        });
+
+        function setHora(value: string, text: string) {
+          horaInput.value = value;
+          horaLabel.textContent = text;
+          horaLabel.style.color = value ? '#e5e3de' : '#6b7280';
+          horaList.style.display = 'none';
+          // verificar lotação
+          lotacao.classList.add('hidden');
+          const key = `${dataInput.value}_${value}`;
+          const ocupadas = bookedSlots[key] || 0;
+          if (ocupadas >= CAPACITY_PER_SLOT) {
+            lotacao.textContent = 'Este horário já não tem disponibilidade. Escolha outro.';
+            lotacao.classList.remove('hidden');
+            setSubmitDisabled(true);
+          } else {
+            setSubmitDisabled(false);
+          }
+        }
 
         // Data mínima = hoje
         const today = new Date();
@@ -415,375 +547,174 @@ const menuData = {
 
         function populateSlots() {
           const dateVal = dataInput.value;
-          horaSelect.innerHTML = '<option value="" style="background:#1a1a1a">Escolher</option>';
+          horaList.innerHTML = '<div id="res-hora-hint" style="padding:10px 14px;font-size:12px;color:#6b7280;font-style:italic;">Selecione primeiro a data</div>';
+          horaInput.value = '';
+          horaLabel.textContent = 'Escolher';
+          horaLabel.style.color = '#6b7280';
           aviso.classList.add('hidden');
           lotacao.classList.add('hidden');
-          submitBtn.disabled = false;
+          setSubmitDisabled(false);
           if (!dateVal) return;
 
+          horaList.innerHTML = '';
           const now = new Date();
           const selected = new Date(dateVal + 'T00:00:00');
           const isToday = selected.toDateString() === now.toDateString();
 
           const allSlots = [...SLOTS.almoco, ...SLOTS.jantar];
+          let count = 0;
           allSlots.forEach(slot => {
-            const [hh, mm] = slot.split(':').map(Number);
-            // Calcular cutoff: se jantar, cutoff = DINNER_START - CUTOFF_HOURS
+            const [hh] = slot.split(':').map(Number);
             const cutoffHour = hh >= DINNER_START ? DINNER_START - CUTOFF_HOURS : 8;
-            const slotDate = new Date(dateVal + `T${slot}:00`);
             const cutoffDate = new Date(dateVal + `T${String(cutoffHour).padStart(2,'0')}:00:00`);
-
-            if (isToday && now >= cutoffDate) return; // passou o prazo
+            if (isToday && now >= cutoffDate) return;
 
             const key = `${dateVal}_${slot}`;
             const ocupadas = bookedSlots[key] || 0;
-            if (ocupadas >= CAPACITY_PER_SLOT) return; // slot cheio
+            if (ocupadas >= CAPACITY_PER_SLOT) return;
 
-            const opt = document.createElement('option');
-            opt.value = slot;
-            opt.style.background = '#1a1a1a';
-            opt.textContent = slot + (ocupadas > 0 ? ` (${CAPACITY_PER_SLOT - ocupadas} lug. livres)` : '');
-            horaSelect.appendChild(opt);
+            const label = slot + (ocupadas > 0 ? ` (${CAPACITY_PER_SLOT - ocupadas} lug. livres)` : '');
+            const item = document.createElement('div');
+            item.style.cssText = 'padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);';
+            item.textContent = label;
+            item.addEventListener('mouseenter', () => { item.style.background='rgba(201,168,76,0.12)'; item.style.color='#c9a84c'; });
+            item.addEventListener('mouseleave', () => { item.style.background=''; item.style.color='#d1cfc9'; });
+            item.addEventListener('click', () => setHora(slot, label));
+            horaList.appendChild(item);
+            count++;
           });
 
-          if (horaSelect.options.length === 1) {
+          if (count === 0) {
             aviso.textContent = isToday
               ? 'Para reservas de hoje, o prazo já encerrou. Contacte-nos por telefone: 259 322 212.'
               : 'Não há horários disponíveis para esta data.';
             aviso.classList.remove('hidden');
-            submitBtn.disabled = true;
+            setSubmitDisabled(true);
           }
         }
 
-        horaSelect.addEventListener('change', () => {
-          lotacao.classList.add('hidden');
-          const key = `${dataInput.value}_${horaSelect.value}`;
-          const ocupadas = bookedSlots[key] || 0;
-          if (ocupadas >= CAPACITY_PER_SLOT) {
-            lotacao.textContent = 'Este horário já não tem disponibilidade. Escolha outro.';
-            lotacao.classList.remove('hidden');
-            submitBtn.disabled = true;
-          } else {
-            submitBtn.disabled = false;
-          }
+        document.addEventListener('click', () => {
+          horaList.style.display = 'none';
+          pessoasList.style.display = 'none';
         });
 
         dataInput.addEventListener('change', populateSlots);
+        dataInput.addEventListener('input', populateSlots);
         populateSlots();
 
-        // ── Submeter reserva via WhatsApp ───────────────────
+        // ── Submeter reserva ────────────────────────────────
         const form = document.getElementById('reserva-form') as HTMLFormElement;
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const nome     = (form.querySelector('[name="nome"]') as HTMLInputElement).value;
-          const telefone = (form.querySelector('[name="telefone"]') as HTMLInputElement).value;
-          const email    = (form.querySelector('[name="email"]') as HTMLInputElement).value;
-          const data     = (form.querySelector('[name="data"]') as HTMLInputElement).value;
-          const hora     = (form.querySelector('[name="hora"]') as HTMLSelectElement).value;
-          const pessoas  = (form.querySelector('[name="pessoas"]') as HTMLSelectElement).value;
-          const obs      = (form.querySelector('[name="obs"]') as HTMLTextAreaElement).value;
 
-          const [ano, mes, dia] = data.split('-');
+        function getFormData() {
+          const nome        = (form.querySelector('[name="nome"]') as HTMLInputElement).value;
+          const telefone    = (form.querySelector('[name="telefone"]') as HTMLInputElement).value;
+          const email       = (form.querySelector('[name="email"]') as HTMLInputElement).value;
+          const data        = (form.querySelector('[name="data"]') as HTMLInputElement).value;
+          const hora        = (form.querySelector('[name="hora"]') as HTMLSelectElement).value;
+          const pessoas     = (form.querySelector('[name="pessoas"]') as HTMLSelectElement).value;
+          const obs         = (form.querySelector('[name="obs"]') as HTMLTextAreaElement).value;
+          const cadeiraBebe = (form.querySelector('[name="cadeira_bebe"]') as HTMLInputElement).checked;
+          return { nome, telefone, email, data, hora, pessoas, obs, cadeiraBebe };
+        }
+
+        function validateForm() {
+          if (!form.checkValidity()) { form.reportValidity(); return false; }
+          const { data, hora } = getFormData();
+          if (!data || !hora) { form.reportValidity(); return false; }
+          return true;
+        }
+
+        function saveToLocalStorage(d: ReturnType<typeof getFormData>) {
+          const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+          reservas.push({
+            id: Date.now(),
+            date: d.data,
+            time: d.hora,
+            name: d.nome,
+            phone: d.telefone,
+            email: d.email,
+            guests: parseInt(d.pessoas),
+            note: d.obs,
+            status: 'pendente'
+          });
+          localStorage.setItem('reservas', JSON.stringify(reservas));
+        }
+
+        function showSuccess() {
+          form.style.display = 'none';
+          const sucesso = document.getElementById('reserva-sucesso');
+          if (sucesso) sucesso.classList.remove('hidden');
+        }
+
+        document.getElementById('res-submit-email')!.addEventListener('click', () => {
+          if (!validateForm()) return;
+          const d = getFormData();
+          const [ano, mes, dia] = d.data.split('-');
           const dataFmt = `${dia}/${mes}/${ano}`;
 
-          let msg = `Olá! Gostaria de fazer uma reserva:\n\n`;
-          msg += `Nome: ${nome}\n`;
-          msg += `Telefone: ${telefone}\n`;
-          msg += `Email: ${email}\n`;
-          msg += `Data: ${dataFmt}\n`;
-          msg += `Hora: ${hora}\n`;
-          msg += `Pessoas: ${pessoas}\n`;
-          if (obs) msg += `Obs: ${obs}\n`;
+          saveToLocalStorage(d);
 
-          // Guardar reserva no localStorage para o backoffice
-          const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-          const novaReserva = {
-            id: Date.now(),
-            date: data,
-            time: hora,
-            name: nome,
-            phone: telefone,
-            email: email,
-            guests: parseInt(pessoas),
-            note: obs,
-            status: 'pendente'
-          };
-          reservas.push(novaReserva);
-          localStorage.setItem('reservas', JSON.stringify(reservas));
-
-          // Ler config do backoffice
           const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
-          const waNum = cfg.whatsapp || '351913977751';
           const formspreeId = cfg.formspree || '';
-
-          // Enviar email via Formspree (se configurado)
           if (formspreeId) {
             fetch(`https://formspree.io/f/${formspreeId}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify({ nome, telefone, email, data: dataFmt, hora, pessoas, obs })
+              body: JSON.stringify({ nome: d.nome, telefone: d.telefone, email: d.email, data: dataFmt, hora: d.hora, pessoas: d.pessoas, obs: d.obs, cadeiraBebe: d.cadeiraBebe ? 'Sim' : 'Não' })
             });
           }
+          showSuccess();
+        });
 
-          // Abrir WhatsApp
-          const url = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
-          window.open(url, '_blank');
+        document.getElementById('res-submit-whatsapp')!.addEventListener('click', () => {
+          if (!validateForm()) return;
+          const d = getFormData();
+          const [ano, mes, dia] = d.data.split('-');
+          const dataFmt = `${dia}/${mes}/${ano}`;
 
-          // Mostrar mensagem de sucesso
-          form.style.display = 'none';
-          const sucesso = document.getElementById('reserva-sucesso');
-          if (sucesso) sucesso.classList.remove('hidden');
+          saveToLocalStorage(d);
+
+          let msg = `Olá! Gostaria de fazer uma reserva:\n\n`;
+          msg += `Nome: ${d.nome}\n`;
+          msg += `Telefone: ${d.telefone}\n`;
+          msg += `Email: ${d.email}\n`;
+          msg += `Data: ${dataFmt}\n`;
+          msg += `Hora: ${d.hora}\n`;
+          msg += `Pessoas: ${d.pessoas}\n`;
+          if (d.cadeiraBebe) msg += `Cadeira de bebé: Sim\n`;
+          if (d.obs) msg += `Obs: ${d.obs}\n`;
+
+          const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+          const waNum = cfg.whatsapp || '351913977751';
+          window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
+          showSuccess();
         });
       </script>
     </div>
   </section>
 
-  <!-- TAKE AWAY -->
-  <section id="takeaway" class="py-28 px-6" style="position: relative; background-image: url('/images/bacalhau.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
-    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
-    <div class="max-w-2xl mx-auto relative" style="z-index: 1;">
-      <div class="text-center reveal mb-14">
-        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Leve para Casa</p>
-        <h2 class="text-4xl md:text-5xl font-light text-white">Take Away</h2>
-        <div class="w-12 h-px bg-gold mx-auto mt-6 mb-6"></div>
-        <p class="text-gray-400 font-light">Encomende online e venha buscar à hora que quiser. Pronto e quentinho.</p>
-      </div>
-
-      <!-- nota de backoffice -->
-      <div id="takeaway-nota-wrap" class="reveal mb-10" style="display:none;">
-        <p id="takeaway-nota" class="text-center text-gray-400 font-light leading-relaxed" style="font-size:0.95rem; border-left: 3px solid rgba(201,168,76,0.5); padding-left: 1.2rem; text-align:left;"></p>
-      </div>
-
-      <form
-        action="https://formspree.io/f/YOUR_FORM_ID"
-        method="POST"
-        class="reveal flex flex-col gap-4"
-      >
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
-            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
-          </div>
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
-            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data de Levantamento</label>
-            <input type="date" name="data" class="form-input" required />
-          </div>
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Hora de Levantamento</label>
-            <select name="hora" class="form-input" required>
-              <option value="" style="background:#1a1a1a">Escolher hora</option>
-              <optgroup label="Almoço" style="background:#1a1a1a">
-                {['12:00','12:30','13:00','13:30','14:00','14:30'].map(h => (
-                  <option value={h} style="background:#1a1a1a">{h}</option>
-                ))}
-              </optgroup>
-              <optgroup label="Jantar" style="background:#1a1a1a">
-                {['19:00','19:30','20:00','20:30','21:00','21:30','22:00'].map(h => (
-                  <option value={h} style="background:#1a1a1a">{h}</option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-3" style="font-family: Playfair Display, serif;">Escolha os Pratos</label>
-          <div class="flex flex-col gap-2">
-            {[
-              { id: 'frango', nome: 'Frango de Churrasco', sub: 'Mínimo 4 un.', preco: '10,50 € / un.', min: 4, field: 'qty_frango' },
-              { id: 'cabrito', nome: 'Cabrito Assado', sub: 'Encomenda prévia obrigatória', preco: 'Sob consulta', min: 1, field: 'qty_cabrito' },
-            ].map(prato => (
-              <label class="flex items-center gap-3 py-3 px-4 cursor-pointer" style="border: 1px solid #2a2a2a;">
-                <input type="checkbox" name="pratos" value={prato.nome} style="accent-color: #c9a84c; width: 16px; height: 16px; flex-shrink:0;" />
-                <div class="flex-1 min-w-0">
-                  <span class="text-gray-300 text-sm font-light">{prato.nome}</span>
-                  <span class="text-gray-400 text-xs ml-2" style="font-family: Playfair Display, serif;">{prato.sub}</span>
-                </div>
-                <input type="number" name={prato.field} min={prato.min} step="1" placeholder={prato.min > 1 ? `mín. ${prato.min}` : '0'} onclick="event.stopPropagation()" class="form-input" style="width: 80px; flex-shrink:0;" />
-                <span class="text-gold text-sm whitespace-nowrap" style="font-family: Playfair Display, serif; min-width:90px; text-align:right;">{prato.preco}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações</label>
-          <textarea name="obs" placeholder="Ex: sem piri-piri num dos frangos, entrega em evento às 13h..." class="form-input h-24 resize-none"></textarea>
-        </div>
-
-        <div class="text-center mt-2">
-          <button type="submit" class="btn-gold">Confirmar Encomenda</button>
-        </div>
-      </form>
-
-      <p id="takeaway-rodape" class="text-center text-gray-400 text-xs mt-6 tracking-wide" style="font-family: Playfair Display, serif;">
-        Encomendas com antecedência mínima de 24h · Sujeito a disponibilidade · Confirmaremos por telefone
-      </p>
-    </div>
-  </section>
-
-  <!-- RECRUTAMENTO -->
-  <section id="recrutamento" class="py-28 px-6" style="position: relative; background-image: url('/images/misto.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
-    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
-    <div class="max-w-4xl mx-auto relative" style="z-index: 1;">
-      <div class="text-center reveal mb-16">
-        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Junte-se a Nós</p>
-        <h2 class="text-4xl md:text-5xl font-light text-white">Trabalhe Connosco</h2>
-        <div class="w-12 h-px bg-gold mx-auto mt-6 mb-6"></div>
-        <p class="text-gray-400 font-light max-w-lg mx-auto">Somos uma equipa apaixonada pela cozinha transmontana. Se partilha os nossos valores, gostaríamos de o conhecer.</p>
-      </div>
-
-      <!-- VAGAS EM ABERTO (dinâmico) -->
-      <div id="vagas-wrap" class="reveal mb-12" style="display:none;">
-        <p class="text-gold text-xs tracking-[0.25em] uppercase mb-4" style="font-family: Playfair Display, serif;">Vagas em Aberto</p>
-        <div id="vagas-lista" class="flex flex-col gap-4"></div>
-      </div>
-
-      <script>
-        (function() {
-          var vagas = JSON.parse(localStorage.getItem('vagasEmprego') || '[]').filter(function(v) { return v.ativa; });
-          if (!vagas.length) return;
-          document.getElementById('vagas-wrap').style.display = '';
-          var lista = document.getElementById('vagas-lista');
-          vagas.forEach(function(v) {
-            var procura = (v.procura || '').split('\n').filter(Boolean);
-            var oferece = (v.oferece || '').split('\n').filter(Boolean);
-            var urgente = v.urgente ? '<span style="background:rgba(201,168,76,0.12);color:#c9a84c;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;font-family:\'Playfair Display\',serif;">Urgente</span>' : '';
-            var card = document.createElement('div');
-            card.style.cssText = 'border:1px solid #2a2a2a;background:#141414;';
-            card.innerHTML =
-              '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6" style="border-bottom:1px solid #2a2a2a;">' +
-                '<div>' +
-                  '<div class="flex items-center gap-3 mb-2">' +
-                    '<span class="text-white text-lg font-light tracking-wide">' + v.titulo + '</span>' + urgente +
-                  '</div>' +
-                  '<p class="text-gray-400 text-sm font-light">' + (v.local || '') + '</p>' +
-                '</div>' +
-                '<a href="#form-candidatura" class="btn-gold whitespace-nowrap" style="font-size:0.7rem;padding:0.5rem 1.5rem;">Candidatar-me</a>' +
-              '</div>' +
-              '<div class="p-6 grid md:grid-cols-2 gap-8">' +
-                (procura.length ? '<div><h4 class="text-white text-xs tracking-widest uppercase mb-4" style="font-family:\'Playfair Display\',serif;">O que procuramos</h4><ul class="space-y-2">' + procura.map(function(i){ return '<li class="flex items-start gap-3 text-gray-400 text-sm font-light"><span class="text-gold mt-0.5" style="flex-shrink:0;">—</span>' + i + '</li>'; }).join('') + '</ul></div>' : '') +
-                (oferece.length ? '<div><h4 class="text-white text-xs tracking-widest uppercase mb-4" style="font-family:\'Playfair Display\',serif;">O que oferecemos</h4><ul class="space-y-2">' + oferece.map(function(i){ return '<li class="flex items-start gap-3 text-gray-400 text-sm font-light"><span class="text-gold mt-0.5" style="flex-shrink:0;">—</span>' + i + '</li>'; }).join('') + '</ul></div>' : '') +
-              '</div>';
-            lista.appendChild(card);
-          });
-        })();
-      </script>
-
-      <!-- FORMULÁRIO DE CANDIDATURA -->
-      <div id="form-candidatura" class="reveal">
-        <div class="text-center mb-10">
-          <p class="text-gold text-xs tracking-[0.25em] uppercase mb-3" style="font-family: Playfair Display, serif;">Candidatura</p>
-          <h3 class="text-white text-2xl font-light">Envie a Sua Candidatura</h3>
-          <p class="text-gray-400 text-sm mt-3 font-light">Para a vaga aberta ou candidatura espontânea — analisamos todas.</p>
-        </div>
-
-        <form
-          id="candidatura-form"
-          class="flex flex-col gap-4"
-        >
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome Completo</label>
-              <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
-            </div>
-            <div>
-              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
-              <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
-            </div>
-          </div>
-
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Email</label>
-            <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Função Pretendida</label>
-              <select name="funcao" class="form-input" required>
-                <option value="" style="background:#1a1a1a">Escolher</option>
-                <option value="Cozinheiro/a" style="background:#1a1a1a">Cozinheiro/a (vaga aberta)</option>
-                <option value="Ajudante de Cozinha" style="background:#1a1a1a">Ajudante de Cozinha</option>
-                <option value="Empregado/a de Mesa" style="background:#1a1a1a">Empregado/a de Mesa</option>
-                <option value="Outra / Espontânea" style="background:#1a1a1a">Outra / Candidatura Espontânea</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Anos de Experiência</label>
-              <select name="experiencia" class="form-input" required>
-                <option value="" style="background:#1a1a1a">Escolher</option>
-                <option value="Menos de 1 ano" style="background:#1a1a1a">Menos de 1 ano</option>
-                <option value="1 a 3 anos" style="background:#1a1a1a">1 a 3 anos</option>
-                <option value="3 a 5 anos" style="background:#1a1a1a">3 a 5 anos</option>
-                <option value="Mais de 5 anos" style="background:#1a1a1a">Mais de 5 anos</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Apresentação / Motivação</label>
-            <textarea name="mensagem" placeholder="Conte-nos um pouco sobre si, a sua experiência e por que gostaria de trabalhar connosco..." class="form-input h-32 resize-none" required></textarea>
-          </div>
-
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Disponibilidade</label>
-            <select name="disponibilidade" class="form-input">
-              <option value="" style="background:#1a1a1a">Escolher</option>
-              <option value="Imediata" style="background:#1a1a1a">Imediata</option>
-              <option value="2 semanas" style="background:#1a1a1a">2 semanas</option>
-              <option value="1 mês" style="background:#1a1a1a">1 mês</option>
-              <option value="A combinar" style="background:#1a1a1a">A combinar</option>
-            </select>
-          </div>
-
-          <p class="text-gray-400 text-xs font-light" style="font-family: Playfair Display, serif;">
-            Pode também enviar o seu CV para <span class="text-gold">churrasqueirazedosfrangos@gmail.com</span> com o assunto "Candidatura".
-          </p>
-
-          <div class="text-center mt-2">
-            <button type="submit" class="btn-gold">Enviar Candidatura</button>
-          </div>
-        </form>
-
-        <script>
-          document.getElementById('candidatura-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const f = this;
-            const nome           = f.querySelector('[name="nome"]').value;
-            const telefone       = f.querySelector('[name="telefone"]').value;
-            const email          = f.querySelector('[name="email"]').value;
-            const funcao         = f.querySelector('[name="funcao"]').value;
-            const experiencia    = f.querySelector('[name="experiencia"]').value;
-            const mensagem       = f.querySelector('[name="mensagem"]').value;
-            const disponibilidade = f.querySelector('[name="disponibilidade"]').value;
-
-            const subject = encodeURIComponent(`Candidatura — ${funcao} | ${nome}`);
-            const body = encodeURIComponent(
-              `Nova candidatura recebida pelo site:\n\n` +
-              `Nome: ${nome}\n` +
-              `Telefone: ${telefone}\n` +
-              `Email do candidato: ${email}\n` +
-              `Função pretendida: ${funcao}\n` +
-              `Experiência: ${experiencia}\n` +
-              `Disponibilidade: ${disponibilidade}\n\n` +
-              `Apresentação:\n${mensagem}`
-            );
-
-            window.location.href = `mailto:pedrommfelix@gmail.com?subject=${subject}&body=${body}`;
-          });
-        </script>
-      </div>
-    </div>
-  </section>
+  <script>
+    // ── Vinho do Mês ─────────────────────────────────────
+    (function() {
+      var d = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+      if (!d.nome) return;
+      var box = document.getElementById('vinho-mes-box');
+      document.getElementById('vinho-nome').textContent = d.nome;
+      document.getElementById('vinho-desc').textContent = d.desc || '';
+      document.getElementById('vinho-preco').textContent = d.preco ? d.preco + ' €' : '';
+      if (d.foto) {
+        var img = document.getElementById('vinho-img');
+        img.src = d.foto;
+        var mobile = document.getElementById('vinho-img-mobile');
+        mobile.style.backgroundImage = 'url(' + d.foto + ')';
+        mobile.style.backgroundSize = 'cover';
+        mobile.style.backgroundPosition = 'center';
+      } else {
+        document.getElementById('vinho-img-wrap').style.display = 'none';
+      }
+      box.style.display = '';
+    })();
+  </script>
 
   <script>
     // ── Sugestão do Mês ─────────────────────────────────
@@ -812,23 +743,40 @@ const menuData = {
     // ── Prato do Dia ────────────────────────────────────
     (function() {
       const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
-      if (!data.pratos || data.pratos.length === 0) return;
-      const box = document.getElementById('prato-dia-box');
-      const lista = document.getElementById('prato-dia-lista');
-      const nota = document.getElementById('prato-dia-nota');
-      if (!box || !lista) return;
-      data.pratos.forEach(function(p) {
-        if (!p.nome) return;
-        const el = document.createElement('div');
-        el.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:8px 0;border-bottom:1px solid rgba(201,168,76,0.15);';
-        el.innerHTML = '<span style="color:white;font-weight:300;font-size:0.9rem;">' + p.nome + '</span>' +
-          (p.preco ? '<span style="color:#c9a84c;font-size:0.85rem;white-space:nowrap;font-family:Montserrat,sans-serif;">' + p.preco + ' €</span>' : '');
-        lista.appendChild(el);
+      const dias = data.dias || {};
+      const DIAS = [
+        { key: 'terca',  label: 'Terça-Feira'  },
+        { key: 'quarta', label: 'Quarta-Feira' },
+        { key: 'quinta', label: 'Quinta-Feira' },
+        { key: 'sexta',  label: 'Sexta-Feira'  },
+      ];
+      const temConteudo = DIAS.some(function(d) {
+        return dias[d.key] && dias[d.key].some(function(p) { return p; });
       });
-      if (data.nota) {
-        nota.textContent = data.nota;
-        nota.style.display = '';
-      }
+      if (!temConteudo) return;
+
+      const box = document.getElementById('prato-dia-box');
+      const diasEl = document.getElementById('prato-dia-dias');
+      const periodoEl = document.getElementById('prato-dia-periodo');
+      if (!box || !diasEl) return;
+
+      if (data.periodo) periodoEl.textContent = data.periodo;
+
+      DIAS.forEach(function(d, i) {
+        const pratos = (dias[d.key] || []).filter(function(p) { return p; });
+        const ativo = data.ativos ? data.ativos[d.key] !== false : true;
+        if (!pratos.length || !ativo) return;
+        const el = document.createElement('div');
+        el.style.cssText = 'padding:14px 0;' + (i > 0 ? 'border-top:1px solid rgba(255,255,255,0.06);' : '');
+        const pratosHtml = pratos.map(function(p) {
+          return '<li style="color:#d1d5db;font-weight:300;font-size:0.85rem;margin-bottom:2px;">' + p + '</li>';
+        }).join('');
+        el.innerHTML =
+          '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#c9a84c;margin-bottom:8px;font-family:Playfair Display,serif;">' + d.label + '</div>' +
+          '<ul style="list-style:none;padding:0;margin:0;">' + pratosHtml + '</ul>';
+        diasEl.appendChild(el);
+      });
+
       box.style.display = '';
     })();
   </script>
@@ -909,7 +857,7 @@ const menuData = {
           <a href="#sobre" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Sobre</a>
           <a href="#ementa" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Ementa</a>
           <a href="#reservas" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Reservas</a>
-          <a href="#recrutamento" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Trabalhe Connosco</a>
+          <a href="/ajuda" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Apoio</a>
         </div>
         <p class="text-gray-700 text-xs tracking-wide" style="font-family: Playfair Display, serif;">
           © 2025 Churrasqueira Zé dos Frangos. Todos os direitos reservados.

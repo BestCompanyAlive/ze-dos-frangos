@@ -213,26 +213,39 @@ import Layout from '../layouts/Layout.astro';
             <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid sm:grid-cols-2 gap-4">
             <div>
               <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Função Pretendida</label>
-              <select name="funcao" class="form-input" required>
-                <option value="" style="background:#1a1a1a">Escolher</option>
-                <option value="Cozinheiro/a" style="background:#1a1a1a">Cozinheiro/a</option>
-                <option value="Ajudante de Cozinha" style="background:#1a1a1a">Ajudante de Cozinha</option>
-                <option value="Empregado/a de Mesa" style="background:#1a1a1a">Empregado/a de Mesa</option>
-                <option value="Outra / Espontânea" style="background:#1a1a1a">Outra / Candidatura Espontânea</option>
-              </select>
+              <input type="hidden" name="funcao" id="funcao-val" />
+              <div class="custom-select" data-target="funcao-val" style="position:relative;">
+                <div class="custom-select-btn form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                  <span class="custom-select-label" style="color:#6b7280;">Escolher</span>
+                  <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+                </div>
+                <div class="custom-select-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;max-height:220px;overflow-y:auto;">
+                  <div class="cso" data-value="Cozinheiro/a">Cozinheiro/a</div>
+                  <div class="cso" data-value="Ajudante de Cozinha">Ajudante de Cozinha</div>
+                  <div class="cso" data-value="Ajudante de Churrasqueira">Ajudante de Churrasqueira</div>
+                  <div class="cso" data-value="Empregado/a de Mesa">Empregado/a de Mesa</div>
+                  <div class="cso" data-value="Outra / Candidatura Espontânea">Outra / Candidatura Espontânea</div>
+                </div>
+              </div>
             </div>
             <div>
               <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Anos de Experiência</label>
-              <select name="experiencia" class="form-input" required>
-                <option value="" style="background:#1a1a1a">Escolher</option>
-                <option value="Menos de 1 ano" style="background:#1a1a1a">Menos de 1 ano</option>
-                <option value="1 a 3 anos" style="background:#1a1a1a">1 a 3 anos</option>
-                <option value="3 a 5 anos" style="background:#1a1a1a">3 a 5 anos</option>
-                <option value="Mais de 5 anos" style="background:#1a1a1a">Mais de 5 anos</option>
-              </select>
+              <input type="hidden" name="experiencia" id="experiencia-val" />
+              <div class="custom-select" data-target="experiencia-val" style="position:relative;">
+                <div class="custom-select-btn form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                  <span class="custom-select-label" style="color:#6b7280;">Escolher</span>
+                  <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+                </div>
+                <div class="custom-select-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;">
+                  <div class="cso" data-value="Menos de 1 ano">Menos de 1 ano</div>
+                  <div class="cso" data-value="1 a 3 anos">1 a 3 anos</div>
+                  <div class="cso" data-value="3 a 5 anos">3 a 5 anos</div>
+                  <div class="cso" data-value="Mais de 5 anos">Mais de 5 anos</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -243,13 +256,19 @@ import Layout from '../layouts/Layout.astro';
 
           <div>
             <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Disponibilidade</label>
-            <select name="disponibilidade" class="form-input">
-              <option value="" style="background:#1a1a1a">Escolher</option>
-              <option value="Imediata" style="background:#1a1a1a">Imediata</option>
-              <option value="2 semanas" style="background:#1a1a1a">2 semanas</option>
-              <option value="1 mês" style="background:#1a1a1a">1 mês</option>
-              <option value="A combinar" style="background:#1a1a1a">A combinar</option>
-            </select>
+            <input type="hidden" name="disponibilidade" id="disponibilidade-val" />
+            <div class="custom-select" data-target="disponibilidade-val" style="position:relative;">
+              <div class="custom-select-btn form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                <span class="custom-select-label" style="color:#6b7280;">Escolher</span>
+                <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+              </div>
+              <div class="custom-select-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;">
+                <div class="cso" data-value="Imediata">Imediata</div>
+                <div class="cso" data-value="2 semanas">2 semanas</div>
+                <div class="cso" data-value="1 mês">1 mês</div>
+                <div class="cso" data-value="A combinar">A combinar</div>
+              </div>
+            </div>
           </div>
 
           <p class="text-gray-400 text-xs font-light" style="font-family: Playfair Display, serif;">
@@ -299,6 +318,49 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
   </section>
+
+  <script>
+    // ── Custom selects ────────────────────────────────────
+    document.querySelectorAll('.custom-select').forEach(function(cs) {
+      var btn  = cs.querySelector('.custom-select-btn');
+      var list = cs.querySelector('.custom-select-list');
+      var label = cs.querySelector('.custom-select-label');
+      var target = document.getElementById(cs.dataset.target);
+
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = list.style.display !== 'none';
+        // fechar todos
+        document.querySelectorAll('.custom-select-list').forEach(function(l) { l.style.display = 'none'; });
+        if (!open) list.style.display = '';
+      });
+
+      list.querySelectorAll('.cso').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          target.value = opt.dataset.value;
+          label.textContent = opt.dataset.value;
+          label.style.color = '#e5e3de';
+          list.style.display = 'none';
+        });
+      });
+    });
+
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.custom-select-list').forEach(function(l) { l.style.display = 'none'; });
+    });
+  </script>
+
+  <style>
+    .cso {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #d1cfc9;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .cso:last-child { border-bottom: none; }
+    .cso:hover { background: rgba(201,168,76,0.12); color: #c9a84c; }
+  </style>
 
   <!-- FOOTER SIMPLES -->
   <footer class="py-10 px-6 text-center" style="background:#080808;border-top:1px solid #1a1a1a;">

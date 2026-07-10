@@ -89,4 +89,55 @@ const {
     background: rgba(13, 13, 13, 0.97) !important;
     box-shadow: 0 1px 30px rgba(0,0,0,0.5);
   }
+
+  /* ── Mobile responsivo ── */
+  .prato-precos-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @media (max-width: 480px) {
+    .prato-precos-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Botões de reserva em coluna */
+    #reservas .flex.flex-col.sm\:flex-row {
+      flex-direction: column !important;
+    }
+
+    /* Notas prato do dia em coluna */
+    #prato-dia-box .flex.flex-wrap {
+      flex-direction: column;
+    }
+
+    /* Tabs ementa: scroll horizontal */
+    #ementa .flex.justify-center.gap-2 {
+      justify-content: flex-start;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+    #ementa .flex.justify-center.gap-2::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Estatísticas hero: 2 colunas em vez de 3 */
+    .hero-stats {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    /* Padding reduzido nas secções */
+    section.py-28 {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+
+    /* Títulos grandes */
+    h2.text-4xl {
+      font-size: 2rem;
+    }
+  }
 </style>
