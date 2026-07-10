@@ -209,7 +209,7 @@ const menuData = {
       <div style="flex:1; background:#0d0d0d; display:flex; align-items:center; padding: 4rem 3rem; position:relative;">
         <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #c9a84c, rgba(201,168,76,0.1));"></div>
         <div style="max-width:480px;">
-          <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Sugestão do Mês</p>
+          <p id="sugestao-label" class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Sugestão do Mês</p>
           <h2 id="sugestao-nome" class="text-4xl md:text-5xl font-light text-white leading-tight mb-4"></h2>
           <div style="width:40px; height:1px; background:#c9a84c; margin-bottom:1.5rem;"></div>
           <p id="sugestao-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
@@ -231,7 +231,7 @@ const menuData = {
       <div style="flex:1; background:#0a0a0a; display:flex; align-items:center; padding: 4rem 3rem; position:relative;">
         <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #c9a84c, rgba(201,168,76,0.1));"></div>
         <div style="max-width:480px; position:relative; z-index:1;">
-          <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Vinho do Mês</p>
+          <p id="vinho-label" class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Vinho do Mês</p>
           <h2 id="vinho-nome" class="text-4xl md:text-5xl font-light text-white leading-tight mb-4"></h2>
           <div style="width:40px; height:1px; background:#c9a84c; margin-bottom:1.5rem;"></div>
           <p id="vinho-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
@@ -343,8 +343,26 @@ const menuData = {
                 '<h3 style="font-family:Playfair Display,serif;font-size:1.1rem;color:#fff;font-weight:400;">' + g.nome + '</h3>' +
                 (g.preco ? '<span style="font-family:Playfair Display,serif;color:#c9a84c;font-size:1rem;">' + g.preco + ' €<span style="font-size:0.7rem;color:#888;margin-left:4px;">/ pessoa</span></span>' : '') +
               '</div>' +
-              (g.desc ? '<p style="color:#9ca3af;font-size:0.82rem;line-height:1.7;white-space:pre-line;">' + g.desc + '</p>' : '') +
-              (g.minPessoas ? '<p style="margin-top:10px;font-size:0.75rem;color:#666;text-transform:uppercase;letter-spacing:.1em;">Mínimo ' + g.minPessoas + ' pessoas</p>' : '');
+              (g.desc ? '<p style="color:#9ca3af;font-size:0.82rem;line-height:1.7;margin-bottom:16px;">' + g.desc + '</p>' : '') +
+              (function() {
+                var sections = [
+                  { label: 'Entradas', val: g.entradas },
+                  { label: 'Pratos', val: g.pratos },
+                  { label: 'Bebidas', val: g.bebidas },
+                  { label: 'Sobremesas', val: g.sobremesas },
+                ];
+                var hasSections = sections.some(function(s) { return s.val; });
+                if (!hasSections) return '';
+                return '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">' +
+                  sections.filter(function(s){ return s.val; }).map(function(s) {
+                    return '<div style="background:rgba(255,255,255,0.03);border:1px solid #2a2a2a;border-radius:4px;padding:10px 14px;">' +
+                      '<p style="font-size:0.62rem;color:#c9a84c;text-transform:uppercase;letter-spacing:.15em;margin-bottom:4px;">' + s.label + '</p>' +
+                      '<p style="font-size:0.8rem;color:#9ca3af;line-height:1.6;white-space:pre-line;">' + s.val + '</p>' +
+                    '</div>';
+                  }).join('') +
+                '</div>';
+              })() +
+              (g.minPessoas ? '<p style="margin-top:14px;font-size:0.82rem;color:#e8e0d0;letter-spacing:.05em;">Mínimo de <strong style="color:#fff;">' + g.minPessoas + ' pessoas</strong></p>' : '');
             lista.appendChild(el);
           });
         })();
@@ -699,6 +717,7 @@ const menuData = {
       var d = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
       if (!d.nome) return;
       var box = document.getElementById('vinho-mes-box');
+      document.getElementById('vinho-label').textContent = d.mes ? 'Vinho de ' + d.mes : 'Vinho do Mês';
       document.getElementById('vinho-nome').textContent = d.nome;
       document.getElementById('vinho-desc').textContent = d.desc || '';
       document.getElementById('vinho-preco').textContent = d.preco ? d.preco + ' €' : '';
@@ -722,6 +741,7 @@ const menuData = {
       var d = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
       if (!d.nome) return;
       var box = document.getElementById('sugestao-mes-box');
+      document.getElementById('sugestao-label').textContent = d.mes ? 'Sugestão de ' + d.mes : 'Sugestão do Mês';
       document.getElementById('sugestao-nome').textContent = d.nome;
       document.getElementById('sugestao-desc').textContent = d.desc || '';
       document.getElementById('sugestao-preco').textContent = d.preco ? d.preco + ' €' : '';

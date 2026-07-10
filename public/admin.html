@@ -543,6 +543,64 @@ textarea { resize: vertical; min-height: 90px; }
 .res-stat.highlight { border-color: var(--gold); background: var(--gold-dim); }
 .res-stat.highlight .val { color: #a07830; }
 
+/* ── Modal cancelamento ── */
+#cancel-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+#cancel-modal-overlay.open {
+  display: flex;
+}
+#cancel-modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 28px 24px 20px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  text-align: center;
+}
+#cancel-modal h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+#cancel-modal p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+#cancel-modal .modal-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#cancel-modal .modal-btns button {
+  padding: 9px 22px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+.modal-btn-confirm {
+  background: #c0392b;
+  color: #fff;
+}
+.modal-btn-cancel {
+  background: #f1f1f1;
+  color: #333;
+}
+
 /* ── Responsive mobile ── */
 @media (max-width: 768px) {
   aside {
@@ -628,8 +686,9 @@ textarea { resize: vertical; min-height: 90px; }
   </div>
 
   <div class="sidebar-section-label">Restaurante</div>
-  <div class="nav-item" onclick="showPanel('reservas', this)">
+  <div class="nav-item" onclick="showPanel('reservas', this)" id="nav-reservas">
     <span class="icon">◈</span> Reservas
+    <span id="reservas-badge" style="display:none;margin-left:auto;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;line-height:1.6;"></span>
   </div>
 
   <div class="nav-item" onclick="showPanel('vagas', this)">
@@ -788,6 +847,12 @@ textarea { resize: vertical; min-height: 90px; }
           <span id="sugestao-foto-nome" style="margin-left:10px;font-size:12px;color:#666;"></span>
         </div>
 
+        <!-- mes -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Mês</label>
+          <input id="sugestao-admin-mes" type="text" placeholder="ex: Julho" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+        </div>
+
         <!-- nome -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Nome do Prato</label>
@@ -833,6 +898,12 @@ textarea { resize: vertical; min-height: 90px; }
             📷 Escolher foto
           </button>
           <span id="vinho-foto-nome" style="margin-left:10px;font-size:12px;color:#666;"></span>
+        </div>
+
+        <!-- mes -->
+        <div>
+          <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Mês</label>
+          <input id="vinho-admin-mes" type="text" placeholder="ex: Julho" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
         </div>
 
         <!-- nome -->
@@ -1524,6 +1595,10 @@ function saveEmenta() {
       desc: card.querySelector('.g-desc').value.trim(),
       preco: card.querySelector('.g-preco').value.trim(),
       minPessoas: card.querySelector('.g-min').value.trim(),
+      entradas: card.querySelector('.g-entradas').value.trim(),
+      pratos: card.querySelector('.g-pratos').value.trim(),
+      bebidas: card.querySelector('.g-bebidas').value.trim(),
+      sobremesas: card.querySelector('.g-sobremesas').value.trim(),
     });
   });
   localStorage.setItem('menuGrupos', JSON.stringify(grupos.filter(function(g) { return g.nome; })));
@@ -1546,7 +1621,13 @@ function addGrupoCard(g) {
       '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Mínimo de pessoas</label><input class="g-min" type="number" min="1" value="' + (g.minPessoas||'') + '" placeholder="10" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;" /></div>' +
       '<div style="padding-top:20px;"><button onclick="this.closest(\'.grupo-card\').remove()" style="background:none;border:none;color:#c0392b;font-size:18px;cursor:pointer;line-height:1;">✕</button></div>' +
     '</div>' +
-    '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Descrição / O que inclui</label><textarea class="g-desc" rows="3" placeholder="Ex: Frango de churrasco · Cabrito assado · Entradas · Sobremesa · Bebida incluída" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.desc||'') + '</textarea></div>';
+    '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Descrição geral (opcional)</label><textarea class="g-desc" rows="2" placeholder="Ex: Menu fechado para grupos — ideal para eventos e celebrações" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.desc||'') + '</textarea></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🥗 Entradas</label><textarea class="g-entradas" rows="2" placeholder="Ex: Pataniscas, presunto, azeitonas" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.entradas||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🍗 Pratos</label><textarea class="g-pratos" rows="2" placeholder="Ex: Frango de churrasco, cabrito assado" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.pratos||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🥤 Bebidas</label><textarea class="g-bebidas" rows="2" placeholder="Ex: Vinho da casa, água, refrigerantes" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.bebidas||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🍮 Sobremesas</label><textarea class="g-sobremesas" rows="2" placeholder="Ex: Arroz doce, bolo do dia" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.sobremesas||'') + '</textarea></div>' +
+    '</div>';
   document.getElementById('grupos-admin-list').appendChild(card);
 }
 
@@ -1649,12 +1730,14 @@ function renderReservations() {
     const isToday = r.date === today;
     const actions = r.status === 'pendente'
       ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'confirmada')">Confirmar</button>
-         <button class="action-btn cancel" onclick="setStatus(${r.id},'cancelada')" style="margin-left:4px;">Cancelar</button>`
+         <button class="action-btn cancel" onclick="setStatus(${r.id},'cancelada')" style="margin-left:4px;">Rejeitar</button>`
       : r.status === 'confirmada'
       ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'concluida')" style="background:var(--green);color:#fff;border:none;">Concluída</button>
-         <button class="action-btn cancel" onclick="setStatus(${r.id},'noshow')" style="margin-left:4px;">Não apareceu</button>`
+         <button class="action-btn cancel" onclick="confirmarCancelamento(${r.id})" style="margin-left:4px;">Cancelar</button>`
       : r.status === 'concluida'
-      ? `<button class="action-btn" onclick="pedirAvaliacao(${r.id})" style="background:#25D366;color:#fff;border:none;padding:5px 10px;cursor:pointer;font-size:12px;border-radius:3px;">⭐ Pedir Avaliação</button>`
+      ? (r.avaliacaoPedida
+          ? `<span style="color:var(--muted);font-size:12px;">✓ Avaliação pedida</span>`
+          : `<button class="action-btn" onclick="pedirAvaliacao(${r.id})" style="background:#25D366;color:#fff;border:none;padding:5px 10px;cursor:pointer;font-size:12px;border-radius:3px;">⭐ Pedir Avaliação</button>`)
       : `<span style="color:var(--muted);font-size:12px;">—</span>`;
 
     return `<tr data-status="${r.status}">
@@ -1669,6 +1752,32 @@ function renderReservations() {
   }).join('');
 
   updateResStats();
+  updateReservasBadge();
+}
+
+function updateReservasBadge() {
+  const count = reservations.filter(r => r.status === 'pendente').length;
+  const badge = document.getElementById('reservas-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = '';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function confirmarCancelamento(id) {
+  const overlay = document.getElementById('cancel-modal-overlay');
+  const btnConfirm = document.getElementById('cancel-modal-btn-confirm');
+  overlay.classList.add('open');
+  // Replace any previous listener
+  const newBtn = btnConfirm.cloneNode(true);
+  btnConfirm.parentNode.replaceChild(newBtn, btnConfirm);
+  newBtn.addEventListener('click', function() {
+    overlay.classList.remove('open');
+    setStatus(id, 'cancelada');
+  });
 }
 
 function setStatus(id, newStatus) {
@@ -1678,34 +1787,55 @@ function setStatus(id, newStatus) {
   saveReservations();
   renderReservations();
 
-  if (newStatus === 'confirmada' && r.email) {
-    const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
-    const formspreeId = cfg.formspree || '';
-    if (!formspreeId) { showToast('Estado atualizado (sem Formspree configurado — email não enviado)'); return; }
-    const firstName = (r.name || '').split(' ')[0];
+  const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+  const formspreeId = cfg.formspree || '';
+  const firstName = (r.name || '').split(' ')[0];
+
+  if ((newStatus === 'confirmada' || newStatus === 'cancelada') && r.email && formspreeId) {
+    const isConfirm = newStatus === 'confirmada';
+    const isCancel = newStatus === 'cancelada';
+    let emailSubject, emailMsg;
+    if (isConfirm) {
+      emailSubject = 'Reserva Confirmada — Churrasqueira Zé dos Frangos';
+      emailMsg = 'Olá ' + firstName + ',\n\n' +
+        'A sua reserva na Churrasqueira Zé dos Frangos foi confirmada!\n\n' +
+        'Data: ' + r.date + '\n' +
+        'Hora: ' + r.time + '\n' +
+        'Pessoas: ' + r.guests + '\n\n' +
+        'Se precisar de alterar ou cancelar, contacte-nos:\n' +
+        'Telefone / WhatsApp: ' + (cfg.whatsapp || '913 977 751') + '\n\n' +
+        'Até breve!\nChurrasqueira Zé dos Frangos';
+    } else {
+      emailSubject = 'Reserva Cancelada — Churrasqueira Zé dos Frangos';
+      emailMsg = 'Olá ' + firstName + ',\n\n' +
+        'Informamos que a sua reserva na Churrasqueira Zé dos Frangos foi cancelada.\n\n' +
+        'Data: ' + r.date + '\n' +
+        'Hora: ' + r.time + '\n' +
+        'Pessoas: ' + r.guests + '\n\n' +
+        'Para mais informações ou para fazer uma nova reserva, contacte-nos:\n' +
+        'Telefone / WhatsApp: ' + (cfg.whatsapp || '913 977 751') + '\n\n' +
+        'Pedimos desculpa pelo incómodo.\nChurrasqueira Zé dos Frangos';
+    }
     fetch('https://formspree.io/f/' + formspreeId, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         _replyto: r.email,
         email: r.email,
-        _subject: 'Reserva Confirmada — Churrasqueira Zé dos Frangos',
-        mensagem:
-          'Olá ' + firstName + ',\n\n' +
-          'A sua reserva na Churrasqueira Zé dos Frangos foi confirmada!\n\n' +
-          'Data: ' + r.date + '\n' +
-          'Hora: ' + r.time + '\n' +
-          'Pessoas: ' + r.guests + '\n\n' +
-          'Se precisar de alterar ou cancelar, contacte-nos:\n' +
-          'Telefone / WhatsApp: ' + (cfg.whatsapp || '') + '\n\n' +
-          'Até breve!\nChurrasqueira Zé dos Frangos'
+        _subject: emailSubject,
+        mensagem: emailMsg
       })
     })
     .then(res => {
-      if (res.ok) showToast('Estado atualizado · Email de confirmação enviado');
+      if (res.ok) showToast('Estado atualizado · Email ' + (isConfirm ? 'de confirmação' : 'de cancelamento') + ' enviado');
       else showToast('Estado atualizado · Falha no envio do email');
     })
     .catch(() => showToast('Estado atualizado · Sem ligação para enviar email'));
+    return;
+  }
+
+  if ((newStatus === 'confirmada' || newStatus === 'cancelada') && r.email && !formspreeId) {
+    showToast('Estado atualizado (sem Formspree configurado — email não enviado)');
     return;
   }
 
@@ -1724,8 +1854,11 @@ function pedirAvaliacao(id) {
   const phone = (r.phone || '').replace(/\D/g, '');
   if (!phone) { alert('Este cliente não tem número de telefone registado.'); return; }
   const firstName = (r.name || '').split(' ')[0];
-  const msg = `Olá ${firstName}! 😊\n\nEsperamos que tenha gostado da sua visita à Churrasqueira Zé dos Frangos!\n\nA sua opinião é muito importante para nós. Se tiver um momento, agradecíamos muito uma avaliação no Google — demora apenas 1 minuto:\n\n👉 ${reviewLink}\n\nMuito obrigado e até à próxima! 🙏`;
+  const msg = `Olá ${firstName}!\n\nEsperamos que tenha gostado da sua visita à Churrasqueira Zé dos Frangos!\n\nA sua opinião é muito importante para nós. Se tiver um momento, agradecíamos muito uma avaliação no Google — demora apenas 1 minuto:\n\n${reviewLink}\n\nMuito obrigado e até à próxima!`;
   window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+  r.avaliacaoPedida = true;
+  saveReservations();
+  renderReservations();
 }
 
 function filterRes(filter, el) {
@@ -1752,6 +1885,7 @@ function switchResTab(tab, el) {
 
 // Init reservations on load
 renderReservations();
+updateReservasBadge();
 
 // ── Carregar dados guardados no painel Geral ──────────
 (function() {
@@ -1983,12 +2117,14 @@ function saveVinhoMes() {
     setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
     return;
   }
+  var mes = document.getElementById('vinho-admin-mes').value.trim();
   var nome = document.getElementById('vinho-admin-nome').value.trim();
   var desc = document.getElementById('vinho-admin-desc').value.trim();
   var preco = document.getElementById('vinho-admin-preco').value.trim();
   if (!nome) { alert('Insere o nome do vinho.'); return; }
   var existing = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
   var data = {
+    mes: mes,
     nome: nome,
     desc: desc,
     preco: preco,
@@ -2002,6 +2138,7 @@ function saveVinhoMes() {
 
 function clearVinhoMes() {
   _vinhoMarkedForRemoval = true;
+  document.getElementById('vinho-admin-mes').value = '';
   document.getElementById('vinho-admin-nome').value = '';
   document.getElementById('vinho-admin-desc').value = '';
   document.getElementById('vinho-admin-preco').value = '';
@@ -2014,6 +2151,7 @@ function clearVinhoMes() {
 // Pré-carregar dados existentes do vinho
 (function() {
   var data = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+  if (data.mes) document.getElementById('vinho-admin-mes').value = data.mes;
   if (data.nome) document.getElementById('vinho-admin-nome').value = data.nome;
   if (data.desc) document.getElementById('vinho-admin-desc').value = data.desc;
   if (data.preco) document.getElementById('vinho-admin-preco').value = data.preco;
@@ -2056,12 +2194,14 @@ function saveSugestaoMes() {
     setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
     return;
   }
+  var mes = document.getElementById('sugestao-admin-mes').value.trim();
   var nome = document.getElementById('sugestao-admin-nome').value.trim();
   var desc = document.getElementById('sugestao-admin-desc').value.trim();
   var preco = document.getElementById('sugestao-admin-preco').value.trim();
   if (!nome) { alert('Insere o nome do prato.'); return; }
   var existing = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
   var data = {
+    mes: mes,
     nome: nome,
     desc: desc,
     preco: preco,
@@ -2075,6 +2215,7 @@ function saveSugestaoMes() {
 
 function clearSugestaoMes() {
   _sugestaoMarkedForRemoval = true;
+  document.getElementById('sugestao-admin-mes').value = '';
   document.getElementById('sugestao-admin-nome').value = '';
   document.getElementById('sugestao-admin-desc').value = '';
   document.getElementById('sugestao-admin-preco').value = '';
@@ -2087,6 +2228,7 @@ function clearSugestaoMes() {
 // Pré-carregar dados existentes da sugestão
 (function() {
   var data = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+  if (data.mes) document.getElementById('sugestao-admin-mes').value = data.mes;
   if (data.nome) document.getElementById('sugestao-admin-nome').value = data.nome;
   if (data.desc) document.getElementById('sugestao-admin-desc').value = data.desc;
   if (data.preco) document.getElementById('sugestao-admin-preco').value = data.preco;
@@ -2098,5 +2240,16 @@ function clearSugestaoMes() {
   }
 })();
 </script>
+<!-- Modal: confirmação de cancelamento -->
+<div id="cancel-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="cancel-modal">
+    <h3>Cancelar reserva?</h3>
+    <p>Esta ação envia um email de cancelamento ao cliente e não pode ser desfeita.</p>
+    <div class="modal-btns">
+      <button id="cancel-modal-btn-confirm" class="modal-btn-confirm">Sim, cancelar</button>
+      <button class="modal-btn-cancel" onclick="document.getElementById('cancel-modal-overlay').classList.remove('open')">Não, voltar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
