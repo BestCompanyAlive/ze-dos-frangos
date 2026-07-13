@@ -86,7 +86,7 @@ const menuData = {
         <a href="#sobre" class="nav-link">Sobre</a>
         <a href="#ementa" class="nav-link">Ementa</a>
         <a href="#contactos" class="nav-link" onclick="document.getElementById('contactos').scrollIntoView({behavior:'smooth'});return false;">Contactos</a>
-        <a href="#reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
+        <a href="/reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
         <a href="/ajuda" class="nav-link">Apoio</a>
       </div>
 
@@ -107,7 +107,7 @@ const menuData = {
       <a href="#sobre" class="nav-link">Sobre</a>
       <a href="#ementa" class="nav-link">Ementa</a>
       <a href="#contactos" class="nav-link">Contactos</a>
-      <a href="#reservas" class="nav-link text-gold">Reservar</a>
+      <a href="/reservas" class="nav-link text-gold">Reservar</a>
       <a href="/ajuda" class="nav-link">Apoio</a>
     </div>
   </nav>
@@ -138,7 +138,7 @@ const menuData = {
         O melhor frango grelhado no carvão de Vila Real. Uma tradição que se mantém fiel ao sabor autêntico de Trás-os-Montes.
       </p>
       <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="#reservas" class="btn-gold">Reservar Mesa</a>
+        <a href="/reservas" class="btn-gold">Reservar Mesa</a>
         <a href="#ementa" class="btn-gold" style="border-color: rgba(255,255,255,0.3); color: white;">Ver Ementa</a>
       </div>
     </div>
@@ -215,7 +215,7 @@ const menuData = {
           <p id="sugestao-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
           <div style="display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;">
             <span id="sugestao-preco" class="text-gold text-3xl font-light" style="font-family: Playfair Display, serif;"></span>
-            <a href="#reservas" class="btn-gold" style="font-size:0.7rem; padding:0.5rem 1.5rem;">Reservar Mesa</a>
+            <a href="/reservas" class="btn-gold" style="font-size:0.7rem; padding:0.5rem 1.5rem;">Reservar Mesa</a>
           </div>
         </div>
       </div>
@@ -237,7 +237,7 @@ const menuData = {
           <p id="vinho-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
           <div style="display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;">
             <span id="vinho-preco" class="text-gold text-3xl font-light" style="font-family: Playfair Display, serif;"></span>
-            <a href="#reservas" class="btn-gold" style="font-size:0.7rem; padding:0.5rem 1.5rem;">Reservar Mesa</a>
+            <a href="/reservas" class="btn-gold" style="font-size:0.7rem; padding:0.5rem 1.5rem;">Reservar Mesa</a>
           </div>
         </div>
         <!-- Img mobile como background -->
@@ -343,7 +343,7 @@ const menuData = {
                 '<h3 style="font-family:Playfair Display,serif;font-size:1.1rem;color:#fff;font-weight:400;">' + g.nome + '</h3>' +
                 (g.preco ? '<span style="font-family:Playfair Display,serif;color:#c9a84c;font-size:1rem;">' + g.preco + ' €<span style="font-size:0.7rem;color:#888;margin-left:4px;">/ pessoa</span></span>' : '') +
               '</div>' +
-              (g.desc ? '<p style="color:#9ca3af;font-size:0.82rem;line-height:1.7;margin-bottom:16px;">' + g.desc + '</p>' : '') +
+              (g.desc ? '<p style="color:#9ca3af;font-size:0.82rem;line-height:1.7;margin-bottom:16px;white-space:pre-line;">' + g.desc + '</p>' : '') +
               (function() {
                 var sections = [
                   { label: 'Entradas', val: g.entradas },
@@ -372,10 +372,67 @@ const menuData = {
         IVA incluído à taxa em vigor · Ementa sujeita a alterações sazonais
       </p>
     </div>
+
+    <!-- Mais Vendidos -->
+    <style>
+      .mv-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+      @media (max-width:640px) { .mv-grid { grid-template-columns:1fr; } }
+      @media (min-width:641px) and (max-width:900px) { .mv-grid { grid-template-columns:repeat(3,1fr); } }
+    </style>
+    <div id="mais-vendidos-section" style="display:none; max-width:1100px; margin:4rem auto 0; padding:0 1.5rem;">
+      <div style="text-align:center; margin-bottom:2.5rem;">
+        <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif; position:relative; z-index:1;">Os Nossos Favoritos</p>
+        <h2 class="text-3xl font-light text-white" style="font-family: Playfair Display, serif; position:relative; z-index:1;">Mais Pedidos</h2>
+        <div style="width:40px; height:1px; background:#c9a84c; margin:1rem auto 0; position:relative; z-index:1;"></div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:2.5rem; position:relative; z-index:1;">
+        <!-- Carne -->
+        <div>
+          <p class="text-gold text-xs tracking-[0.3em] uppercase mb-4" style="font-family: Playfair Display, serif; text-align:center;">Carne</p>
+          <div id="mv-carne-grid" class="mv-grid"></div>
+        </div>
+        <!-- Peixe -->
+        <div>
+          <p class="text-gold text-xs tracking-[0.3em] uppercase mb-4" style="font-family: Playfair Display, serif; text-align:center;">Peixe</p>
+          <div id="mv-peixe-grid" class="mv-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        var data = JSON.parse(localStorage.getItem('maisVendidos') || '{}');
+        var carne = data.carne || [];
+        var peixe = data.peixe || [];
+        if (!carne.length && !peixe.length) return;
+
+        function renderGrid(items, gridId) {
+          var grid = document.getElementById(gridId);
+          items.forEach(function(item) {
+            if (!item.nome) return;
+            var card = document.createElement('div');
+            card.style.cssText = 'background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;';
+            card.innerHTML =
+              (item.foto ? '<img src="' + item.foto + '" style="width:100%;height:160px;object-fit:cover;display:block;" />' :
+                '<div style="width:100%;height:160px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;"><span style="color:#444;font-size:2rem;">🍽</span></div>') +
+              '<div style="padding:1rem;">' +
+                '<p style="color:#e8e0d0;font-size:0.95rem;font-weight:300;margin-bottom:0.25rem;">' + item.nome + '</p>' +
+                (item.preco ? '<p style="color:#c9a84c;font-size:0.85rem;">' + item.preco + ' €</p>' : '') +
+              '</div>';
+            grid.appendChild(card);
+          });
+        }
+
+        renderGrid(carne, 'mv-carne-grid');
+        renderGrid(peixe, 'mv-peixe-grid');
+        document.getElementById('mais-vendidos-section').style.display = '';
+      })();
+    </script>
   </section>
 
-  <!-- RESERVAS -->
-  <section id="reservas" class="py-28 px-6" style="position: relative; background-image: url('/images/croquetes.jpg'); background-size: cover; background-position: center; background-attachment: scroll;">
+  <!-- RESERVAS — movido para /reservas -->
+  <section id="reservas" style="display:none;">
     <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
     <div class="max-w-2xl mx-auto relative" style="z-index: 1;">
       <div class="text-center reveal mb-14">
@@ -801,6 +858,212 @@ const menuData = {
     })();
   </script>
 
+  <!-- EVENTOS & CAMPANHAS -->
+  <style is:global>
+    #eventos-section { display:none; background:#0d0d0d; }
+
+    .ev-wrap {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      min-height:560px;
+    }
+    .ev-left {
+      padding:4rem 3rem 4rem 4rem;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      border-right:1px solid rgba(201,168,76,0.18);
+      position:relative;
+    }
+    .ev-right {
+      position:relative;
+      overflow:hidden;
+      min-height:320px;
+    }
+    .ev-right-img {
+      position:absolute;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      transition:transform 7s ease;
+    }
+    .ev-wrap:hover .ev-right-img { transform:scale(1.04); }
+    .ev-right-overlay {
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to right, rgba(13,13,13,0.35) 0%, rgba(13,13,13,0.05) 100%);
+    }
+    .ev-right-empty {
+      position:absolute;
+      inset:0;
+      background:repeating-linear-gradient(
+        135deg,
+        transparent,
+        transparent 40px,
+        rgba(201,168,76,0.03) 40px,
+        rgba(201,168,76,0.03) 41px
+      );
+    }
+
+    .ev-eyebrow {
+      font-size:0.62rem;
+      letter-spacing:0.35em;
+      text-transform:uppercase;
+      color:#c9a84c;
+      font-family:'Playfair Display',serif;
+      margin-bottom:2rem;
+    }
+
+    .ev-title-line1 {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.6rem,5vw,4rem);
+      font-weight:700;
+      color:#fff;
+      line-height:1.05;
+      display:block;
+    }
+    .ev-title-line2 {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.2rem,4.5vw,3.5rem);
+      font-weight:300;
+      font-style:italic;
+      color:#c9a84c;
+      line-height:1.1;
+      display:block;
+      margin-bottom:1.5rem;
+    }
+
+    .ev-desc {
+      font-size:0.9rem;
+      color:#9a9285;
+      line-height:1.85;
+      max-width:420px;
+      margin-bottom:2.5rem;
+    }
+
+    .ev-dates {
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      margin-bottom:2.5rem;
+    }
+    .ev-date-block { display:flex; align-items:baseline; gap:0.35rem; }
+    .ev-date-num {
+      font-size:clamp(2rem,4vw,2.8rem);
+      font-weight:700;
+      color:#fff;
+      font-family:'Playfair Display',serif;
+      line-height:1;
+    }
+    .ev-date-mon {
+      font-size:0.6rem;
+      letter-spacing:0.2em;
+      text-transform:uppercase;
+      color:#c9a84c;
+    }
+    .ev-date-arrow {
+      color:rgba(201,168,76,0.5);
+      font-size:0.85rem;
+      letter-spacing:0.1em;
+    }
+
+    .ev-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+    .ev-btn-primary {
+      display:inline-block;
+      background:#c9a84c;
+      color:#0d0d0d;
+      padding:0.85rem 2rem;
+      font-size:0.62rem;
+      letter-spacing:0.28em;
+      text-transform:uppercase;
+      text-decoration:none;
+      font-weight:700;
+      transition:background .2s;
+    }
+    .ev-btn-primary:hover { background:#e2c06a; }
+    .ev-btn-secondary {
+      display:inline-block;
+      border:1px solid rgba(201,168,76,0.4);
+      color:#c9a84c;
+      padding:0.85rem 2rem;
+      font-size:0.62rem;
+      letter-spacing:0.28em;
+      text-transform:uppercase;
+      text-decoration:none;
+      font-weight:600;
+      transition:border-color .2s,color .2s;
+    }
+    .ev-btn-secondary:hover { border-color:#c9a84c; color:#e2c06a; }
+
+    @media(max-width:768px) {
+      .ev-wrap { grid-template-columns:1fr; }
+      .ev-right { min-height:220px; order:-1; }
+      .ev-left { padding:2.5rem 1.5rem; border-right:none; border-top:1px solid rgba(201,168,76,0.18); }
+    }
+  </style>
+
+  <div id="eventos-section">
+    <div id="eventos-inner" class="ev-wrap"></div>
+  </div>
+
+  <script>
+    (function() {
+      var eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+      var ev = eventos.find(function(e) { return e.titulo; });
+      if (!ev) return;
+
+      var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      var parseDate = function(s) {
+        if (!s) return null;
+        var p = s.split('-');
+        return { dd: p[2], mm: meses[parseInt(p[1],10)-1], yyyy: p[0] };
+      };
+
+      var d1 = parseDate(ev.dataInicio);
+      var d2 = parseDate(ev.dataFim && ev.dataFim !== ev.dataInicio ? ev.dataFim : null);
+
+      var datesHtml = '';
+      if (d1) {
+        datesHtml += '<div class="ev-date-block"><span class="ev-date-num">' + d1.dd + '</span><span class="ev-date-mon">' + d1.mm + (d2 ? '' : ' ' + d1.yyyy) + '</span></div>';
+        if (d2) {
+          datesHtml += '<span class="ev-date-arrow">&#8594;</span>';
+          datesHtml += '<div class="ev-date-block"><span class="ev-date-num">' + d2.dd + '</span><span class="ev-date-mon">' + d2.mm + ' ' + d2.yyyy + '</span></div>';
+        }
+      }
+
+      var words = ev.titulo.trim().split(/\s+/);
+      var mid = Math.ceil(words.length / 2);
+      var line1 = words.slice(0, mid).join(' ');
+      var line2 = words.slice(mid).join(' ');
+
+      var inner = document.getElementById('eventos-inner');
+      inner.innerHTML =
+        '<div class="ev-left">' +
+          '<div>' +
+            '<p class="ev-eyebrow">Está-se a aproximar</p>' +
+            '<div style="margin-bottom:1rem;">' +
+              '<span class="ev-title-line1">' + line1 + '</span>' +
+              (line2 ? '<span class="ev-title-line2">' + line2 + '</span>' : '') +
+            '</div>' +
+            (ev.desc ? '<p class="ev-desc">' + ev.desc + '</p>' : '') +
+          '</div>' +
+          '<div>' +
+            (datesHtml ? '<div class="ev-dates">' + datesHtml + '</div>' : '') +
+            '<div class="ev-btns">' +
+              '<a class="ev-btn-primary" href="/reservas">Reservar Mesa</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ev-right">' +
+          (ev.foto
+            ? '<div class="ev-right-img" style="background-image:url(\'' + ev.foto + '\')"></div><div class="ev-right-overlay"></div>'
+            : '<div class="ev-right-empty"></div>') +
+        '</div>';
+
+      document.getElementById('eventos-section').style.display = 'block';
+    })();
+  </script>
+
   <!-- FOOTER / CONTACTOS -->
   <footer id="contactos" style="background: #0a0a0a; border-top: 1px solid #1a1a1a;">
 
@@ -839,8 +1102,8 @@ const menuData = {
             Jantar: 19h00 – 22h30
           </p>
           <p id="footer-horario-nota" class="text-gray-400 font-light text-xs leading-loose mt-2">
-            Domingo: só almoço (sem jantar)<br />
-            Segunda: encerrado
+            Domingo: só almoço<br />
+            Segunda: só jantar
           </p>
         </div>
         <div>
@@ -876,7 +1139,7 @@ const menuData = {
         <div class="flex justify-center gap-8 mb-4" style="font-family: Playfair Display, serif;">
           <a href="#sobre" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Sobre</a>
           <a href="#ementa" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Ementa</a>
-          <a href="#reservas" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Reservas</a>
+          <a href="/reservas" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Reservas</a>
           <a href="/ajuda" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Apoio</a>
         </div>
         <p class="text-gray-700 text-xs tracking-wide" style="font-family: Playfair Display, serif;">

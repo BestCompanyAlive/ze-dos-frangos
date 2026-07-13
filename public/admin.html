@@ -261,6 +261,45 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .btn-add:hover { border-color: var(--gold); color: var(--gold); }
 
+.mv-card {
+  border: 1px solid #e5e3de;
+  border-radius: 6px;
+  padding: 14px 16px;
+  background: #fafaf9;
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.mv-card img { width:90px;height:70px;object-fit:cover;border-radius:4px;border:1px solid #e5e3de;display:block; }
+.mv-card .mv-img-placeholder { width:90px;height:70px;border:1px dashed #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb;cursor:pointer;background:#f5f5f5;text-align:center;padding:4px; }
+.mv-card input { width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:6px; }
+.mv-card input:last-of-type { margin-bottom:0; }
+.mv-card .mv-remove { background:none;border:1px solid #ddd;color:#999;padding:4px 10px;border-radius:4px;font-size:12px;cursor:pointer;white-space:nowrap; }
+.mv-card .mv-remove:hover { border-color:#c0392b;color:#c0392b; }
+@media (max-width:600px) { .mv-card { grid-template-columns: 70px 1fr; } .mv-card .mv-remove { grid-column:1/-1; } }
+
+.evento-card {
+  border: 1px solid #e5e3de;
+  border-radius: 6px;
+  padding: 20px;
+  background: #fafaf9;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.evento-card .ev-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.evento-card label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .1em; display: block; margin-bottom: 5px; }
+.evento-card input, .evento-card textarea {
+  width: 100%; background: #fff; border: 1px solid #e5e3de; color: #1a1a1a;
+  padding: 9px 11px; border-radius: 4px; font-size: 13px; font-family: inherit;
+}
+.evento-card textarea { resize: vertical; }
+.evento-card .ev-preview { max-width: 100%; max-height: 160px; border-radius: 4px; object-fit: cover; border: 1px solid #e5e3de; }
+.evento-card .ev-remove { align-self: flex-end; background: none; border: 1px solid #ddd; color: #999; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.evento-card .ev-remove:hover { border-color: #c0392b; color: #c0392b; }
+@media (max-width: 600px) { .evento-card .ev-row { grid-template-columns: 1fr; } }
+
 /* HORÁRIOS */
 .hours-row {
   display: grid;
@@ -683,6 +722,12 @@ textarea { resize: vertical; min-height: 90px; }
   <div class="nav-item" onclick="showPanel('ementa', this)">
     <span class="icon">◉</span> Ementa
   </div>
+  <div class="nav-item" onclick="showPanel('eventos', this)">
+    <span class="icon">🎉</span> Eventos
+  </div>
+  <div class="nav-item" onclick="showPanel('maisVendidos', this)">
+    <span class="icon">⭐</span> Mais Vendidos
+  </div>
   </div>
 
   <div class="sidebar-section-label">Restaurante</div>
@@ -696,9 +741,6 @@ textarea { resize: vertical; min-height: 90px; }
   </div>
 
   <div class="sidebar-section-label">Comunicação</div>
-  <div class="nav-item" onclick="showPanel('comunicacoes', this)">
-    <span class="icon">✉</span> Comunicações
-  </div>
 
   <div class="sidebar-footer">
     <a class="btn-preview" href="/" target="_blank">
@@ -717,11 +759,7 @@ textarea { resize: vertical; min-height: 90px; }
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <div class="topbar-right">
-      <div class="save-status" id="save-status">
-        <span>●</span> Todas as alterações guardadas
-      </div>
-    </div>
+    <div class="topbar-right"></div>
   </div>
 
   <div class="content">
@@ -731,97 +769,69 @@ textarea { resize: vertical; min-height: 90px; }
       <div class="section-header">
         <div>
           <h2>Bem-vindo de volta</h2>
-          <p>Aqui pode gerir todo o conteúdo do seu site.</p>
+          <p>O que quer gerir hoje?</p>
         </div>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Secções Editáveis</div>
-          <div class="stat-value">8</div>
-          <div class="stat-sub">Textos, fotos, contactos…</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+      <div id="dash-reservas-alert" style="display:none;margin-bottom:24px;padding:14px 18px;background:rgba(229,62,62,0.07);border:1px solid rgba(229,62,62,0.25);border-radius:6px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:18px;">🔔</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#c0392b;" id="dash-reservas-alert-text"></div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">Vá às Reservas para confirmar ou rejeitar.</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Pratos na Ementa</div>
-          <div class="stat-value">14</div>
-          <div class="stat-sub">3 categorias</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:70%"></div></div>
+        <button onclick="showPanel('reservas', document.getElementById('nav-reservas'))" style="margin-left:auto;background:#c0392b;color:#fff;border:none;padding:7px 16px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;">Ver reservas</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
+        <div onclick="showPanel('geral', document.querySelectorAll('.nav-item')[1])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">✎</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Informações Gerais</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Nome, descrição, contactos</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Fotos na Galeria</div>
-          <div class="stat-value">5</div>
-          <div class="stat-sub">Fotos reais do restaurante</div>
-          <div class="stat-bar"><div class="stat-bar-fill" style="width:42%"></div></div>
+        <div onclick="showPanel('pratoDia', document.querySelectorAll('.nav-item')[2])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">★</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Prato do Dia</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Atualizar destaque diário</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Estado do Site</div>
-          <div class="stat-value" style="font-size:20px;margin-top:4px;">
-            <span class="badge badge-green">✓ Online</span>
-          </div>
-          <div class="stat-sub">gilded-biscotti.netlify.app</div>
+        <div onclick="showPanel('sugestaoMes', document.querySelectorAll('.nav-item')[3])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">✦</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Sugestão do Mês</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Prato e vinho em destaque</div>
+        </div>
+        <div onclick="showPanel('ementa', document.querySelectorAll('.nav-item')[5])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">◉</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Ementa</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Pratos, preços e menus</div>
+        </div>
+        <div onclick="showPanel('eventos', document.querySelectorAll('.nav-item')[6])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">🎉</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Eventos</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Campanhas e datas especiais</div>
+        </div>
+        <div onclick="showPanel('reservas', document.getElementById('nav-reservas'))" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">◈</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Reservas</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Gerir e confirmar reservas</div>
+        </div>
+        <div onclick="showPanel('vagas', document.querySelectorAll('.nav-item')[8])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+          <div style="font-size:22px;margin-bottom:10px;">◐</div>
+          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Vagas de Emprego</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">Publicar e gerir vagas</div>
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Atividade Recente</h3>
-              <div class="card-desc">Últimas alterações ao site</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <ul class="activity-list">
-              <li class="activity-item">
-                <div class="activity-dot green"></div>
-                <div>
-                  <div class="activity-text">Galeria atualizada com 5 fotos reais</div>
-                  <div class="activity-time">Hoje às 11:04</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-dot"></div>
-                <div>
-                  <div class="activity-text">Secção Take Away adicionada ao site</div>
-                  <div class="activity-time">Hoje às 10:52</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-dot"></div>
-                <div>
-                  <div class="activity-text">Site publicado no Netlify</div>
-                  <div class="activity-time">Hoje às 09:30</div>
-                </div>
-              </li>
-              <li class="activity-item">
-                <div class="activity-dot grey"></div>
-                <div>
-                  <div class="activity-text">Informações do restaurante preenchidas</div>
-                  <div class="activity-time">Ontem</div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Acesso Rápido</h3>
-              <div class="card-desc">O que quer editar?</div>
-            </div>
-          </div>
-          <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
-            <button class="btn-add" style="width:100%;justify-content:flex-start;" onclick="showPanel('ementa', document.querySelectorAll('.nav-item')[3])">
-              ◉ &nbsp;Adicionar prato à ementa
-            </button>
-            <button class="btn-add" style="width:100%;justify-content:flex-start;" onclick="showPanel('reservas', document.querySelectorAll('.nav-item')[4])">
-              ◈ &nbsp;Ver reservas
-            </button>
-          </div>
-        </div>
-      </div>
+      <script>
+        (function() {
+          var reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+          var pendentes = reservas.filter(function(r) { return r.status === 'pendente'; }).length;
+          if (pendentes > 0) {
+            var alert = document.getElementById('dash-reservas-alert');
+            document.getElementById('dash-reservas-alert-text').textContent =
+              pendentes === 1 ? '1 reserva pendente a aguardar confirmação' : pendentes + ' reservas pendentes a aguardar confirmação';
+            alert.style.display = 'flex';
+          }
+        })();
+      </script>
     </div>
 
     <!-- PRATO DO DIA -->
@@ -971,12 +981,8 @@ textarea { resize: vertical; min-height: 90px; }
         <div class="card-body">
           <div class="form-row">
             <div class="field">
-              <label>Nome do Restaurante</label>
+              <label>Nome Completo <span style="font-weight:400;color:var(--muted);">(aparece no nav e no hero)</span></label>
               <input type="text" id="geral-nome" value="Churrasqueira Zé dos Frangos" />
-            </div>
-            <div class="field">
-              <label>Subtítulo (nav)</label>
-              <input type="text" id="geral-subtitulo" value="Churrasqueira" />
             </div>
           </div>
           <div class="form-row">
@@ -1182,6 +1188,47 @@ textarea { resize: vertical; min-height: 90px; }
         <button class="btn-save" onclick="saveEmenta()">Guardar Ementa</button>
         <p id="ementa-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
       </div>
+
+    </div>
+
+    <!-- MAIS VENDIDOS -->
+    <div class="panel" id="panel-maisVendidos">
+      <div class="panel-header">
+        <div class="panel-title">Mais Vendidos</div>
+        <div class="panel-subtitle">Aparecem no rodapé da ementa — máximo 3 de carne e 3 de peixe, com foto</div>
+      </div>
+      <div style="max-width:700px;">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Carne (3 pratos)</div>
+          <div id="mv-carne-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+          <button class="btn-add" onclick="addMvCard('carne')" style="margin-top:10px;">+ Adicionar prato de carne</button>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Peixe (3 pratos)</div>
+          <div id="mv-peixe-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+          <button class="btn-add" onclick="addMvCard('peixe')" style="margin-top:10px;">+ Adicionar prato de peixe</button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="saveMaisVendidos()">Guardar Mais Vendidos</button>
+        </div>
+        <p id="mv-feedback" style="font-size:12px;color:#c9a84c;display:none;margin-top:8px;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- EVENTOS -->
+    <div class="panel" id="panel-eventos">
+      <div class="panel-header">
+        <div class="panel-title">Eventos & Campanhas</div>
+        <div class="panel-subtitle">Adiciona eventos futuros — aparecem no site numa secção de destaque</div>
+      </div>
+      <div style="max-width:700px;">
+        <div id="eventos-lista" style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"></div>
+        <button class="btn-add" onclick="addEventoCard()" style="width:100%;justify-content:center;">+ Adicionar Evento</button>
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+          <button class="btn-save" onclick="saveEventos()">Guardar e publicar</button>
+        </div>
+        <p id="eventos-feedback" style="font-size:12px;color:#c9a84c;display:none;margin-top:8px;">Guardado com sucesso!</p>
+      </div>
     </div>
 
     <!-- RESERVAS -->
@@ -1340,9 +1387,9 @@ textarea { resize: vertical; min-height: 90px; }
     </div>
 
     <!-- COMUNICAÇÕES -->
-    <div class="panel" id="panel-comunicacoes">
+    <div class="panel" id="panel-comunicacoes" style="display:none!important;">
       <div class="section-header">
-        <div><h2>Comunicações</h2><p>Emails automáticos e avisos para clientes</p></div>
+        <div><h2>Comunicações</h2></div>
       </div>
 
       <!-- AVISO FÉRIAS / LOTAÇÃO -->
@@ -1485,11 +1532,17 @@ function showPanel(id, el) {
   const titles = {
     dashboard: 'Dashboard',
     geral: 'Informações Gerais',
+    pratoDia: 'Prato do Dia',
+    sugestaoMes: 'Sugestão do Mês',
+    vinhoMes: 'Vinho do Mês',
     ementa: 'Ementa',
+    eventos: 'Eventos & Campanhas',
+    maisVendidos: 'Mais Vendidos',
     reservas: 'Reservas',
-    comunicacoes: 'Comunicações',
+    vagas: 'Vagas de Emprego',
   };
   document.getElementById('topbar-title').textContent = titles[id] || id;
+  if (id === 'maisVendidos') loadMaisVendidos();
 }
 
 function switchSubTab(id, el) {
@@ -1718,7 +1771,7 @@ const statusMeta = {
 
 function renderReservations() {
   const tbody = document.getElementById('res-tbody');
-  const today = '2026-07-07';
+  const today = new Date().toISOString().split('T')[0];
   const filtered = currentFilter === 'todas'
     ? reservations
     : reservations.filter(r => r.status === currentFilter);
@@ -1728,13 +1781,20 @@ function renderReservations() {
     const d = new Date(r.date);
     const dateStr = d.toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric' });
     const isToday = r.date === today;
-    const actions = r.status === 'pendente'
+    const isPast = r.date < today;
+    // Se confirmada e data já passou → tratar como concluída automaticamente
+    const effectiveStatus = (r.status === 'confirmada' && isPast) ? 'concluida' : r.status;
+    if (r.status === 'confirmada' && isPast) {
+      r.status = 'concluida';
+      saveReservations();
+    }
+    const actions = effectiveStatus === 'pendente'
       ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'confirmada')">Confirmar</button>
          <button class="action-btn cancel" onclick="setStatus(${r.id},'cancelada')" style="margin-left:4px;">Rejeitar</button>`
-      : r.status === 'confirmada'
+      : effectiveStatus === 'confirmada'
       ? `<button class="action-btn confirm" onclick="setStatus(${r.id},'concluida')" style="background:var(--green);color:#fff;border:none;">Concluída</button>
          <button class="action-btn cancel" onclick="confirmarCancelamento(${r.id})" style="margin-left:4px;">Cancelar</button>`
-      : r.status === 'concluida'
+      : effectiveStatus === 'concluida'
       ? (r.avaliacaoPedida
           ? `<span style="color:var(--muted);font-size:12px;">✓ Avaliação pedida</span>`
           : `<button class="action-btn" onclick="pedirAvaliacao(${r.id})" style="background:#25D366;color:#fff;border:none;padding:5px 10px;cursor:pointer;font-size:12px;border-radius:3px;">⭐ Pedir Avaliação</button>`)
@@ -1869,7 +1929,7 @@ function filterRes(filter, el) {
 }
 
 function updateResStats() {
-  const today = '2026-07-07';
+  const today = new Date().toISOString().split('T')[0];
   document.getElementById('stat-pending').textContent   = reservations.filter(r => r.status === 'pendente').length;
   document.getElementById('stat-today').textContent     = reservations.filter(r => r.date === today).length;
   document.getElementById('stat-confirmed').textContent = reservations.filter(r => r.status === 'confirmada').length;
@@ -2240,6 +2300,181 @@ function clearSugestaoMes() {
   }
 })();
 </script>
+<!-- ── Mais Vendidos JS ── -->
+<script>
+var _mvFotos = {};
+
+function addMvCard(tipo, data) {
+  var listId = 'mv-' + tipo + '-list';
+  var list = document.getElementById(listId);
+  if (!list) return;
+  if (list.children.length >= 3) { alert('Máximo de 3 pratos por categoria.'); return; }
+  var id = 'mv_' + Date.now() + '_' + Math.random().toString(36).slice(2,5);
+  var d = data || {};
+  var card = document.createElement('div');
+  card.className = 'mv-card';
+  card.dataset.id = id;
+  card.dataset.tipo = tipo;
+  var imgHtml = d.foto
+    ? '<img src="' + d.foto + '" onclick="this.nextSibling.click()" style="cursor:pointer;" />'
+    : '<div class="mv-img-placeholder" onclick="this.nextSibling.click()">Clica para foto</div>';
+  card.innerHTML =
+    '<div style="position:relative;">' + imgHtml +
+      '<input type="file" accept="image/*" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />' +
+    '</div>' +
+    '<div>' +
+      '<input class="mv-nome" type="text" placeholder="Nome do prato" value="' + escHtml(d.nome||'') + '" />' +
+      '<input class="mv-preco" type="text" placeholder="Preço (ex: 14,50)" value="' + escHtml(d.preco||'') + '" />' +
+    '</div>' +
+    '<button class="mv-remove" onclick="removeMvCard(this)">✕</button>';
+  if (d.foto) _mvFotos[id] = d.foto;
+  list.appendChild(card);
+}
+
+function previewMvFoto(event, id) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _mvFotos[id] = e.target.result;
+    var card = document.querySelector('.mv-card[data-id="' + id + '"]');
+    if (!card) return;
+    var imgWrap = card.firstElementChild;
+    imgWrap.innerHTML =
+      '<img src="' + e.target.result + '" onclick="this.nextSibling.click()" style="cursor:pointer;" />' +
+      '<input type="file" accept="image/*" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeMvCard(btn) {
+  var card = btn.closest('.mv-card');
+  delete _mvFotos[card.dataset.id];
+  card.remove();
+}
+
+function saveMaisVendidos() {
+  var result = { carne: [], peixe: [] };
+  ['carne','peixe'].forEach(function(tipo) {
+    document.querySelectorAll('.mv-card[data-tipo="' + tipo + '"]').forEach(function(card) {
+      result[tipo].push({
+        nome:  card.querySelector('.mv-nome').value.trim(),
+        preco: card.querySelector('.mv-preco').value.trim(),
+        foto:  _mvFotos[card.dataset.id] || null,
+      });
+    });
+  });
+  localStorage.setItem('maisVendidos', JSON.stringify(result));
+  var fb = document.getElementById('mv-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+function loadMaisVendidos() {
+  document.getElementById('mv-carne-list').innerHTML = '';
+  document.getElementById('mv-peixe-list').innerHTML = '';
+  _mvFotos = {};
+  var data = JSON.parse(localStorage.getItem('maisVendidos') || '{}');
+  (data.carne || []).forEach(function(d) { addMvCard('carne', d); });
+  (data.peixe || []).forEach(function(d) { addMvCard('peixe', d); });
+}
+</script>
+
+<!-- ── Eventos JS ── -->
+<script>
+var _eventoFotos = {}; // id -> base64
+
+function addEventoCard(data) {
+  var id = 'ev_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  var d = data || {};
+  var card = document.createElement('div');
+  card.className = 'evento-card';
+  card.dataset.id = id;
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <strong style="font-size:13px;color:#555;">Evento</strong>
+      <button class="ev-remove" onclick="removeEventoCard(this)">✕ Remover</button>
+    </div>
+    <div>
+      <label>Título</label>
+      <input class="ev-titulo" type="text" placeholder="ex: Festa de Natal" value="${escHtml(d.titulo||'')}" />
+    </div>
+    <div class="ev-row">
+      <div>
+        <label>Data início</label>
+        <input class="ev-data-inicio" type="date" value="${escHtml(d.dataInicio||'')}" />
+      </div>
+      <div>
+        <label>Data fim <span style="font-weight:400;color:#aaa;">(opcional)</span></label>
+        <input class="ev-data-fim" type="date" value="${escHtml(d.dataFim||'')}" />
+      </div>
+    </div>
+    <div>
+      <label>Descrição</label>
+      <textarea class="ev-desc" rows="3" placeholder="ex: Venha celebrar o Natal connosco com um menu especial de época...">${escHtml(d.desc||'')}</textarea>
+    </div>
+    <div>
+      <label>Fotografia</label>
+      <input type="file" accept="image/*" onchange="previewEventoFoto(event, '${id}')" style="font-size:12px;" />
+      <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
+        <img class="ev-preview" src="${escHtml(d.foto||'')}" />
+      </div>
+    </div>
+  `;
+  if (d.foto) _eventoFotos[id] = d.foto;
+  document.getElementById('eventos-lista').appendChild(card);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function previewEventoFoto(event, id) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _eventoFotos[id] = e.target.result;
+    var card = document.querySelector('.evento-card[data-id="' + id + '"]');
+    if (!card) return;
+    card.querySelector('.ev-preview').src = e.target.result;
+    card.querySelector('.ev-preview-wrap').style.display = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeEventoCard(btn) {
+  var card = btn.closest('.evento-card');
+  delete _eventoFotos[card.dataset.id];
+  card.remove();
+}
+
+function saveEventos() {
+  var cards = document.querySelectorAll('.evento-card');
+  var eventos = [];
+  cards.forEach(function(card) {
+    var id = card.dataset.id;
+    eventos.push({
+      titulo:    card.querySelector('.ev-titulo').value.trim(),
+      dataInicio: card.querySelector('.ev-data-inicio').value,
+      dataFim:   card.querySelector('.ev-data-fim').value,
+      desc:      card.querySelector('.ev-desc').value.trim(),
+      foto:      _eventoFotos[id] || null,
+    });
+  });
+  localStorage.setItem('eventos', JSON.stringify(eventos));
+  var fb = document.getElementById('eventos-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+// Pré-carregar eventos existentes
+(function() {
+  var eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+  eventos.forEach(function(ev) { addEventoCard(ev); });
+})();
+</script>
+
 <!-- Modal: confirmação de cancelamento -->
 <div id="cancel-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
   <div id="cancel-modal">

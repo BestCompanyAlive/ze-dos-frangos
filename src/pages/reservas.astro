@@ -1,0 +1,407 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Reservas — Churrasqueira Zé dos Frangos" description="Faça a sua reserva na Churrasqueira Zé dos Frangos em Vila Real.">
+  <!-- NAV -->
+  <nav
+    id="main-nav"
+    class="fixed top-0 left-0 right-0 z-50 px-6 py-5"
+    style="background: rgba(13,13,13,0.85); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(255,255,255,0.05);"
+  >
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src="/images/logo.png" alt="Zé dos Frangos" class="w-12 h-12 object-contain" />
+        <div class="hidden sm:block text-left">
+          <div class="text-gold text-xs tracking-[0.3em] uppercase" style="font-family: Playfair Display, serif;">Churrasqueira</div>
+          <div class="text-xl font-light tracking-widest text-white">ZÉ DOS FRANGOS</div>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8" style="font-family: Playfair Display, serif;">
+        <a href="/#sobre" class="nav-link">Sobre</a>
+        <a href="/#ementa" class="nav-link">Ementa</a>
+        <a href="/#contactos" class="nav-link">Contactos</a>
+        <a href="/reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
+        <a href="/ajuda" class="nav-link">Apoio</a>
+      </div>
+
+      <button id="menu-btn" class="md:hidden text-white" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div
+      id="mobile-menu"
+      class="hidden md:hidden absolute top-full left-0 right-0 py-6 px-6 flex flex-col gap-5 text-center"
+      style="background: rgba(13,13,13,0.97); font-family: Playfair Display, serif;"
+    >
+      <a href="/#sobre" class="nav-link">Sobre</a>
+      <a href="/#ementa" class="nav-link">Ementa</a>
+      <a href="/#contactos" class="nav-link">Contactos</a>
+      <a href="/reservas" class="nav-link text-gold">Reservar</a>
+      <a href="/ajuda" class="nav-link">Apoio</a>
+    </div>
+  </nav>
+
+  <script>
+    const btn = document.getElementById('menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+  </script>
+
+  <!-- HERO RESERVAS -->
+  <div style="min-height: 280px; background: #0d0d0d; display:flex; align-items:flex-end; padding: 7rem 1.5rem 3rem; position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background:url('/images/croquetes.jpg') center/cover no-repeat; opacity:0.15;"></div>
+    <div style="max-width:700px; margin:0 auto; text-align:center; width:100%; position:relative; z-index:1;">
+      <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Churrasqueira Zé dos Frangos</p>
+      <h1 class="text-4xl md:text-5xl font-light text-white" style="font-family: Playfair Display, serif;">Reserve a Sua Mesa</h1>
+      <div style="width:40px;height:1px;background:#c9a84c;margin:1.5rem auto 0;"></div>
+    </div>
+  </div>
+
+  <!-- FORM RESERVAS -->
+  <section class="py-20 px-6" style="position:relative; background-image: url('/images/misto.jpg'); background-size: cover; background-position: center; background-attachment: scroll;">
+    <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
+    <div class="max-w-2xl mx-auto" style="position:relative; z-index:1;">
+
+      <div class="text-center mb-10">
+        <p class="text-gray-400 font-light">Confirmaremos a sua reserva por telefone. Também pode ligar para <span id="res-telefone-display" class="text-gold">913 977 751</span>.</p>
+      </div>
+
+      <!-- Aviso grupos grandes -->
+      <div class="mb-6 text-center">
+        <p class="text-xs text-gray-400" style="font-family: Playfair Display, serif;">
+          Reservas online disponíveis para <span class="text-gold font-semibold">grupos até 4 pessoas</span>.<br/>
+          Para grupos maiores, contacte-nos por telefone ou WhatsApp.
+        </p>
+      </div>
+
+      <!-- Aviso lotação / férias (oculto por defeito, ativado pelo admin) -->
+      <div id="res-notice" class="mb-6 hidden">
+        <div style="border: 1px solid #c9a84c33; background: rgba(201,168,76,0.06); border-radius: 6px; padding: 16px; text-align: center;">
+          <p id="res-notice-msg" class="text-gold text-sm font-light"></p>
+        </div>
+      </div>
+
+      <form
+        id="reserva-form"
+        class="flex flex-col gap-4"
+      >
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
+            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Email</label>
+          <input type="email" name="email" placeholder="joao@email.com" class="form-input" required />
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data</label>
+          <input type="date" id="res-data" name="data" class="form-input" required />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Hora</label>
+            <input type="hidden" id="res-hora" name="hora" />
+            <div id="res-hora-dropdown" style="position:relative;">
+              <div id="res-hora-btn" class="form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                <span id="res-hora-label" style="color:#6b7280;">Escolher</span>
+                <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+              </div>
+              <div id="res-hora-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;max-height:200px;overflow-y:auto;">
+                <div id="res-hora-hint" style="padding:10px 14px;font-size:12px;color:#6b7280;font-style:italic;">Selecione primeiro a data</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Pessoas</label>
+            <input type="hidden" name="pessoas" id="res-pessoas" value="2" />
+            <div id="res-pessoas-dropdown" style="position:relative;">
+              <div id="res-pessoas-btn" class="form-input" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                <span id="res-pessoas-label" style="color:#e5e3de;">2</span>
+                <span style="font-size:0.65rem;color:#6b7280;">▼</span>
+              </div>
+              <div id="res-pessoas-list" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#1a1a1a;border:1px solid rgba(201,168,76,0.3);border-top:none;border-radius:0 0 4px 4px;">
+                <div class="res-cso" data-value="1" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">1 pessoa</div>
+                <div class="res-cso" data-value="2" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">2 pessoas</div>
+                <div class="res-cso" data-value="3" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">3 pessoas</div>
+                <div class="res-cso" data-value="4" style="padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;">4 pessoas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="hora-aviso" class="hidden" style="color:#c9a84c; font-size:12px; text-align:center; font-family:Montserrat,sans-serif; letter-spacing:0.05em;"></div>
+        <div id="lotacao-aviso" class="hidden" style="color:#ef4444; font-size:12px; text-align:center; font-family:Montserrat,sans-serif;"></div>
+
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer select-none" style="opacity: 0.55;">
+            <input type="checkbox" name="cadeira_bebe" style="accent-color: #c9a84c; width: 13px; height: 13px; flex-shrink: 0;" />
+            <span style="font-size: 0.72rem; color: #9ca3af; letter-spacing: 0.04em;">Necessito de cadeira de bebé</span>
+          </label>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações</label>
+          <textarea name="obs" placeholder="Alergias, ocasião especial, preferências..." class="form-input h-28 resize-none"></textarea>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+          <button type="button" id="res-submit-email" class="btn-gold" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+            Reservar por e-mail
+          </button>
+          <button type="button" id="res-submit-whatsapp" class="btn-gold" style="background:#25D366;border-color:#25D366;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Reservar por WhatsApp
+          </button>
+        </div>
+      </form>
+
+      <!-- Mensagem de sucesso -->
+      <div id="reserva-sucesso" class="hidden" style="margin-top: 24px; border: 1px solid #c9a84c55; background: rgba(201,168,76,0.07); border-radius: 6px; padding: 28px; text-align: center;">
+        <p style="font-family: Playfair Display, serif; font-size: 1.3rem; color: #c9a84c; margin-bottom: 8px;">Reserva recebida!</p>
+        <p class="text-gray-300 text-sm font-light">A sua reserva foi enviada com sucesso. Entraremos em contacto para confirmar.</p>
+        <a href="/" style="display:inline-block;margin-top:1.5rem;border:1px solid #c9a84c;color:#c9a84c;padding:0.6rem 1.5rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;">Voltar ao site</a>
+      </div>
+    </div>
+  </section>
+
+
+  <script>
+    // ── Slots disponíveis e capacidade ──────────────────
+    const SLOTS = {
+      almoco:  ['11:30','12:00','12:30','13:00','13:30'],
+      jantar:  ['19:00','19:30','20:00','20:30','21:00'],
+    };
+    const CAPACITY_PER_SLOT = 20;
+    const CUTOFF_HOURS = 4;
+    const DINNER_START = 19;
+    const bookedSlots: Record<string,number> = {};
+
+    const dataInput   = document.getElementById('res-data') as HTMLInputElement;
+    const horaInput   = document.getElementById('res-hora') as HTMLInputElement;
+    const horaBtn     = document.getElementById('res-hora-btn') as HTMLElement;
+    const horaLabel   = document.getElementById('res-hora-label') as HTMLElement;
+    const horaList    = document.getElementById('res-hora-list') as HTMLElement;
+    const aviso       = document.getElementById('hora-aviso') as HTMLElement;
+    const lotacao     = document.getElementById('lotacao-aviso') as HTMLElement;
+    function setSubmitDisabled(v: boolean) {
+      (document.getElementById('res-submit-email') as HTMLButtonElement).disabled = v;
+      (document.getElementById('res-submit-whatsapp') as HTMLButtonElement).disabled = v;
+    }
+
+    // ── Custom dropdown PESSOAS ──────────────────────────
+    const pessoasInput = document.getElementById('res-pessoas') as HTMLInputElement;
+    const pessoasBtn   = document.getElementById('res-pessoas-btn') as HTMLElement;
+    const pessoasList  = document.getElementById('res-pessoas-list') as HTMLElement;
+    pessoasBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      horaList.style.display = 'none';
+      pessoasList.style.display = pessoasList.style.display === 'none' ? '' : 'none';
+    });
+    pessoasList.querySelectorAll('.res-cso').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const el = opt as HTMLElement;
+        pessoasInput.value = el.dataset.value!;
+        (pessoasBtn.querySelector('#res-pessoas-label') as HTMLElement).textContent = el.textContent!.trim();
+        (pessoasBtn.querySelector('#res-pessoas-label') as HTMLElement).style.color = '#e5e3de';
+        pessoasList.style.display = 'none';
+      });
+    });
+
+    // ── Custom dropdown HORA ─────────────────────────────
+    horaBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pessoasList.style.display = 'none';
+      if (!horaInput.disabled) horaList.style.display = horaList.style.display === 'none' ? '' : 'none';
+    });
+
+    function setHora(value: string, text: string) {
+      horaInput.value = value;
+      horaLabel.textContent = text;
+      horaLabel.style.color = value ? '#e5e3de' : '#6b7280';
+      horaList.style.display = 'none';
+      lotacao.classList.add('hidden');
+      const key = `${dataInput.value}_${value}`;
+      const ocupadas = bookedSlots[key] || 0;
+      if (ocupadas >= CAPACITY_PER_SLOT) {
+        lotacao.textContent = 'Este horário já não tem disponibilidade. Escolha outro.';
+        lotacao.classList.remove('hidden');
+        setSubmitDisabled(true);
+      } else {
+        setSubmitDisabled(false);
+      }
+    }
+
+    const today = new Date();
+    dataInput.min = today.toISOString().split('T')[0];
+
+    function populateSlots() {
+      const dateVal = dataInput.value;
+      horaList.innerHTML = '<div id="res-hora-hint" style="padding:10px 14px;font-size:12px;color:#6b7280;font-style:italic;">Selecione primeiro a data</div>';
+      horaInput.value = '';
+      horaLabel.textContent = 'Escolher';
+      horaLabel.style.color = '#6b7280';
+      aviso.classList.add('hidden');
+      lotacao.classList.add('hidden');
+      setSubmitDisabled(false);
+      if (!dateVal) return;
+
+      horaList.innerHTML = '';
+      const now = new Date();
+      const selected = new Date(dateVal + 'T00:00:00');
+      const isToday = selected.toDateString() === now.toDateString();
+
+      const allSlots = [...SLOTS.almoco, ...SLOTS.jantar];
+      let count = 0;
+      allSlots.forEach(slot => {
+        const [hh] = slot.split(':').map(Number);
+        const cutoffHour = hh >= DINNER_START ? DINNER_START - CUTOFF_HOURS : 8;
+        const cutoffDate = new Date(dateVal + `T${String(cutoffHour).padStart(2,'0')}:00:00`);
+        if (isToday && now >= cutoffDate) return;
+
+        const key = `${dateVal}_${slot}`;
+        const ocupadas = bookedSlots[key] || 0;
+        if (ocupadas >= CAPACITY_PER_SLOT) return;
+
+        const label = slot + (ocupadas > 0 ? ` (${CAPACITY_PER_SLOT - ocupadas} lug. livres)` : '');
+        const item = document.createElement('div');
+        item.style.cssText = 'padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);';
+        item.textContent = label;
+        item.addEventListener('mouseenter', () => { item.style.background='rgba(201,168,76,0.12)'; item.style.color='#c9a84c'; });
+        item.addEventListener('mouseleave', () => { item.style.background=''; item.style.color='#d1cfc9'; });
+        item.addEventListener('click', () => setHora(slot, label));
+        horaList.appendChild(item);
+        count++;
+      });
+
+      if (count === 0) {
+        aviso.textContent = isToday
+          ? 'Para reservas de hoje, o prazo já encerrou. Contacte-nos por telefone.'
+          : 'Não há horários disponíveis para esta data.';
+        aviso.classList.remove('hidden');
+        setSubmitDisabled(true);
+      }
+    }
+
+    document.addEventListener('click', () => {
+      horaList.style.display = 'none';
+      pessoasList.style.display = 'none';
+    });
+
+    dataInput.addEventListener('change', populateSlots);
+    dataInput.addEventListener('input', populateSlots);
+    populateSlots();
+
+    // ── Config (telefone de contacto) ────────────────────
+    (function() {
+      var cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+      var el = document.getElementById('res-telefone-display');
+      if (el && cfg.whatsapp) el.textContent = cfg.whatsapp;
+
+      var notice = JSON.parse(localStorage.getItem('reservaNotice') || '{}');
+      if (notice.msg) {
+        document.getElementById('res-notice-msg')!.textContent = notice.msg;
+        document.getElementById('res-notice')!.classList.remove('hidden');
+      }
+    })();
+
+    // ── Submeter reserva ────────────────────────────────
+    const form = document.getElementById('reserva-form') as HTMLFormElement;
+
+    function getFormData() {
+      const nome        = (form.querySelector('[name="nome"]') as HTMLInputElement).value;
+      const telefone    = (form.querySelector('[name="telefone"]') as HTMLInputElement).value;
+      const email       = (form.querySelector('[name="email"]') as HTMLInputElement).value;
+      const data        = (form.querySelector('[name="data"]') as HTMLInputElement).value;
+      const hora        = (form.querySelector('[name="hora"]') as HTMLInputElement).value;
+      const pessoas     = (form.querySelector('[name="pessoas"]') as HTMLInputElement).value;
+      const obs         = (form.querySelector('[name="obs"]') as HTMLTextAreaElement).value;
+      const cadeiraBebe = (form.querySelector('[name="cadeira_bebe"]') as HTMLInputElement).checked;
+      return { nome, telefone, email, data, hora, pessoas, obs, cadeiraBebe };
+    }
+
+    function validateForm() {
+      if (!form.checkValidity()) { form.reportValidity(); return false; }
+      const { data, hora } = getFormData();
+      if (!data || !hora) { aviso.textContent = 'Por favor selecione a data e hora.'; aviso.classList.remove('hidden'); return false; }
+      return true;
+    }
+
+    function saveToLocalStorage(d: ReturnType<typeof getFormData>) {
+      const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+      reservas.push({
+        id: Date.now(),
+        date: d.data,
+        time: d.hora,
+        name: d.nome,
+        phone: d.telefone,
+        email: d.email,
+        guests: parseInt(d.pessoas),
+        note: d.obs,
+        status: 'pendente'
+      });
+      localStorage.setItem('reservas', JSON.stringify(reservas));
+    }
+
+    function showSuccess() {
+      form.style.display = 'none';
+      document.getElementById('reserva-sucesso')!.classList.remove('hidden');
+    }
+
+    document.getElementById('res-submit-email')!.addEventListener('click', () => {
+      if (!validateForm()) return;
+      const d = getFormData();
+      const [ano, mes, dia] = d.data.split('-');
+      const dataFmt = `${dia}/${mes}/${ano}`;
+
+      saveToLocalStorage(d);
+
+      const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+      const formspreeId = cfg.formspree || '';
+      if (formspreeId) {
+        fetch(`https://formspree.io/f/${formspreeId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ nome: d.nome, telefone: d.telefone, email: d.email, data: dataFmt, hora: d.hora, pessoas: d.pessoas, obs: d.obs, cadeiraBebe: d.cadeiraBebe ? 'Sim' : 'Não' })
+        });
+      }
+      showSuccess();
+    });
+
+    document.getElementById('res-submit-whatsapp')!.addEventListener('click', () => {
+      if (!validateForm()) return;
+      const d = getFormData();
+      const [ano, mes, dia] = d.data.split('-');
+      const dataFmt = `${dia}/${mes}/${ano}`;
+
+      saveToLocalStorage(d);
+
+      let msg = `Olá! Gostaria de fazer uma reserva:\n\n`;
+      msg += `Nome: ${d.nome}\n`;
+      msg += `Telefone: ${d.telefone}\n`;
+      msg += `Email: ${d.email}\n`;
+      msg += `Data: ${dataFmt}\n`;
+      msg += `Hora: ${d.hora}\n`;
+      msg += `Pessoas: ${d.pessoas}\n`;
+      if (d.cadeiraBebe) msg += `Cadeira de bebé: Sim\n`;
+      if (d.obs) msg += `Obs: ${d.obs}\n`;
+
+      const cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+      const waNum = cfg.whatsapp || '351913977751';
+      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
+      showSuccess();
+    });
+  </script>
+</Layout>

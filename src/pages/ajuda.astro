@@ -56,90 +56,6 @@ import Layout from '../layouts/Layout.astro';
     <div class="w-12 h-px bg-gold mx-auto"></div>
   </div>
 
-  <!-- ══ PERDIDOS E ACHADOS ══════════════════════════════════════════ -->
-  <section id="perdidos" class="py-24 px-6" style="position:relative; background-image:url('/images/croquetes.jpg'); background-size:cover; background-position:center; background-attachment:fixed;">
-    <div class="absolute inset-0" style="background:rgba(13,13,13,0.88);"></div>
-    <div class="max-w-2xl mx-auto relative" style="z-index:1;">
-      <div class="text-center mb-14">
-        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Esqueceu algo?</p>
-        <h2 class="text-3xl md:text-4xl font-light text-white mb-6">Perdidos e Achados</h2>
-        <div class="w-12 h-px bg-gold mx-auto mb-6"></div>
-        <p class="text-gray-400 font-light text-sm max-w-md mx-auto">Preencha o formulário e entraremos em contacto consigo o mais breve possível. A sua mensagem será enviada diretamente para o WhatsApp do restaurante.</p>
-      </div>
-
-      <form id="perdidos-form" class="flex flex-col gap-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
-            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
-          </div>
-          <div>
-            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
-            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
-          </div>
-        </div>
-
-        <div>
-          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data em que esteve no restaurante</label>
-          <input type="date" name="data" class="form-input" required />
-        </div>
-
-        <div>
-          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Item Perdido</label>
-          <input type="text" name="item" placeholder="Ex: carteira preta, casaco azul, óculos..." class="form-input" required />
-        </div>
-
-        <div>
-          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações (opcional)</label>
-          <textarea name="obs" placeholder="Algum detalhe adicional que nos ajude a identificar o objeto..." class="form-input h-24 resize-none"></textarea>
-        </div>
-
-        <div class="text-center mt-2">
-          <button type="submit" class="btn-gold">Enviar via WhatsApp</button>
-        </div>
-      </form>
-
-      <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #c9a84c55;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
-        <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#c9a84c;margin-bottom:8px;">Mensagem enviada!</p>
-        <p class="text-gray-300 text-sm font-light">A sua mensagem foi enviada via WhatsApp. Entraremos em contacto brevemente.</p>
-      </div>
-
-      <script>
-        document.getElementById('perdidos-form').addEventListener('submit', function(e) {
-          e.preventDefault();
-          var f = this;
-          var nome  = f.querySelector('[name="nome"]').value;
-          var tel   = f.querySelector('[name="telefone"]').value;
-          var data  = f.querySelector('[name="data"]').value;
-          var item  = f.querySelector('[name="item"]').value;
-          var obs   = f.querySelector('[name="obs"]').value;
-
-          var partes = data.split('-');
-          var dataFmt = partes.length === 3 ? partes[2] + '/' + partes[1] + '/' + partes[0] : data;
-
-          var msg =
-            'Olá! Perdi um objeto no restaurante e gostaria de saber se foi encontrado:\n\n' +
-            'Nome: ' + nome + '\n' +
-            'Telefone: ' + tel + '\n' +
-            'Data da visita: ' + dataFmt + '\n' +
-            'Item perdido: ' + item +
-            (obs ? '\nObservações: ' + obs : '');
-
-          var cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
-          var waNum = cfg.whatsapp || '351913977751';
-
-          window.open('https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg), '_blank');
-
-          f.style.display = 'none';
-          document.getElementById('perdidos-sucesso').classList.remove('hidden');
-        });
-      </script>
-    </div>
-  </section>
-
-  <!-- DIVISOR -->
-  <div style="height:1px;background:linear-gradient(to right,transparent,#2a2a2a,transparent);"></div>
-
   <!-- ══ RECRUTAMENTO ═══════════════════════════════════════════════ -->
   <section id="recrutamento" class="py-24 px-6" style="position:relative; background-image:url('/images/misto.jpg'); background-size:cover; background-position:center; background-attachment:fixed;">
     <div class="absolute inset-0" style="background:rgba(13,13,13,0.88);"></div>
@@ -316,6 +232,90 @@ import Layout from '../layouts/Layout.astro';
           });
         </script>
       </div>
+    </div>
+  </section>
+
+  <!-- DIVISOR -->
+  <div style="height:1px;background:linear-gradient(to right,transparent,#2a2a2a,transparent);"></div>
+
+  <!-- ══ PERDIDOS E ACHADOS ══════════════════════════════════════════ -->
+  <section id="perdidos" class="py-24 px-6" style="position:relative; background-image:url('/images/croquetes.jpg'); background-size:cover; background-position:center; background-attachment:fixed;">
+    <div class="absolute inset-0" style="background:rgba(13,13,13,0.88);"></div>
+    <div class="max-w-2xl mx-auto relative" style="z-index:1;">
+      <div class="text-center mb-14">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Esqueceu algo?</p>
+        <h2 class="text-3xl md:text-4xl font-light text-white mb-6">Perdidos e Achados</h2>
+        <div class="w-12 h-px bg-gold mx-auto mb-6"></div>
+        <p class="text-gray-400 font-light text-sm max-w-md mx-auto">Preencha o formulário e entraremos em contacto consigo o mais breve possível. A sua mensagem será enviada diretamente para o WhatsApp do restaurante.</p>
+      </div>
+
+      <form id="perdidos-form" class="flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Nome</label>
+            <input type="text" name="nome" placeholder="João Silva" class="form-input" required />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Telefone</label>
+            <input type="tel" name="telefone" placeholder="+351 912 345 678" class="form-input" required />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Data em que esteve no restaurante</label>
+          <input type="date" name="data" class="form-input" required />
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Item Perdido</label>
+          <input type="text" name="item" placeholder="Ex: carteira preta, casaco azul, óculos..." class="form-input" required />
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 tracking-widest uppercase block mb-2" style="font-family: Playfair Display, serif;">Observações (opcional)</label>
+          <textarea name="obs" placeholder="Algum detalhe adicional que nos ajude a identificar o objeto..." class="form-input h-24 resize-none"></textarea>
+        </div>
+
+        <div class="text-center mt-2">
+          <button type="submit" class="btn-gold">Enviar via WhatsApp</button>
+        </div>
+      </form>
+
+      <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #c9a84c55;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
+        <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#c9a84c;margin-bottom:8px;">Mensagem enviada!</p>
+        <p class="text-gray-300 text-sm font-light">A sua mensagem foi enviada via WhatsApp. Entraremos em contacto brevemente.</p>
+      </div>
+
+      <script>
+        document.getElementById('perdidos-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          var f = this;
+          var nome  = f.querySelector('[name="nome"]').value;
+          var tel   = f.querySelector('[name="telefone"]').value;
+          var data  = f.querySelector('[name="data"]').value;
+          var item  = f.querySelector('[name="item"]').value;
+          var obs   = f.querySelector('[name="obs"]').value;
+
+          var partes = data.split('-');
+          var dataFmt = partes.length === 3 ? partes[2] + '/' + partes[1] + '/' + partes[0] : data;
+
+          var msg =
+            'Olá! Perdi um objeto no restaurante e gostaria de saber se foi encontrado:\n\n' +
+            'Nome: ' + nome + '\n' +
+            'Telefone: ' + tel + '\n' +
+            'Data da visita: ' + dataFmt + '\n' +
+            'Item perdido: ' + item +
+            (obs ? '\nObservações: ' + obs : '');
+
+          var cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
+          var waNum = cfg.whatsapp || '351913977751';
+
+          window.open('https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg), '_blank');
+
+          f.style.display = 'none';
+          document.getElementById('perdidos-sucesso').classList.remove('hidden');
+        });
+      </script>
     </div>
   </section>
 
