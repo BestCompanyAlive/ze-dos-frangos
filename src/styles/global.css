@@ -14,10 +14,10 @@
 }
 
 /* Gold utilities */
-.text-gold { color: #c9a84c; }
-.text-gold-light { color: #e8c97a; }
-.bg-gold { background-color: #c9a84c; }
-.border-gold { border-color: #c9a84c; }
+.text-gold { color: #aea995; }
+.text-gold-light { color: #c2bfb0; }
+.bg-gold { background-color: #aea995; }
+.border-gold { border-color: #aea995; }
 
 /* Scroll reveal */
 .reveal {
@@ -47,10 +47,10 @@
   left: 0;
   width: 0;
   height: 1px;
-  background: #c9a84c;
+  background: #aea995;
   transition: width 0.3s;
 }
-.nav-link:hover { color: #c9a84c; }
+.nav-link:hover { color: #aea995; }
 .nav-link:hover::after { width: 100%; }
 
 /* Hero */
@@ -75,8 +75,8 @@
 }
 .menu-tab.active,
 .menu-tab:hover {
-  border-color: #c9a84c;
-  color: #c9a84c;
+  border-color: #aea995;
+  color: #aea995;
 }
 
 /* Gallery */
@@ -96,14 +96,14 @@
   font-size: 0.9rem;
   transition: border-color 0.3s;
 }
-.form-input:focus { border-color: #c9a84c; }
+.form-input:focus { border-color: #aea995; }
 .form-input::placeholder { color: #6b6352; }
 
 /* Button */
 .btn-gold {
   background: transparent;
-  border: 1px solid #c9a84c;
-  color: #c9a84c;
+  border: 1px solid #aea995;
+  color: #aea995;
   padding: 0.85rem 2.5rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
@@ -115,6 +115,6 @@
   text-decoration: none;
 }
 .btn-gold:hover {
-  background: #c9a84c;
+  background: #aea995;
   color: #0d0d0d;
 }

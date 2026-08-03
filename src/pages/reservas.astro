@@ -60,7 +60,7 @@ import Layout from '../layouts/Layout.astro';
     <div style="max-width:700px; margin:0 auto; text-align:center; width:100%; position:relative; z-index:1;">
       <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Churrasqueira Zé dos Frangos</p>
       <h1 class="text-4xl md:text-5xl font-light text-white" style="font-family: Playfair Display, serif;">Reserve a Sua Mesa</h1>
-      <div style="width:40px;height:1px;background:#c9a84c;margin:1.5rem auto 0;"></div>
+      <div style="width:40px;height:1px;background:#aea995;margin:1.5rem auto 0;"></div>
     </div>
   </div>
 
@@ -83,7 +83,7 @@ import Layout from '../layouts/Layout.astro';
 
       <!-- Aviso lotação / férias (oculto por defeito, ativado pelo admin) -->
       <div id="res-notice" class="mb-6 hidden">
-        <div style="border: 1px solid #c9a84c33; background: rgba(201,168,76,0.06); border-radius: 6px; padding: 16px; text-align: center;">
+        <div style="border: 1px solid #aea99533; background: rgba(201,168,76,0.06); border-radius: 6px; padding: 16px; text-align: center;">
           <p id="res-notice-msg" class="text-gold text-sm font-light"></p>
         </div>
       </div>
@@ -142,12 +142,12 @@ import Layout from '../layouts/Layout.astro';
           </div>
         </div>
 
-        <div id="hora-aviso" class="hidden" style="color:#c9a84c; font-size:12px; text-align:center; font-family:Montserrat,sans-serif; letter-spacing:0.05em;"></div>
+        <div id="hora-aviso" class="hidden" style="color:#aea995; font-size:12px; text-align:center; font-family:Montserrat,sans-serif; letter-spacing:0.05em;"></div>
         <div id="lotacao-aviso" class="hidden" style="color:#ef4444; font-size:12px; text-align:center; font-family:Montserrat,sans-serif;"></div>
 
         <div>
           <label class="flex items-center gap-2 cursor-pointer select-none" style="opacity: 0.55;">
-            <input type="checkbox" name="cadeira_bebe" style="accent-color: #c9a84c; width: 13px; height: 13px; flex-shrink: 0;" />
+            <input type="checkbox" name="cadeira_bebe" style="accent-color: #aea995; width: 13px; height: 13px; flex-shrink: 0;" />
             <span style="font-size: 0.72rem; color: #9ca3af; letter-spacing: 0.04em;">Necessito de cadeira de bebé</span>
           </label>
         </div>
@@ -169,10 +169,10 @@ import Layout from '../layouts/Layout.astro';
       </form>
 
       <!-- Mensagem de sucesso -->
-      <div id="reserva-sucesso" class="hidden" style="margin-top: 24px; border: 1px solid #c9a84c55; background: rgba(201,168,76,0.07); border-radius: 6px; padding: 28px; text-align: center;">
-        <p style="font-family: Playfair Display, serif; font-size: 1.3rem; color: #c9a84c; margin-bottom: 8px;">Reserva recebida!</p>
+      <div id="reserva-sucesso" class="hidden" style="margin-top: 24px; border: 1px solid #aea99555; background: rgba(201,168,76,0.07); border-radius: 6px; padding: 28px; text-align: center;">
+        <p style="font-family: Playfair Display, serif; font-size: 1.3rem; color: #aea995; margin-bottom: 8px;">Reserva recebida!</p>
         <p class="text-gray-300 text-sm font-light">A sua reserva foi enviada com sucesso. Entraremos em contacto para confirmar.</p>
-        <a href="/" style="display:inline-block;margin-top:1.5rem;border:1px solid #c9a84c;color:#c9a84c;padding:0.6rem 1.5rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;">Voltar ao site</a>
+        <a href="/" style="display:inline-block;margin-top:1.5rem;border:1px solid #aea995;color:#aea995;padding:0.6rem 1.5rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;">Voltar ao site</a>
       </div>
     </div>
   </section>
@@ -279,7 +279,7 @@ import Layout from '../layouts/Layout.astro';
         const item = document.createElement('div');
         item.style.cssText = 'padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);';
         item.textContent = label;
-        item.addEventListener('mouseenter', () => { item.style.background='rgba(201,168,76,0.12)'; item.style.color='#c9a84c'; });
+        item.addEventListener('mouseenter', () => { item.style.background='rgba(201,168,76,0.12)'; item.style.color='#aea995'; });
         item.addEventListener('mouseleave', () => { item.style.background=''; item.style.color='#d1cfc9'; });
         item.addEventListener('click', () => setHora(slot, label));
         horaList.appendChild(item);

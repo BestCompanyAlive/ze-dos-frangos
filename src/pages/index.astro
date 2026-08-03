@@ -85,6 +85,7 @@ const menuData = {
       <div class="hidden md:flex items-center gap-8" style="font-family: Playfair Display, serif;">
         <a href="#sobre" class="nav-link">Sobre</a>
         <a href="#ementa" class="nav-link">Ementa</a>
+        <a href="#galeria" class="nav-link">Galeria</a>
         <a href="#contactos" class="nav-link" onclick="document.getElementById('contactos').scrollIntoView({behavior:'smooth'});return false;">Contactos</a>
         <a href="/reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
         <a href="/ajuda" class="nav-link">Apoio</a>
@@ -106,6 +107,7 @@ const menuData = {
     >
       <a href="#sobre" class="nav-link">Sobre</a>
       <a href="#ementa" class="nav-link">Ementa</a>
+      <a href="#galeria" class="nav-link">Galeria</a>
       <a href="#contactos" class="nav-link">Contactos</a>
       <a href="/reservas" class="nav-link text-gold">Reservar</a>
       <a href="/ajuda" class="nav-link">Apoio</a>
@@ -147,15 +149,14 @@ const menuData = {
 
   <!-- SOBRE NÓS -->
   <section id="sobre" class="py-28 px-6" style="background: #0d0d0d;">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-      <div class="reveal relative">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-stretch">
+      <div class="reveal relative h-full">
         <img
-          src="/images/bacalhaunatas.jpg"
+          src="/images/churrasco.jpeg"
           alt="Frango grelhado no carvão"
-          class="w-full h-96 object-cover"
+          class="w-full h-full object-contain"
           style="filter: brightness(0.9);"
         />
-        <div class="absolute -bottom-6 -right-6 w-32 h-32 border border-gold hidden md:block" style="z-index: -1;"></div>
       </div>
 
       <div class="reveal">
@@ -207,11 +208,11 @@ const menuData = {
       </div>
       <!-- Conteúdo -->
       <div style="flex:1; background:#0d0d0d; display:flex; align-items:center; padding: 4rem 3rem; position:relative;">
-        <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #c9a84c, rgba(201,168,76,0.1));"></div>
+        <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #aea995, rgba(201,168,76,0.1));"></div>
         <div style="max-width:480px;">
           <p id="sugestao-label" class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Sugestão do Mês</p>
           <h2 id="sugestao-nome" class="text-4xl md:text-5xl font-light text-white leading-tight mb-4"></h2>
-          <div style="width:40px; height:1px; background:#c9a84c; margin-bottom:1.5rem;"></div>
+          <div style="width:40px; height:1px; background:#aea995; margin-bottom:1.5rem;"></div>
           <p id="sugestao-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
           <div style="display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;">
             <span id="sugestao-preco" class="text-gold text-3xl font-light" style="font-family: Playfair Display, serif;"></span>
@@ -229,11 +230,11 @@ const menuData = {
     <section style="position:relative; min-height: 480px; display:flex; align-items:stretch; overflow:hidden;">
       <!-- Conteúdo -->
       <div style="flex:1; background:#0a0a0a; display:flex; align-items:center; padding: 4rem 3rem; position:relative;">
-        <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #c9a84c, rgba(201,168,76,0.1));"></div>
+        <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #aea995, rgba(201,168,76,0.1));"></div>
         <div style="max-width:480px; position:relative; z-index:1;">
           <p id="vinho-label" class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif;">Vinho do Mês</p>
           <h2 id="vinho-nome" class="text-4xl md:text-5xl font-light text-white leading-tight mb-4"></h2>
-          <div style="width:40px; height:1px; background:#c9a84c; margin-bottom:1.5rem;"></div>
+          <div style="width:40px; height:1px; background:#aea995; margin-bottom:1.5rem;"></div>
           <p id="vinho-desc" class="text-gray-400 font-light leading-relaxed mb-6" style="font-size:1rem;"></p>
           <div style="display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap;">
             <span id="vinho-preco" class="text-gold text-3xl font-light" style="font-family: Playfair Display, serif;"></span>
@@ -265,7 +266,7 @@ const menuData = {
         <div style="border: 1px solid rgba(201,168,76,0.35); background: rgba(201,168,76,0.05); border-radius: 6px; padding: 28px 32px;">
           <!-- Cabeçalho -->
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid rgba(201,168,76,0.2);">
-            <p style="font-family: Playfair Display, serif; color:#c9a84c; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; font-weight:700;">Prato do Dia</p>
+            <p style="font-family: Playfair Display, serif; color:#aea995; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; font-weight:700;">Prato do Dia</p>
             <span id="prato-dia-periodo" style="font-family: Playfair Display, serif; color:#888; font-size:0.75rem; font-style:italic;"></span>
           </div>
 
@@ -275,17 +276,17 @@ const menuData = {
           <!-- Preços fixos -->
           <div class="prato-precos-grid" style="display:grid; gap:12px; margin-top:20px; padding-top:20px; border-top:1px solid rgba(201,168,76,0.2);">
             <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:14px 16px; text-align:center;">
-              <div style="font-size:1.3rem; font-weight:700; color:#c9a84c; font-family:Playfair Display,serif; line-height:1;">11,5€</div>
+              <div style="font-size:1.3rem; font-weight:700; color:#aea995; font-family:Playfair Display,serif; line-height:1;">11,5€</div>
               <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#888; margin:6px 0 4px;">Sala</div>
-              <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5;">Inclui: Pão, Sopa, Prato, Bebida e Café<br><span style="color:#c9a84c80;">Sobremesa +1€</span></div>
+              <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5;">Inclui: Pão, Sopa, Prato, Bebida e Café<br><span style="color:#aea99580;">Sobremesa +1€</span></div>
             </div>
             <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:14px 16px; text-align:center;">
-              <div style="font-size:1.3rem; font-weight:700; color:#c9a84c; font-family:Playfair Display,serif; line-height:1;">9€</div>
+              <div style="font-size:1.3rem; font-weight:700; color:#aea995; font-family:Playfair Display,serif; line-height:1;">9€</div>
               <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#888; margin:6px 0 4px;">Take-Away</div>
               <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5;">Inclui: Prato</div>
             </div>
             <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:14px 16px; text-align:center;">
-              <div style="font-size:1.3rem; font-weight:700; color:#c9a84c; font-family:Playfair Display,serif; line-height:1;">+1€</div>
+              <div style="font-size:1.3rem; font-weight:700; color:#aea995; font-family:Playfair Display,serif; line-height:1;">+1€</div>
               <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#888; margin:6px 0 4px;">Sobremesa do Dia</div>
               <div style="font-size:0.7rem; color:#9ca3af; line-height:1.5; font-style:italic;">Solicitar disponibilidade do dia</div>
             </div>
@@ -341,7 +342,7 @@ const menuData = {
             el.innerHTML =
               '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">' +
                 '<h3 style="font-family:Playfair Display,serif;font-size:1.1rem;color:#fff;font-weight:400;">' + g.nome + '</h3>' +
-                (g.preco ? '<span style="font-family:Playfair Display,serif;color:#c9a84c;font-size:1rem;">' + g.preco + ' €<span style="font-size:0.7rem;color:#888;margin-left:4px;">/ pessoa</span></span>' : '') +
+                (g.preco ? '<span style="font-family:Playfair Display,serif;color:#aea995;font-size:1rem;">' + g.preco + ' €<span style="font-size:0.7rem;color:#888;margin-left:4px;">/ pessoa</span></span>' : '') +
               '</div>' +
               (g.desc ? '<p style="color:#9ca3af;font-size:0.82rem;line-height:1.7;margin-bottom:16px;white-space:pre-line;">' + g.desc + '</p>' : '') +
               (function() {
@@ -356,7 +357,7 @@ const menuData = {
                 return '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">' +
                   sections.filter(function(s){ return s.val; }).map(function(s) {
                     return '<div style="background:rgba(255,255,255,0.03);border:1px solid #2a2a2a;border-radius:4px;padding:10px 14px;">' +
-                      '<p style="font-size:0.62rem;color:#c9a84c;text-transform:uppercase;letter-spacing:.15em;margin-bottom:4px;">' + s.label + '</p>' +
+                      '<p style="font-size:0.62rem;color:#aea995;text-transform:uppercase;letter-spacing:.15em;margin-bottom:4px;">' + s.label + '</p>' +
                       '<p style="font-size:0.8rem;color:#9ca3af;line-height:1.6;white-space:pre-line;">' + s.val + '</p>' +
                     '</div>';
                   }).join('') +
@@ -383,7 +384,7 @@ const menuData = {
       <div style="text-align:center; margin-bottom:2.5rem;">
         <p class="text-gold text-xs tracking-[0.4em] uppercase mb-3" style="font-family: Playfair Display, serif; position:relative; z-index:1;">Os Nossos Favoritos</p>
         <h2 class="text-3xl font-light text-white" style="font-family: Playfair Display, serif; position:relative; z-index:1;">Mais Pedidos</h2>
-        <div style="width:40px; height:1px; background:#c9a84c; margin:1rem auto 0; position:relative; z-index:1;"></div>
+        <div style="width:40px; height:1px; background:#aea995; margin:1rem auto 0; position:relative; z-index:1;"></div>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr; gap:2.5rem; position:relative; z-index:1;">
@@ -418,7 +419,7 @@ const menuData = {
                 '<div style="width:100%;height:160px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;"><span style="color:#444;font-size:2rem;">🍽</span></div>') +
               '<div style="padding:1rem;">' +
                 '<p style="color:#e8e0d0;font-size:0.95rem;font-weight:300;margin-bottom:0.25rem;">' + item.nome + '</p>' +
-                (item.preco ? '<p style="color:#c9a84c;font-size:0.85rem;">' + item.preco + ' €</p>' : '') +
+                (item.preco ? '<p style="color:#aea995;font-size:0.85rem;">' + item.preco + ' €</p>' : '') +
               '</div>';
             grid.appendChild(card);
           });
@@ -429,6 +430,44 @@ const menuData = {
         document.getElementById('mais-vendidos-section').style.display = '';
       })();
     </script>
+  </section>
+
+  <!-- GALERIA -->
+  <section id="galeria" class="py-28 px-6" style="background: #0d0d0d;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center reveal mb-16">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Da Nossa Cozinha</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Galeria</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6"></div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div class="gallery-item reveal">
+          <img src="/images/bacalhau.jpg" alt="Bacalhau" class="w-full h-64 object-cover" />
+          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Bacalhau na Brasa</p>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="/images/bacalhaunatas.jpg" alt="Bacalhau com Natas" class="w-full h-64 object-cover" />
+          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Bacalhau com Natas</p>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="/images/croquetes.jpg" alt="Croquetes de Alheira" class="w-full h-64 object-cover" />
+          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Croquetes de Alheira</p>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="/images/misto.jpg" alt="Misto de Carne" class="w-full h-64 object-cover" />
+          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Misto de Carne</p>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="/images/polvo.jpg" alt="Polvo à Lagareiro" class="w-full h-64 object-cover" />
+          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Polvo à Lagareiro</p>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="/images/churrasco.jpeg" alt="Frango Grelhado no Carvão" class="w-full h-64 object-cover" />
+          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Frango Grelhado no Carvão</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- RESERVAS — movido para /reservas -->
@@ -453,7 +492,7 @@ const menuData = {
 
       <!-- Aviso lotação / férias (oculto por defeito, ativado pelo admin) -->
       <div id="res-notice" class="reveal mb-6 hidden">
-        <div style="border: 1px solid #c9a84c33; background: rgba(201,168,76,0.06); border-radius: 6px; padding: 16px; text-align: center;">
+        <div style="border: 1px solid #aea99533; background: rgba(201,168,76,0.06); border-radius: 6px; padding: 16px; text-align: center;">
           <p id="res-notice-msg" class="text-gold text-sm font-light"></p>
         </div>
       </div>
@@ -515,13 +554,13 @@ const menuData = {
         </div>
 
         <!-- Aviso hora inválida -->
-        <div id="hora-aviso" class="hidden" style="color:#c9a84c; font-size:12px; text-align:center; font-family:Montserrat,sans-serif; letter-spacing:0.05em;"></div>
+        <div id="hora-aviso" class="hidden" style="color:#aea995; font-size:12px; text-align:center; font-family:Montserrat,sans-serif; letter-spacing:0.05em;"></div>
         <!-- Aviso lotação -->
         <div id="lotacao-aviso" class="hidden" style="color:#ef4444; font-size:12px; text-align:center; font-family:Montserrat,sans-serif;"></div>
 
         <div>
           <label class="flex items-center gap-2 cursor-pointer select-none" style="opacity: 0.55;">
-            <input type="checkbox" name="cadeira_bebe" style="accent-color: #c9a84c; width: 13px; height: 13px; flex-shrink: 0;" />
+            <input type="checkbox" name="cadeira_bebe" style="accent-color: #aea995; width: 13px; height: 13px; flex-shrink: 0;" />
             <span style="font-size: 0.72rem; color: #9ca3af; letter-spacing: 0.04em;">Necessito de cadeira de bebé</span>
           </label>
         </div>
@@ -543,8 +582,8 @@ const menuData = {
       </form>
 
       <!-- Mensagem de sucesso (oculta por defeito) -->
-      <div id="reserva-sucesso" class="hidden reveal" style="margin-top: 24px; border: 1px solid #c9a84c55; background: rgba(201,168,76,0.07); border-radius: 6px; padding: 28px; text-align: center;">
-        <p style="font-family: Playfair Display, serif; font-size: 1.3rem; color: #c9a84c; margin-bottom: 8px;">Reserva recebida!</p>
+      <div id="reserva-sucesso" class="hidden reveal" style="margin-top: 24px; border: 1px solid #aea99555; background: rgba(201,168,76,0.07); border-radius: 6px; padding: 28px; text-align: center;">
+        <p style="font-family: Playfair Display, serif; font-size: 1.3rem; color: #aea995; margin-bottom: 8px;">Reserva recebida!</p>
         <p class="text-gray-300 text-sm font-light">A sua reserva foi enviada com sucesso. Entraremos em contacto para confirmar.</p>
       </div>
 
@@ -652,7 +691,7 @@ const menuData = {
             const item = document.createElement('div');
             item.style.cssText = 'padding:10px 14px;font-size:13px;color:#d1cfc9;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);';
             item.textContent = label;
-            item.addEventListener('mouseenter', () => { item.style.background='rgba(201,168,76,0.12)'; item.style.color='#c9a84c'; });
+            item.addEventListener('mouseenter', () => { item.style.background='rgba(201,168,76,0.12)'; item.style.color='#aea995'; });
             item.addEventListener('mouseleave', () => { item.style.background=''; item.style.color='#d1cfc9'; });
             item.addEventListener('click', () => setHora(slot, label));
             horaList.appendChild(item);
@@ -849,7 +888,7 @@ const menuData = {
           return '<li style="color:#d1d5db;font-weight:300;font-size:0.85rem;margin-bottom:2px;">' + p + '</li>';
         }).join('');
         el.innerHTML =
-          '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#c9a84c;margin-bottom:8px;font-family:Playfair Display,serif;">' + d.label + '</div>' +
+          '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#aea995;margin-bottom:8px;font-family:Playfair Display,serif;">' + d.label + '</div>' +
           '<ul style="list-style:none;padding:0;margin:0;">' + pratosHtml + '</ul>';
         diasEl.appendChild(el);
       });
@@ -909,7 +948,7 @@ const menuData = {
       font-size:0.62rem;
       letter-spacing:0.35em;
       text-transform:uppercase;
-      color:#c9a84c;
+      color:#aea995;
       font-family:'Playfair Display',serif;
       margin-bottom:2rem;
     }
@@ -927,7 +966,7 @@ const menuData = {
       font-size:clamp(2.2rem,4.5vw,3.5rem);
       font-weight:300;
       font-style:italic;
-      color:#c9a84c;
+      color:#aea995;
       line-height:1.1;
       display:block;
       margin-bottom:1.5rem;
@@ -959,7 +998,7 @@ const menuData = {
       font-size:0.6rem;
       letter-spacing:0.2em;
       text-transform:uppercase;
-      color:#c9a84c;
+      color:#aea995;
     }
     .ev-date-arrow {
       color:rgba(201,168,76,0.5);
@@ -970,7 +1009,7 @@ const menuData = {
     .ev-btns { display:flex; gap:1rem; flex-wrap:wrap; }
     .ev-btn-primary {
       display:inline-block;
-      background:#c9a84c;
+      background:#aea995;
       color:#0d0d0d;
       padding:0.85rem 2rem;
       font-size:0.62rem;
@@ -984,7 +1023,7 @@ const menuData = {
     .ev-btn-secondary {
       display:inline-block;
       border:1px solid rgba(201,168,76,0.4);
-      color:#c9a84c;
+      color:#aea995;
       padding:0.85rem 2rem;
       font-size:0.62rem;
       letter-spacing:0.28em;
@@ -993,7 +1032,7 @@ const menuData = {
       font-weight:600;
       transition:border-color .2s,color .2s;
     }
-    .ev-btn-secondary:hover { border-color:#c9a84c; color:#e2c06a; }
+    .ev-btn-secondary:hover { border-color:#aea995; color:#e2c06a; }
 
     @media(max-width:768px) {
       .ev-wrap { grid-template-columns:1fr; }
@@ -1139,6 +1178,7 @@ const menuData = {
         <div class="flex justify-center gap-8 mb-4" style="font-family: Playfair Display, serif;">
           <a href="#sobre" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Sobre</a>
           <a href="#ementa" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Ementa</a>
+          <a href="#galeria" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Galeria</a>
           <a href="/reservas" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Reservas</a>
           <a href="/ajuda" class="text-gray-400 text-xs tracking-widest uppercase hover:text-gold transition-colors">Apoio</a>
         </div>

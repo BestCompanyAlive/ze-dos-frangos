@@ -24,7 +24,7 @@ import Layout from '../layouts/Layout.astro';
         <a href="/#ementa" class="nav-link">Ementa</a>
         <a href="/#contactos" class="nav-link">Contactos</a>
         <a href="/#reservas" class="btn-gold" style="padding: 0.5rem 1.5rem; font-size: 0.7rem;">Reservar</a>
-        <a href="/ajuda" class="nav-link" style="color:#c9a84c;">Apoio</a>
+        <a href="/ajuda" class="nav-link" style="color:#aea995;">Apoio</a>
       </div>
 
       <button id="menu-btn" class="md:hidden text-white" aria-label="Menu">
@@ -45,7 +45,7 @@ import Layout from '../layouts/Layout.astro';
       <a href="/#ementa" class="nav-link">Ementa</a>
       <a href="/#contactos" class="nav-link">Contactos</a>
       <a href="/#reservas" class="nav-link text-gold">Reservar</a>
-      <a href="/ajuda" class="nav-link" style="color:#c9a84c;">Apoio</a>
+      <a href="/ajuda" class="nav-link" style="color:#aea995;">Apoio</a>
     </div>
   </nav>
 
@@ -82,7 +82,7 @@ import Layout from '../layouts/Layout.astro';
           vagas.forEach(function(v) {
             var procura = (v.procura || '').split('\n').filter(Boolean);
             var oferece = (v.oferece || '').split('\n').filter(Boolean);
-            var urgente = v.urgente ? '<span style="background:rgba(201,168,76,0.12);color:#c9a84c;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;font-family:\'Playfair Display\',serif;">Urgente</span>' : '';
+            var urgente = v.urgente ? '<span style="background:rgba(201,168,76,0.12);color:#aea995;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;font-family:\'Playfair Display\',serif;">Urgente</span>' : '';
             var card = document.createElement('div');
             card.style.cssText = 'border:1px solid #2a2a2a;background:#141414;';
             card.innerHTML =
@@ -196,8 +196,8 @@ import Layout from '../layouts/Layout.astro';
           </div>
         </form>
 
-        <div id="candidatura-sucesso" class="hidden" style="margin-top:24px;border:1px solid #c9a84c55;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
-          <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#c9a84c;margin-bottom:8px;">Candidatura enviada!</p>
+        <div id="candidatura-sucesso" class="hidden" style="margin-top:24px;border:1px solid #aea99555;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
+          <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#aea995;margin-bottom:8px;">Candidatura enviada!</p>
           <p class="text-gray-300 text-sm font-light">Recebemos a sua candidatura e entraremos em contacto em breve.</p>
         </div>
 
@@ -281,8 +281,8 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </form>
 
-      <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #c9a84c55;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
-        <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#c9a84c;margin-bottom:8px;">Mensagem enviada!</p>
+      <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #aea99555;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
+        <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#aea995;margin-bottom:8px;">Mensagem enviada!</p>
         <p class="text-gray-300 text-sm font-light">A sua mensagem foi enviada via WhatsApp. Entraremos em contacto brevemente.</p>
       </div>
 
@@ -359,7 +359,7 @@ import Layout from '../layouts/Layout.astro';
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .cso:last-child { border-bottom: none; }
-    .cso:hover { background: rgba(201,168,76,0.12); color: #c9a84c; }
+    .cso:hover { background: rgba(201,168,76,0.12); color: #aea995; }
   </style>
 
   <!-- FOOTER SIMPLES -->
