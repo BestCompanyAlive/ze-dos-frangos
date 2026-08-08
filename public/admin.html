@@ -261,6 +261,21 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .btn-add:hover { border-color: var(--gold); color: var(--gold); }
 
+.section-locked input:disabled, .section-locked textarea:disabled, .section-locked select:disabled {
+  background:#f3f2ef; color:#888; cursor:not-allowed; opacity:1;
+}
+.btn-edit-section {
+  background:#aea995; border:1px solid #aea995; color:#1a1a1a; padding:8px 20px;
+  border-radius:4px; cursor:pointer; font-size:12.5px; font-weight:600; font-family:inherit; margin-left:8px;
+}
+.btn-edit-section:hover { opacity:0.85; }
+.locked-hint {
+  display:none; align-items:center; gap:8px; margin-bottom:16px; padding:10px 14px;
+  background:rgba(174,169,149,0.1); border:1px solid rgba(174,169,149,0.35); border-radius:6px;
+  font-size:12.5px; color:#8a7f5f;
+}
+.section-locked .locked-hint { display:flex; }
+
 .mv-card {
   border: 1px solid #e5e3de;
   border-radius: 6px;
@@ -731,7 +746,7 @@ textarea { resize: vertical; min-height: 90px; }
   </div>
 
   <div class="sidebar-section-label">Restaurante</div>
-  <div class="nav-item" onclick="showPanel('reservas', this)" id="nav-reservas">
+  <div class="nav-item" onclick="showPanel('reservas', this)" id="nav-reservas" style="display:none;">
     <span class="icon">◈</span> Reservas
     <span id="reservas-badge" style="display:none;margin-left:auto;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;line-height:1.6;"></span>
   </div>
@@ -740,7 +755,13 @@ textarea { resize: vertical; min-height: 90px; }
     <span class="icon">◐</span> Vagas de Emprego
   </div>
 
-  <div class="sidebar-section-label">Comunicação</div>
+  <div class="nav-item" onclick="showPanel('galeria', this)" id="nav-galeria">
+    <span class="icon">▦</span> Galeria
+  </div>
+
+  <div class="nav-item" onclick="showPanel('perdidos', this)" id="nav-perdidos">
+    <span class="icon">◎</span> Perdidos e Achados
+  </div>
 
   <div class="sidebar-footer">
     <a class="btn-preview" href="/" target="_blank">
@@ -759,7 +780,7 @@ textarea { resize: vertical; min-height: 90px; }
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <div class="topbar-right"></div>
+    <div class="topbar-right"><span id="save-status" class="save-status">● Todas as alterações guardadas</span></div>
   </div>
 
   <div class="content">
@@ -773,7 +794,7 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
 
-      <div id="dash-reservas-alert" style="display:none;margin-bottom:24px;padding:14px 18px;background:rgba(229,62,62,0.07);border:1px solid rgba(229,62,62,0.25);border-radius:6px;display:flex;align-items:center;gap:12px;">
+      <div id="dash-reservas-alert" style="display:none;margin-bottom:24px;padding:14px 18px;background:rgba(229,62,62,0.07);border:1px solid rgba(229,62,62,0.25);border-radius:6px;align-items:center;gap:12px;">
         <span style="font-size:18px;">🔔</span>
         <div>
           <div style="font-size:13px;font-weight:600;color:#c0392b;" id="dash-reservas-alert-text"></div>
@@ -783,37 +804,32 @@ textarea { resize: vertical; min-height: 90px; }
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
-        <div onclick="showPanel('geral', document.querySelectorAll('.nav-item')[1])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+        <div onclick="showPanel('geral', document.querySelectorAll('.nav-item')[1])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#aea995'" onmouseout="this.style.borderColor='#e5e3de'">
           <div style="font-size:22px;margin-bottom:10px;">✎</div>
           <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Informações Gerais</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">Nome, descrição, contactos</div>
         </div>
-        <div onclick="showPanel('pratoDia', document.querySelectorAll('.nav-item')[2])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+        <div onclick="showPanel('pratoDia', document.querySelectorAll('.nav-item')[2])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#aea995'" onmouseout="this.style.borderColor='#e5e3de'">
           <div style="font-size:22px;margin-bottom:10px;">★</div>
           <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Prato do Dia</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">Atualizar destaque diário</div>
         </div>
-        <div onclick="showPanel('sugestaoMes', document.querySelectorAll('.nav-item')[3])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+        <div onclick="showPanel('sugestaoMes', document.querySelectorAll('.nav-item')[3])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#aea995'" onmouseout="this.style.borderColor='#e5e3de'">
           <div style="font-size:22px;margin-bottom:10px;">✦</div>
           <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Sugestão do Mês</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">Prato e vinho em destaque</div>
         </div>
-        <div onclick="showPanel('ementa', document.querySelectorAll('.nav-item')[5])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+        <div onclick="showPanel('ementa', document.querySelectorAll('.nav-item')[5])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#aea995'" onmouseout="this.style.borderColor='#e5e3de'">
           <div style="font-size:22px;margin-bottom:10px;">◉</div>
           <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Ementa</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">Pratos, preços e menus</div>
         </div>
-        <div onclick="showPanel('eventos', document.querySelectorAll('.nav-item')[6])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+        <div onclick="showPanel('eventos', document.querySelectorAll('.nav-item')[6])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#aea995'" onmouseout="this.style.borderColor='#e5e3de'">
           <div style="font-size:22px;margin-bottom:10px;">🎉</div>
           <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Eventos</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">Campanhas e datas especiais</div>
         </div>
-        <div onclick="showPanel('reservas', document.getElementById('nav-reservas'))" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
-          <div style="font-size:22px;margin-bottom:10px;">◈</div>
-          <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Reservas</div>
-          <div style="font-size:12px;color:#888;margin-top:4px;">Gerir e confirmar reservas</div>
-        </div>
-        <div onclick="showPanel('vagas', document.querySelectorAll('.nav-item')[8])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#c9a84c'" onmouseout="this.style.borderColor='#e5e3de'">
+        <div onclick="showPanel('vagas', document.querySelectorAll('.nav-item')[8])" style="cursor:pointer;border:1px solid #e5e3de;border-radius:6px;padding:20px 18px;background:#fafaf9;transition:border-color .2s;" onmouseover="this.style.borderColor='#aea995'" onmouseout="this.style.borderColor='#e5e3de'">
           <div style="font-size:22px;margin-bottom:10px;">◐</div>
           <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Vagas de Emprego</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">Publicar e gerir vagas</div>
@@ -878,14 +894,16 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- preco -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Preço (€)</label>
-          <input id="sugestao-admin-preco" type="text" placeholder="ex: 14.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+          <input id="sugestao-admin-preco" class="price-input" type="text" inputmode="decimal" placeholder="ex: 14.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
           <button class="btn-save" onclick="saveSugestaoMes()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-sugestaoMes')" style="display:none;">&#9998; Editar</button>
           <button onclick="clearSugestaoMes()" style="background:none;border:1px solid #333;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Remover sugestão</button>
         </div>
-        <p id="sugestao-feedback" style="font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+        <p id="sugestao-feedback" style="font-size:12px;color:#aea995;display:none;">Guardado com sucesso!</p>
       </div>
     </div>
 
@@ -931,14 +949,16 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- preco -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Preço (€)</label>
-          <input id="vinho-admin-preco" type="text" placeholder="ex: 18.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+          <input id="vinho-admin-preco" class="price-input" type="text" inputmode="decimal" placeholder="ex: 18.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
           <button class="btn-save" onclick="saveVinhoMes()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-vinhoMes')" style="display:none;">&#9998; Editar</button>
           <button onclick="clearVinhoMes()" style="background:none;border:1px solid #333;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Remover vinho</button>
         </div>
-        <p id="vinho-feedback" style="font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+        <p id="vinho-feedback" style="font-size:12px;color:#aea995;display:none;">Guardado com sucesso!</p>
       </div>
     </div>
 
@@ -964,10 +984,12 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
           <button class="btn-save" onclick="savePratoDia()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-pratoDia')" style="display:none;">&#9998; Editar</button>
           <button onclick="clearPratoDia()" style="background:none;border:1px solid #ccc;color:#888;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:12px;">Limpar</button>
         </div>
-        <p id="pratoDia-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+        <p id="pratoDia-feedback" style="margin-top:12px;font-size:12px;color:#aea995;display:none;">Guardado com sucesso!</p>
       </div>
     </div>
 
@@ -1033,8 +1055,10 @@ textarea { resize: vertical; min-height: 90px; }
             </div>
           </div>
           <div style="margin-top:16px;">
+            <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
             <button class="btn-save" onclick="saveGeral()">Guardar Informações</button>
-            <p id="geral-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
+          <button class="btn-edit-section" onclick="unlockSection('panel-geral')" style="display:none;">&#9998; Editar</button>
+            <p id="geral-feedback" style="margin-top:8px;font-size:12px;color:#aea995;display:none;">Guardado!</p>
           </div>
         </div>
       </div>
@@ -1051,6 +1075,8 @@ textarea { resize: vertical; min-height: 90px; }
         <button class="sub-tab" onclick="switchSubTab('carnes', this)">Carnes</button>
         <button class="sub-tab" onclick="switchSubTab('peixe', this)">Peixe</button>
         <button class="sub-tab" onclick="switchSubTab('sobremesas', this)">Sobremesas</button>
+        <button class="sub-tab" onclick="switchSubTab('fimdesemana', this)">Fim de Semana</button>
+        <button class="sub-tab" onclick="switchSubTab('acompanhamentos', this)">Acompanhamentos</button>
         <button class="sub-tab" onclick="switchSubTab('grupos', this)">Menus de Grupo</button>
       </div>
 
@@ -1172,6 +1198,57 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
 
+      <div class="menu-tab-panel" id="subtab-fimdesemana">
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Fim de Semana</h3></div>
+            <span class="badge badge-gold">6 itens</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 2fr 80px 36px;gap:10px;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Nome</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Descrição</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Preço (€)</div>
+              <div></div>
+            </div>
+            <div id="fimdesemana-list">
+              <div class="menu-item-row"><input type="text" value="Cabrito Assado no Forno" /><input type="text" value="" /><input type="text" value="28,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Leitão Assado no Forno" /><input type="text" value="" /><input type="text" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Vitela Assada no Forno" /><input type="text" value="" /><input type="text" value="11,00 / 17,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Pernil Assado no Forno" /><input type="text" value="" /><input type="text" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Tripas à Moda da Casa" /><input type="text" value="" /><input type="text" value="12,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Cozido à Portuguesa" /><input type="text" value="" /><input type="text" value="19,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+            </div>
+            <button class="btn-add" onclick="addMenuRow('fimdesemana-list')">+ Adicionar Prato</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-tab-panel" id="subtab-acompanhamentos">
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Acompanhamentos</h3></div>
+            <span class="badge badge-gold">5 itens</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 2fr 80px 36px;gap:10px;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Nome</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Descrição</div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Preço (€)</div>
+              <div></div>
+            </div>
+            <div id="acompanhamentos-list">
+              <div class="menu-item-row"><input type="text" value="Salada Mista" /><input type="text" value="" /><input type="text" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Arroz" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Batata Frita" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Feijão Preto" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" value="Legumes Salteados" /><input type="text" value="" /><input type="text" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+            </div>
+            <button class="btn-add" onclick="addMenuRow('acompanhamentos-list')">+ Adicionar Item</button>
+          </div>
+        </div>
+      </div>
+
       <div class="menu-tab-panel" id="subtab-grupos">
         <div class="card">
           <div class="card-header">
@@ -1185,8 +1262,10 @@ textarea { resize: vertical; min-height: 90px; }
       </div>
 
       <div style="margin-top:20px;">
+        <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
         <button class="btn-save" onclick="saveEmenta()">Guardar Ementa</button>
-        <p id="ementa-feedback" style="margin-top:8px;font-size:12px;color:#c9a84c;display:none;">Guardado!</p>
+          <button class="btn-edit-section" onclick="unlockSection('panel-ementa')" style="display:none;">&#9998; Editar</button>
+        <p id="ementa-feedback" style="margin-top:8px;font-size:12px;color:#aea995;display:none;">Guardado!</p>
       </div>
 
     </div>
@@ -1209,9 +1288,11 @@ textarea { resize: vertical; min-height: 90px; }
           <button class="btn-add" onclick="addMvCard('peixe')" style="margin-top:10px;">+ Adicionar prato de peixe</button>
         </div>
         <div style="display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
           <button class="btn-save" onclick="saveMaisVendidos()">Guardar Mais Vendidos</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-maisVendidos')" style="display:none;">&#9998; Editar</button>
         </div>
-        <p id="mv-feedback" style="font-size:12px;color:#c9a84c;display:none;margin-top:8px;">Guardado com sucesso!</p>
+        <p id="mv-feedback" style="font-size:12px;color:#aea995;display:none;margin-top:8px;">Guardado com sucesso!</p>
       </div>
     </div>
 
@@ -1223,11 +1304,49 @@ textarea { resize: vertical; min-height: 90px; }
       </div>
       <div style="max-width:700px;">
         <div id="eventos-lista" style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"></div>
-        <button class="btn-add" onclick="addEventoCard()" style="width:100%;justify-content:center;">+ Adicionar Evento</button>
+        <button class="btn-add" id="btn-add-evento" onclick="addEventoCard()" style="width:100%;justify-content:center;">+ Adicionar Evento</button>
         <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
           <button class="btn-save" onclick="saveEventos()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-eventos')" style="display:none;">&#9998; Editar</button>
         </div>
-        <p id="eventos-feedback" style="font-size:12px;color:#c9a84c;display:none;margin-top:8px;">Guardado com sucesso!</p>
+        <p id="eventos-feedback" style="font-size:12px;color:#aea995;display:none;margin-top:8px;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- GALERIA -->
+    <div class="panel" id="panel-galeria">
+      <div class="panel-header">
+        <div class="panel-title">Galeria</div>
+        <div class="panel-subtitle">Fotos em destaque no site, antes da Ementa — até 6 fotos</div>
+      </div>
+      <div style="max-width:700px;">
+        <div id="galeria-lista" style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"></div>
+        <button class="btn-add" id="btn-add-galeria" onclick="addGaleriaCard()" style="width:100%;justify-content:center;">+ Adicionar Foto</button>
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
+          <button class="btn-save" onclick="saveGaleria()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-galeria')" style="display:none;">&#9998; Editar</button>
+        </div>
+        <p id="galeria-feedback" style="font-size:12px;color:#aea995;display:none;margin-top:8px;">Guardado com sucesso!</p>
+      </div>
+    </div>
+
+    <!-- PERDIDOS E ACHADOS -->
+    <div class="panel" id="panel-perdidos">
+      <div class="panel-header">
+        <div class="panel-title">Perdidos e Achados</div>
+        <div class="panel-subtitle">Objetos encontrados no restaurante — aparecem na página de Ajuda</div>
+      </div>
+      <div style="max-width:700px;">
+        <div id="perdidos-lista" style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;"></div>
+        <button class="btn-add" id="btn-add-perdido" onclick="addPerdidoCard()" style="width:100%;justify-content:center;">+ Adicionar Item</button>
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
+          <button class="btn-save" onclick="savePerdidos()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-perdidos')" style="display:none;">&#9998; Editar</button>
+        </div>
+        <p id="perdidos-feedback" style="font-size:12px;color:#aea995;display:none;margin-top:8px;">Guardado com sucesso!</p>
       </div>
     </div>
 
@@ -1347,7 +1466,7 @@ textarea { resize: vertical; min-height: 90px; }
               <div class="field">
                 <label>ID Formspree <span style="font-weight:400;color:var(--muted);">(para envio de email)</span></label>
                 <input type="text" id="res-formspree" placeholder="xpwzabcd" />
-                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Regista em <strong style="color:#c9a84c;">formspree.io</strong> → New Form → copia o ID do URL</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Regista em <strong style="color:#aea995;">formspree.io</strong> → New Form → copia o ID do URL</div>
               </div>
             </div>
             <div class="form-row" style="margin-top:12px;">
@@ -1358,9 +1477,11 @@ textarea { resize: vertical; min-height: 90px; }
               </div>
             </div>
             <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+              <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
               <button class="btn-save" onclick="saveResConfig()">Guardar configuração</button>
+          <button class="btn-edit-section" onclick="unlockSection('res-config')" style="display:none;">&#9998; Editar</button>
             </div>
-            <p id="res-config-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+            <p id="res-config-feedback" style="margin-top:12px;font-size:12px;color:#aea995;display:none;">Guardado com sucesso!</p>
           </div>
         </div>
       </div>
@@ -1380,9 +1501,11 @@ textarea { resize: vertical; min-height: 90px; }
         <button class="btn-add" onclick="addVaga()" style="margin-bottom:24px;">+ Adicionar vaga</button>
 
         <div style="display:flex;gap:10px;align-items:center;">
+          <div class="locked-hint">&#128274; Secção trancada — clique em <strong>Editar</strong> para alterar.</div>
           <button class="btn-save" onclick="saveVagas()">Guardar e publicar</button>
+          <button class="btn-edit-section" onclick="unlockSection('panel-vagas')" style="display:none;">&#9998; Editar</button>
         </div>
-        <p id="vagas-feedback" style="margin-top:12px;font-size:12px;color:#c9a84c;display:none;">Guardado com sucesso!</p>
+        <p id="vagas-feedback" style="margin-top:12px;font-size:12px;color:#aea995;display:none;">Guardado com sucesso!</p>
       </div>
     </div>
 
@@ -1523,7 +1646,50 @@ function closeMobileSidebar() {
   document.getElementById('mobile-sidebar-overlay').style.display = 'none';
 }
 
+// Secções com bloqueio de edição: painel -> chave no localStorage
+var PANEL_STORAGE_KEY = {
+  'panel-geral': 'siteGeral',
+  'panel-pratoDia': 'pratoDia',
+  'panel-sugestaoMes': 'sugestaoMes',
+  'panel-vinhoMes': 'vinhoMes',
+  'panel-ementa': 'menuData',
+  'panel-eventos': 'eventos',
+  'panel-maisVendidos': 'maisVendidos',
+  'panel-galeria': 'galeria',
+  'panel-perdidos': 'perdidosItens',
+  'panel-vagas': 'vagasEmprego',
+};
+
+function reloadPanelData(panelId) {
+  switch (panelId) {
+    case 'panel-geral': loadGeral(); break;
+    case 'panel-pratoDia': loadPratoDia(); break;
+    case 'panel-sugestaoMes': loadSugestaoMes(); break;
+    case 'panel-vinhoMes': loadVinhoMes(); break;
+    case 'panel-ementa': loadEmenta(); break;
+    case 'panel-eventos': loadEventos(); break;
+    case 'panel-maisVendidos': loadMaisVendidos(); break;
+    case 'panel-galeria': loadGaleria(); break;
+    case 'panel-perdidos': loadPerdidos(); break;
+    case 'panel-vagas': loadVagas(); break;
+  }
+}
+
+// Ao sair de uma secção destrancada (em edição) sem guardar, descarta as alterações e volta a trancar
+function discardUnsavedEdits(panelId) {
+  var key = PANEL_STORAGE_KEY[panelId];
+  if (!key) return;
+  var raw = localStorage.getItem(key);
+  if (!raw || raw === '{}' || raw === '[]' || raw === 'null') return;
+  reloadPanelData(panelId);
+  lockSection(panelId);
+}
+
 function showPanel(id, el) {
+  var prevPanel = document.querySelector('.panel.active');
+  if (prevPanel && !prevPanel.classList.contains('section-locked')) {
+    discardUnsavedEdits(prevPanel.id);
+  }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
@@ -1538,11 +1704,16 @@ function showPanel(id, el) {
     ementa: 'Ementa',
     eventos: 'Eventos & Campanhas',
     maisVendidos: 'Mais Vendidos',
+    galeria: 'Galeria',
+    perdidos: 'Perdidos e Achados',
     reservas: 'Reservas',
     vagas: 'Vagas de Emprego',
   };
   document.getElementById('topbar-title').textContent = titles[id] || id;
-  if (id === 'maisVendidos') loadMaisVendidos();
+  // Só carrega na primeira visita (painel ainda vazio) — evita apagar trabalho em curso não guardado ao voltar a entrar
+  if (id === 'maisVendidos' && !document.querySelector('#mv-carne-list .mv-card, #mv-peixe-list .mv-card')) loadMaisVendidos();
+  if (id === 'galeria' && document.getElementById('galeria-lista').children.length === 0) loadGaleria();
+  if (id === 'perdidos' && document.getElementById('perdidos-lista').children.length === 0) loadPerdidos();
 }
 
 function switchSubTab(id, el) {
@@ -1598,12 +1769,62 @@ function showToast(msg = 'Alterações guardadas com sucesso') {
 
 function saveAll() { showToast('Alterações guardadas com sucesso'); }
 
+// Reduz o tamanho da imagem antes de a guardar (localStorage tem limite ~5MB)
+function compressImage(file, callback, maxDim, quality) {
+  maxDim = maxDim || 1000;
+  quality = quality || 0.6;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var w = img.width, h = img.height;
+      if (w > maxDim || h > maxDim) {
+        if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = function() { callback(e.target.result); };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Guarda no localStorage com aviso claro se o limite de armazenamento for excedido
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    alert('Não foi possível guardar: o armazenamento do browser ficou cheio (demasiadas fotos ou fotos muito grandes). Remove ou reduz algumas fotos e tenta novamente.');
+    return false;
+  }
+}
+
+// Campos de preço só aceitam números (dígitos, vírgula, ponto, barra para 2 preços e espaço)
+document.addEventListener('input', function(e) {
+  var el = e.target;
+  if (!el || el.tagName !== 'INPUT') return;
+  var isPriceField = el.classList.contains('price-input') || el.classList.contains('mv-preco') || el.classList.contains('g-preco') ||
+    (el.closest('.menu-item-row') && el.matches('.menu-item-row input:nth-of-type(3)'));
+  if (!isPriceField) return;
+  var cleaned = el.value.replace(/[^0-9.,/\s]/g, '');
+  if (cleaned !== el.value) el.value = cleaned;
+});
+
 // ── GUARDAR GERAL ─────────────────────────────────────
 function saveGeral() {
   function val(id) { var el = document.getElementById(id); return el ? el.value : ''; }
   const data = {
-    sobreP1: val('geral-sobre1'),
-    sobreP2: val('geral-sobre2'),
+    nome: val('geral-nome'),
+    tag: val('geral-tag'),
+    desc: val('geral-desc'),
+    sobre1: val('geral-sobre1'),
+    sobre2: val('geral-sobre2'),
     stats: [
       { val: val('geral-stat1-val'), lbl: val('geral-stat1-lbl') },
       { val: val('geral-stat2-val'), lbl: val('geral-stat2-lbl') },
@@ -1611,6 +1832,7 @@ function saveGeral() {
     ],
   };
   localStorage.setItem('siteGeral', JSON.stringify(data));
+  lockSection('panel-geral');
   const fb = document.getElementById('geral-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -1637,6 +1859,8 @@ function saveEmenta() {
     carnes: getListItems('carnes-list'),
     peixe: getListItems('peixe-list'),
     sobremesas: getListItems('sobremesas-list'),
+    fimdesemana: getListItems('fimdesemana-list'),
+    acompanhamentos: getListItems('acompanhamentos-list'),
   };
   localStorage.setItem('menuData', JSON.stringify(data));
 
@@ -1655,6 +1879,7 @@ function saveEmenta() {
     });
   });
   localStorage.setItem('menuGrupos', JSON.stringify(grupos.filter(function(g) { return g.nome; })));
+  lockSection('panel-ementa');
 
   const fb = document.getElementById('ementa-feedback');
   fb.style.display = '';
@@ -1683,12 +1908,6 @@ function addGrupoCard(g) {
     '</div>';
   document.getElementById('grupos-admin-list').appendChild(card);
 }
-
-// Carregar grupos guardados no backoffice
-(function() {
-  var grupos = JSON.parse(localStorage.getItem('menuGrupos') || '[]');
-  grupos.forEach(addGrupoCard);
-})();
 
 // ── GUARDAR HORÁRIOS ──────────────────────────────────
 function saveHorarios() {
@@ -1740,6 +1959,7 @@ function saveResConfig() {
     googleReview: document.getElementById('res-google-review').value.trim()
   };
   localStorage.setItem('reservasConfig', JSON.stringify(data));
+  lockSection('res-config');
   var fb = document.getElementById('res-config-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -1947,22 +2167,33 @@ function switchResTab(tab, el) {
 renderReservations();
 updateReservasBadge();
 
-// ── Carregar dados guardados no painel Geral ──────────
+// Captura os valores por defeito (do HTML estático) antes de qualquer substituição — usados para repor quando não há nada guardado
+var DEFAULT_GERAL = {};
 (function() {
-  var d = JSON.parse(localStorage.getItem('siteGeral') || '{}');
-  if (d.nome) document.getElementById('geral-nome').value = d.nome;
-  if (d.subtitulo) document.getElementById('geral-subtitulo').value = d.subtitulo;
-  if (d.tag) document.getElementById('geral-tag').value = d.tag;
-  if (d.desc) document.getElementById('geral-desc').value = d.desc;
-  if (d.sobre1) document.getElementById('geral-sobre1').value = d.sobre1;
-  if (d.sobre2) document.getElementById('geral-sobre2').value = d.sobre2;
-  if (d.stat1val) document.getElementById('geral-stat1-val').value = d.stat1val;
-  if (d.stat1lbl) document.getElementById('geral-stat1-lbl').value = d.stat1lbl;
-  if (d.stat2val) document.getElementById('geral-stat2-val').value = d.stat2val;
-  if (d.stat2lbl) document.getElementById('geral-stat2-lbl').value = d.stat2lbl;
-  if (d.stat3val) document.getElementById('geral-stat3-val').value = d.stat3val;
-  if (d.stat3lbl) document.getElementById('geral-stat3-lbl').value = d.stat3lbl;
+  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl'].forEach(function(id) {
+    var el = document.getElementById(id);
+    DEFAULT_GERAL[id] = el ? el.value : '';
+  });
 })();
+
+// Carregar (ou recarregar) as Informações Gerais guardadas — descarta qualquer edição não guardada
+function loadGeral() {
+  function set(id, value) { var el = document.getElementById(id); if (el) el.value = value; }
+  var d = JSON.parse(localStorage.getItem('siteGeral') || '{}');
+  var stats = d.stats || [];
+  set('geral-nome', d.nome || DEFAULT_GERAL['geral-nome']);
+  set('geral-tag', d.tag || DEFAULT_GERAL['geral-tag']);
+  set('geral-desc', d.desc || DEFAULT_GERAL['geral-desc']);
+  set('geral-sobre1', d.sobre1 || DEFAULT_GERAL['geral-sobre1']);
+  set('geral-sobre2', d.sobre2 || DEFAULT_GERAL['geral-sobre2']);
+  set('geral-stat1-val', (stats[0] && stats[0].val) || DEFAULT_GERAL['geral-stat1-val']);
+  set('geral-stat1-lbl', (stats[0] && stats[0].lbl) || DEFAULT_GERAL['geral-stat1-lbl']);
+  set('geral-stat2-val', (stats[1] && stats[1].val) || DEFAULT_GERAL['geral-stat2-val']);
+  set('geral-stat2-lbl', (stats[1] && stats[1].lbl) || DEFAULT_GERAL['geral-stat2-lbl']);
+  set('geral-stat3-val', (stats[2] && stats[2].val) || DEFAULT_GERAL['geral-stat3-val']);
+  set('geral-stat3-lbl', (stats[2] && stats[2].lbl) || DEFAULT_GERAL['geral-stat3-lbl']);
+}
+loadGeral();
 
 
 // ── COMUNICAÇÕES ──────────────────────────────────────────
@@ -2002,7 +2233,7 @@ function buildPratoDiaForm(data) {
           '<span style="font-size:11px;color:#888;" id="dia-label-' + d.key + '">' + (ativo ? 'Ativo' : 'Inativo') + '</span>' +
           '<div style="position:relative;width:36px;height:20px;">' +
             '<input type="checkbox" data-toggle="' + d.key + '" ' + (ativo ? 'checked' : '') + ' style="opacity:0;width:0;height:0;position:absolute;" onchange="toggleDia(\'' + d.key + '\',this.checked)" />' +
-            '<div id="dia-track-' + d.key + '" style="position:absolute;inset:0;border-radius:20px;background:' + (ativo ? '#c9a84c' : '#ccc') + ';transition:background .2s;"></div>' +
+            '<div id="dia-track-' + d.key + '" style="position:absolute;inset:0;border-radius:20px;background:' + (ativo ? '#aea995' : '#ccc') + ';transition:background .2s;"></div>' +
             '<div id="dia-thumb-' + d.key + '" style="position:absolute;top:3px;left:' + (ativo ? '19px' : '3px') + ';width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s;"></div>' +
           '</div>' +
         '</label>' +
@@ -2018,7 +2249,7 @@ function buildPratoDiaForm(data) {
 function toggleDia(key, ativo) {
   document.getElementById('dia-block-' + key).style.opacity = ativo ? '1' : '0.45';
   document.getElementById('dia-label-' + key).textContent = ativo ? 'Ativo' : 'Inativo';
-  document.getElementById('dia-track-' + key).style.background = ativo ? '#c9a84c' : '#ccc';
+  document.getElementById('dia-track-' + key).style.background = ativo ? '#aea995' : '#ccc';
   document.getElementById('dia-thumb-' + key).style.left = ativo ? '19px' : '3px';
 }
 
@@ -2036,6 +2267,7 @@ function savePratoDia() {
     ativos[cb.dataset.toggle] = cb.checked;
   });
   localStorage.setItem('pratoDia', JSON.stringify({ periodo, dias, ativos }));
+  lockSection('panel-pratoDia');
   const fb = document.getElementById('pratoDia-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -2047,25 +2279,26 @@ function clearPratoDia() {
   buildPratoDiaForm({});
 }
 
-// Carregar dados existentes ao abrir o painel
-(function() {
+// Carregar (ou recarregar) o Prato do Dia guardado — descarta qualquer edição não guardada
+function loadPratoDia() {
   const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
-  if (data.periodo) document.getElementById('pratoDia-periodo').value = data.periodo;
+  document.getElementById('pratoDia-periodo').value = data.periodo || '';
   buildPratoDiaForm(data);
-})();
+}
+loadPratoDia();
 
 // ── Vagas de Emprego ─────────────────────────────────
 function vagaCardHTML(v, idx) {
   return `
   <div style="background:#f9f8f6;border:1px solid #e5e3de;border-radius:4px;padding:20px;" id="vaga-card-${idx}">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <span style="font-size:12px;color:#c9a84c;text-transform:uppercase;letter-spacing:.15em;">Vaga ${idx+1}</span>
+      <span style="font-size:12px;color:#aea995;text-transform:uppercase;letter-spacing:.15em;">Vaga ${idx+1}</span>
       <div style="display:flex;gap:10px;align-items:center;">
         <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#aaa;cursor:pointer;">
-          <input type="checkbox" ${v.ativa ? 'checked' : ''} onchange="toggleVagaAtiva(${idx},this)" style="accent-color:#c9a84c;" /> Ativa
+          <input type="checkbox" ${v.ativa ? 'checked' : ''} onchange="toggleVagaAtiva(${idx},this)" style="accent-color:#aea995;" /> Ativa
         </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c9a84c;cursor:pointer;">
-          <input type="checkbox" ${v.urgente ? 'checked' : ''} onchange="toggleVagaUrgente(${idx},this)" style="accent-color:#c9a84c;" /> Urgente
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#aea995;cursor:pointer;">
+          <input type="checkbox" ${v.urgente ? 'checked' : ''} onchange="toggleVagaUrgente(${idx},this)" style="accent-color:#aea995;" /> Urgente
         </label>
         <button onclick="removeVaga(${idx})" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;">✕</button>
       </div>
@@ -2120,12 +2353,18 @@ function toggleVagaUrgente(idx, el) { vagasData[idx].urgente = el.checked; }
 
 function saveVagas() {
   localStorage.setItem('vagasEmprego', JSON.stringify(vagasData));
+  lockSection('panel-vagas');
   var fb = document.getElementById('vagas-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
 }
 
-(function() { renderVagasAdmin(); })();
+// Carregar (ou recarregar) as vagas guardadas — descarta qualquer edição não guardada
+function loadVagas() {
+  vagasData = JSON.parse(localStorage.getItem('vagasEmprego') || '[]');
+  renderVagasAdmin();
+}
+loadVagas();
 
 // ── Take Away ────────────────────────────────────────
 function saveTakeaway() {
@@ -2155,15 +2394,13 @@ function previewVinhoFoto(event) {
   var file = event.target.files[0];
   if (!file) return;
   document.getElementById('vinho-foto-nome').textContent = file.name;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _vinhoFotoBase64 = e.target.result;
+  compressImage(file, function(dataUrl) {
+    _vinhoFotoBase64 = dataUrl;
     var preview = document.getElementById('vinho-admin-preview');
     preview.src = _vinhoFotoBase64;
     document.getElementById('vinho-preview-wrap').style.display = '';
     _vinhoMarkedForRemoval = false;
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 function saveVinhoMes() {
@@ -2171,6 +2408,7 @@ function saveVinhoMes() {
     localStorage.removeItem('vinhoMes');
     _vinhoMarkedForRemoval = false;
     _vinhoFotoBase64 = null;
+    unlockSection('panel-vinhoMes');
     var fb = document.getElementById('vinho-feedback');
     fb.textContent = 'Vinho removido.';
     fb.style.display = '';
@@ -2190,7 +2428,8 @@ function saveVinhoMes() {
     preco: preco,
     foto: _vinhoFotoBase64 || existing.foto || null
   };
-  localStorage.setItem('vinhoMes', JSON.stringify(data));
+  if (!safeSetItem('vinhoMes', JSON.stringify(data))) return;
+  lockSection('panel-vinhoMes');
   var fb = document.getElementById('vinho-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -2208,8 +2447,17 @@ function clearVinhoMes() {
   _vinhoFotoBase64 = null;
 }
 
-// Pré-carregar dados existentes do vinho
-(function() {
+// Carregar (ou recarregar) dados guardados do vinho — descarta qualquer edição não guardada
+function loadVinhoMes() {
+  _vinhoMarkedForRemoval = false;
+  _vinhoFotoBase64 = null;
+  document.getElementById('vinho-admin-mes').value = '';
+  document.getElementById('vinho-admin-nome').value = '';
+  document.getElementById('vinho-admin-desc').value = '';
+  document.getElementById('vinho-admin-preco').value = '';
+  document.getElementById('vinho-admin-preview').src = '';
+  document.getElementById('vinho-preview-wrap').style.display = 'none';
+  document.getElementById('vinho-foto-nome').textContent = '';
   var data = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
   if (data.mes) document.getElementById('vinho-admin-mes').value = data.mes;
   if (data.nome) document.getElementById('vinho-admin-nome').value = data.nome;
@@ -2221,7 +2469,8 @@ function clearVinhoMes() {
     document.getElementById('vinho-preview-wrap').style.display = '';
     document.getElementById('vinho-foto-nome').textContent = '(foto guardada)';
   }
-})();
+}
+loadVinhoMes();
 
 // ── Sugestão do Mês ──────────────────────────────────
 var _sugestaoFotoBase64 = null;
@@ -2231,16 +2480,14 @@ function previewSugestaoFoto(event) {
   var file = event.target.files[0];
   if (!file) return;
   document.getElementById('sugestao-foto-nome').textContent = file.name;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _sugestaoFotoBase64 = e.target.result;
+  compressImage(file, function(dataUrl) {
+    _sugestaoFotoBase64 = dataUrl;
     var preview = document.getElementById('sugestao-admin-preview');
     preview.src = _sugestaoFotoBase64;
     document.getElementById('sugestao-preview-wrap').style.display = '';
     _sugestaoMarkedForRemoval = false;
     document.getElementById('sugestao-admin-nome').style.opacity = '';
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 function saveSugestaoMes() {
@@ -2248,6 +2495,7 @@ function saveSugestaoMes() {
     localStorage.removeItem('sugestaoMes');
     _sugestaoMarkedForRemoval = false;
     _sugestaoFotoBase64 = null;
+    unlockSection('panel-sugestaoMes');
     var fb = document.getElementById('sugestao-feedback');
     fb.textContent = 'Sugestão removida.';
     fb.style.display = '';
@@ -2258,7 +2506,7 @@ function saveSugestaoMes() {
   var nome = document.getElementById('sugestao-admin-nome').value.trim();
   var desc = document.getElementById('sugestao-admin-desc').value.trim();
   var preco = document.getElementById('sugestao-admin-preco').value.trim();
-  if (!nome) { alert('Insere o nome do prato.'); return; }
+  if (!nome) { showToast('Insere o nome do prato.'); return; }
   var existing = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
   var data = {
     mes: mes,
@@ -2267,7 +2515,8 @@ function saveSugestaoMes() {
     preco: preco,
     foto: _sugestaoFotoBase64 || existing.foto || null
   };
-  localStorage.setItem('sugestaoMes', JSON.stringify(data));
+  if (!safeSetItem('sugestaoMes', JSON.stringify(data))) return;
+  lockSection('panel-sugestaoMes');
   var fb = document.getElementById('sugestao-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -2285,8 +2534,17 @@ function clearSugestaoMes() {
   _sugestaoFotoBase64 = null;
 }
 
-// Pré-carregar dados existentes da sugestão
-(function() {
+// Carregar (ou recarregar) dados guardados da sugestão — descarta qualquer edição não guardada
+function loadSugestaoMes() {
+  _sugestaoMarkedForRemoval = false;
+  _sugestaoFotoBase64 = null;
+  document.getElementById('sugestao-admin-mes').value = '';
+  document.getElementById('sugestao-admin-nome').value = '';
+  document.getElementById('sugestao-admin-desc').value = '';
+  document.getElementById('sugestao-admin-preco').value = '';
+  document.getElementById('sugestao-admin-preview').src = '';
+  document.getElementById('sugestao-preview-wrap').style.display = 'none';
+  document.getElementById('sugestao-foto-nome').textContent = '';
   var data = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
   if (data.mes) document.getElementById('sugestao-admin-mes').value = data.mes;
   if (data.nome) document.getElementById('sugestao-admin-nome').value = data.nome;
@@ -2298,7 +2556,8 @@ function clearSugestaoMes() {
     document.getElementById('sugestao-preview-wrap').style.display = '';
     document.getElementById('sugestao-foto-nome').textContent = '(foto guardada)';
   }
-})();
+}
+loadSugestaoMes();
 </script>
 <!-- ── Mais Vendidos JS ── -->
 <script>
@@ -2334,17 +2593,15 @@ function addMvCard(tipo, data) {
 function previewMvFoto(event, id) {
   var file = event.target.files[0];
   if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _mvFotos[id] = e.target.result;
+  compressImage(file, function(dataUrl) {
+    _mvFotos[id] = dataUrl;
     var card = document.querySelector('.mv-card[data-id="' + id + '"]');
     if (!card) return;
     var imgWrap = card.firstElementChild;
     imgWrap.innerHTML =
-      '<img src="' + e.target.result + '" onclick="this.nextSibling.click()" style="cursor:pointer;" />' +
+      '<img src="' + dataUrl + '" onclick="this.nextSibling.click()" style="cursor:pointer;" />' +
       '<input type="file" accept="image/*" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />';
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 function removeMvCard(btn) {
@@ -2364,10 +2621,12 @@ function saveMaisVendidos() {
       });
     });
   });
-  localStorage.setItem('maisVendidos', JSON.stringify(result));
+  if (!safeSetItem('maisVendidos', JSON.stringify(result))) return;
+  lockSection('panel-maisVendidos');
   var fb = document.getElementById('mv-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  showToast('Mais Vendidos guardado');
 }
 
 function loadMaisVendidos() {
@@ -2423,6 +2682,22 @@ function addEventoCard(data) {
   `;
   if (d.foto) _eventoFotos[id] = d.foto;
   document.getElementById('eventos-lista').appendChild(card);
+
+  var elIni = card.querySelector('.ev-data-inicio');
+  var elFim = card.querySelector('.ev-data-fim');
+  function checkEventoDatas() {
+    if (elIni.value && elFim.value && elIni.value > elFim.value) {
+      elFim.style.borderColor = '#dc2626';
+    } else {
+      elFim.style.borderColor = '';
+    }
+  }
+  elIni.addEventListener('change', checkEventoDatas);
+  elFim.addEventListener('change', checkEventoDatas);
+  checkEventoDatas();
+
+  var addBtn = document.getElementById('btn-add-evento');
+  if (addBtn) addBtn.style.display = document.querySelectorAll('#eventos-lista .evento-card').length >= 1 ? 'none' : '';
 }
 
 function escHtml(s) {
@@ -2432,47 +2707,217 @@ function escHtml(s) {
 function previewEventoFoto(event, id) {
   var file = event.target.files[0];
   if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _eventoFotos[id] = e.target.result;
+  compressImage(file, function(dataUrl) {
+    _eventoFotos[id] = dataUrl;
     var card = document.querySelector('.evento-card[data-id="' + id + '"]');
     if (!card) return;
-    card.querySelector('.ev-preview').src = e.target.result;
+    card.querySelector('.ev-preview').src = dataUrl;
     card.querySelector('.ev-preview-wrap').style.display = '';
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 function removeEventoCard(btn) {
   var card = btn.closest('.evento-card');
   delete _eventoFotos[card.dataset.id];
   card.remove();
+  var addBtn = document.getElementById('btn-add-evento');
+  if (addBtn) addBtn.style.display = document.querySelectorAll('#eventos-lista .evento-card').length >= 1 ? 'none' : '';
 }
 
 function saveEventos() {
-  var cards = document.querySelectorAll('.evento-card');
+  var cards = document.querySelectorAll('#eventos-lista .evento-card');
   var eventos = [];
-  cards.forEach(function(card) {
+  for (var i = 0; i < cards.length; i++) {
+    var card = cards[i];
     var id = card.dataset.id;
+    var dataInicio = card.querySelector('.ev-data-inicio').value;
+    var dataFim   = card.querySelector('.ev-data-fim').value;
+    if (dataInicio && dataFim && dataInicio > dataFim) {
+      showToast('A data de início não pode ser depois da data de fim.');
+      card.querySelector('.ev-data-fim').style.borderColor = '#dc2626';
+      return;
+    }
     eventos.push({
       titulo:    card.querySelector('.ev-titulo').value.trim(),
-      dataInicio: card.querySelector('.ev-data-inicio').value,
-      dataFim:   card.querySelector('.ev-data-fim').value,
+      dataInicio: dataInicio,
+      dataFim:   dataFim,
       desc:      card.querySelector('.ev-desc').value.trim(),
       foto:      _eventoFotos[id] || null,
     });
-  });
-  localStorage.setItem('eventos', JSON.stringify(eventos));
+  }
+  if (!safeSetItem('eventos', JSON.stringify(eventos))) return;
+  showToast('Evento guardado e publicado!');
+  lockSection('panel-eventos');
   var fb = document.getElementById('eventos-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
 }
 
-// Pré-carregar eventos existentes
-(function() {
-  var eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+// Carregar (ou recarregar) eventos guardados (máximo 1) — descarta qualquer edição não guardada
+function loadEventos() {
+  document.getElementById('eventos-lista').innerHTML = '';
+  _eventoFotos = {};
+  var eventos = JSON.parse(localStorage.getItem('eventos') || '[]').slice(0, 1);
   eventos.forEach(function(ev) { addEventoCard(ev); });
-})();
+}
+loadEventos();
+</script>
+
+<!-- ── Galeria JS ── -->
+<script>
+var _galeriaFotos = {};
+
+function addGaleriaCard(data) {
+  var lista = document.getElementById('galeria-lista');
+  if (lista.children.length >= 6) { showToast('Máximo de 6 fotos na Galeria.'); return; }
+  var id = 'gal_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  var d = data || {};
+  var card = document.createElement('div');
+  card.className = 'evento-card';
+  card.dataset.id = id;
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <strong style="font-size:13px;color:#555;">Foto</strong>
+      <button class="ev-remove" onclick="removeGaleriaCard(this)">✕ Remover</button>
+    </div>
+    <div>
+      <label>Legenda</label>
+      <input class="gal-legenda" type="text" placeholder="ex: Bacalhau na Brasa" value="${escHtml(d.legenda||'')}" />
+    </div>
+    <div>
+      <label>Fotografia</label>
+      <input type="file" accept="image/*" onchange="previewGaleriaFoto(event, '${id}')" style="font-size:12px;" />
+      <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
+        <img class="ev-preview" src="${escHtml(d.foto||'')}" />
+      </div>
+    </div>
+  `;
+  if (d.foto) _galeriaFotos[id] = d.foto;
+  lista.appendChild(card);
+  var addBtn = document.getElementById('btn-add-galeria');
+  if (addBtn) addBtn.style.display = lista.children.length >= 6 ? 'none' : '';
+}
+
+function previewGaleriaFoto(event, id) {
+  var file = event.target.files[0];
+  if (!file) return;
+  compressImage(file, function(dataUrl) {
+    _galeriaFotos[id] = dataUrl;
+    var card = document.querySelector('#galeria-lista .evento-card[data-id="' + id + '"]');
+    if (!card) return;
+    card.querySelector('.ev-preview').src = dataUrl;
+    card.querySelector('.ev-preview-wrap').style.display = '';
+  });
+}
+
+function removeGaleriaCard(btn) {
+  var card = btn.closest('.evento-card');
+  delete _galeriaFotos[card.dataset.id];
+  card.remove();
+  var addBtn = document.getElementById('btn-add-galeria');
+  if (addBtn) addBtn.style.display = document.querySelectorAll('#galeria-lista .evento-card').length >= 6 ? 'none' : '';
+}
+
+function saveGaleria() {
+  var cards = document.querySelectorAll('#galeria-lista .evento-card');
+  var fotos = [];
+  cards.forEach(function(card) {
+    var id = card.dataset.id;
+    var legenda = card.querySelector('.gal-legenda').value.trim();
+    var foto = _galeriaFotos[id] || null;
+    if (foto) fotos.push({ legenda: legenda, foto: foto });
+  });
+  if (!safeSetItem('galeria', JSON.stringify(fotos))) return;
+  showToast('Galeria guardada e publicada!');
+  lockSection('panel-galeria');
+  var fb = document.getElementById('galeria-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+function loadGaleria() {
+  var lista = document.getElementById('galeria-lista');
+  lista.innerHTML = '';
+  _galeriaFotos = {};
+  var fotos = JSON.parse(localStorage.getItem('galeria') || '[]');
+  fotos.forEach(function(f) { addGaleriaCard(f); });
+}
+</script>
+
+<!-- ── Perdidos e Achados JS ── -->
+<script>
+var _perdidoFotos = {};
+
+function addPerdidoCard(data) {
+  var lista = document.getElementById('perdidos-lista');
+  var id = 'pdd_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  var d = data || {};
+  var card = document.createElement('div');
+  card.className = 'evento-card';
+  card.dataset.id = id;
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <strong style="font-size:13px;color:#555;">Item</strong>
+      <button class="ev-remove" onclick="removePerdidoCard(this)">✕ Remover</button>
+    </div>
+    <div>
+      <label>Descrição do objeto</label>
+      <input class="pdd-desc" type="text" placeholder="ex: Óculos de sol pretos" value="${escHtml(d.desc||'')}" />
+    </div>
+    <div>
+      <label>Fotografia</label>
+      <input type="file" accept="image/*" onchange="previewPerdidoFoto(event, '${id}')" style="font-size:12px;" />
+      <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
+        <img class="ev-preview" src="${escHtml(d.foto||'')}" />
+      </div>
+    </div>
+  `;
+  if (d.foto) _perdidoFotos[id] = d.foto;
+  lista.appendChild(card);
+}
+
+function previewPerdidoFoto(event, id) {
+  var file = event.target.files[0];
+  if (!file) return;
+  compressImage(file, function(dataUrl) {
+    _perdidoFotos[id] = dataUrl;
+    var card = document.querySelector('#perdidos-lista .evento-card[data-id="' + id + '"]');
+    if (!card) return;
+    card.querySelector('.ev-preview').src = dataUrl;
+    card.querySelector('.ev-preview-wrap').style.display = '';
+  });
+}
+
+function removePerdidoCard(btn) {
+  var card = btn.closest('.evento-card');
+  delete _perdidoFotos[card.dataset.id];
+  card.remove();
+}
+
+function savePerdidos() {
+  var cards = document.querySelectorAll('#perdidos-lista .evento-card');
+  var itens = [];
+  cards.forEach(function(card) {
+    var id = card.dataset.id;
+    var desc = card.querySelector('.pdd-desc').value.trim();
+    if (!desc) return;
+    itens.push({ desc: desc, foto: _perdidoFotos[id] || null });
+  });
+  if (!safeSetItem('perdidosItens', JSON.stringify(itens))) return;
+  showToast('Perdidos e Achados guardado e publicado!');
+  lockSection('panel-perdidos');
+  var fb = document.getElementById('perdidos-feedback');
+  fb.style.display = '';
+  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+}
+
+function loadPerdidos() {
+  var lista = document.getElementById('perdidos-lista');
+  lista.innerHTML = '';
+  _perdidoFotos = {};
+  var itens = JSON.parse(localStorage.getItem('perdidosItens') || '[]');
+  itens.forEach(function(it) { addPerdidoCard(it); });
+}
 </script>
 
 <!-- Modal: confirmação de cancelamento -->
@@ -2486,5 +2931,97 @@ function saveEventos() {
     </div>
   </div>
 </div>
+
+<script>
+// ── Modo edição: trancar secções depois de guardadas ──
+function lockSection(containerId) {
+  var c = document.getElementById(containerId);
+  if (!c) return;
+  c.querySelectorAll('input, textarea, select').forEach(function(el){ el.disabled = true; });
+  c.querySelectorAll('button').forEach(function(el){
+    if (!el.classList.contains('btn-save') && !el.classList.contains('btn-edit-section') && !el.classList.contains('sub-tab')) el.style.display = 'none';
+  });
+  c.querySelectorAll('.btn-save').forEach(function(el){ el.style.display = 'none'; });
+  c.querySelectorAll('.btn-edit-section').forEach(function(el){ el.style.display = 'inline-block'; });
+  c.classList.add('section-locked');
+}
+function unlockSection(containerId) {
+  var c = document.getElementById(containerId);
+  if (!c) return;
+  c.querySelectorAll('input, textarea, select').forEach(function(el){ el.disabled = false; });
+  c.querySelectorAll('button').forEach(function(el){
+    if (!el.classList.contains('btn-edit-section') && !el.classList.contains('sub-tab')) el.style.display = '';
+  });
+  c.querySelectorAll('.btn-edit-section').forEach(function(el){ el.style.display = 'none'; });
+  if (containerId === 'panel-eventos') {
+    var addBtn = document.getElementById('btn-add-evento');
+    if (addBtn) addBtn.style.display = document.querySelectorAll('#eventos-lista .evento-card').length >= 1 ? 'none' : '';
+  }
+  if (containerId === 'panel-galeria') {
+    var addGalBtn = document.getElementById('btn-add-galeria');
+    if (addGalBtn) addGalBtn.style.display = document.querySelectorAll('#galeria-lista .evento-card').length >= 6 ? 'none' : '';
+  }
+  c.classList.remove('section-locked');
+  showToast('Modo de edição ativado');
+}
+
+// Recarregar itens da ementa guardados (senão mostra sempre os pratos por defeito)
+function renderMenuList(listId, items) {
+  var list = document.getElementById(listId);
+  if (!list) return;
+  list.innerHTML = '';
+  items.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'menu-item-row';
+    row.innerHTML =
+      '<input type="text" value="' + escHtml(item.nome || '') + '" />' +
+      '<input type="text" value="' + escHtml(item.desc || '') + '" />' +
+      '<input type="text" value="' + escHtml(item.preco || '') + '" />' +
+      '<button class="btn-remove" onclick="removeRow(this)">✕</button>';
+    list.appendChild(row);
+  });
+}
+var EMENTA_LIST_MAP = { entradas: 'entradas-list', carnes: 'carnes-list', peixe: 'peixe-list', sobremesas: 'sobremesas-list', fimdesemana: 'fimdesemana-list', acompanhamentos: 'acompanhamentos-list' };
+// Captura os pratos por defeito (do HTML estático) antes de qualquer substituição — usados para repor quando não há nada guardado
+var DEFAULT_MENU_ITEMS = {};
+Object.keys(EMENTA_LIST_MAP).forEach(function(cat) {
+  DEFAULT_MENU_ITEMS[cat] = getListItems(EMENTA_LIST_MAP[cat]);
+});
+// Carregar (ou recarregar) a ementa guardada — descarta qualquer edição não guardada
+function loadEmenta() {
+  var menu = JSON.parse(localStorage.getItem('menuData') || 'null');
+  Object.keys(EMENTA_LIST_MAP).forEach(function(cat) {
+    renderMenuList(EMENTA_LIST_MAP[cat], (menu && menu[cat]) ? menu[cat] : DEFAULT_MENU_ITEMS[cat]);
+  });
+  var gruposList = document.getElementById('grupos-admin-list');
+  if (gruposList) gruposList.innerHTML = '';
+  var grupos = JSON.parse(localStorage.getItem('menuGrupos') || '[]');
+  grupos.forEach(addGrupoCard);
+}
+loadEmenta();
+
+// Ao carregar: trancar secções que já têm dados guardados
+(function() {
+  var checks = [
+    ['sugestaoMes', 'panel-sugestaoMes'],
+    ['vinhoMes', 'panel-vinhoMes'],
+    ['pratoDia', 'panel-pratoDia'],
+    ['siteGeral', 'panel-geral'],
+    ['menuData', 'panel-ementa'],
+    ['eventos', 'panel-eventos'],
+    ['maisVendidos', 'panel-maisVendidos'],
+    ['galeria', 'panel-galeria'],
+    ['perdidosItens', 'panel-perdidos'],
+    ['reservasConfig', 'res-config'],
+    ['vagasEmprego', 'panel-vagas'],
+  ];
+  checks.forEach(function(pair) {
+    var raw = localStorage.getItem(pair[0]);
+    if (raw && raw !== '{}' && raw !== '[]' && raw !== 'null') {
+      lockSection(pair[1]);
+    }
+  });
+})();
+</script>
 </body>
 </html>

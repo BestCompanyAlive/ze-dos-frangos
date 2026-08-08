@@ -201,9 +201,51 @@ import Layout from '../layouts/Layout.astro';
           <p class="text-gray-300 text-sm font-light">Recebemos a sua candidatura e entraremos em contacto em breve.</p>
         </div>
 
+        <div id="candidatura-limite" class="hidden" style="margin-top:24px;border:1px solid rgba(220,38,38,0.35);background:rgba(220,38,38,0.06);border-radius:6px;padding:28px;text-align:center;">
+          <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#e5a3a3;margin-bottom:8px;">Já recebemos a sua candidatura recentemente</p>
+          <p class="text-gray-300 text-sm font-light">Para evitar candidaturas repetidas, já estamos a analisar a sua candidatura e entraremos em contacto em breve — se for urgente, contacte-nos diretamente para <span class="text-gold">churrasqueirazedosfrangos@gmail.com</span>.</p>
+        </div>
+
         <script>
+          var CANDIDATURA_LIMITE = 2;
+          var CANDIDATURA_JANELA_DIAS = 7;
+
+          function candidaturasRecentes() {
+            var agora = Date.now();
+            var janelaMs = CANDIDATURA_JANELA_DIAS * 24 * 60 * 60 * 1000;
+            var envios = JSON.parse(localStorage.getItem('candidaturasEnviadas') || '[]');
+            return envios.filter(function(t) { return (agora - t) < janelaMs; });
+          }
+
+          function candidaturaAtingiuLimite() {
+            return candidaturasRecentes().length >= CANDIDATURA_LIMITE;
+          }
+
+          function registarCandidatura() {
+            var recentes = candidaturasRecentes();
+            recentes.push(Date.now());
+            localStorage.setItem('candidaturasEnviadas', JSON.stringify(recentes));
+          }
+
+          function mostrarLimiteCandidatura() {
+            document.getElementById('candidatura-form').style.display = 'none';
+            document.getElementById('candidatura-sucesso').classList.add('hidden');
+            document.getElementById('candidatura-limite').classList.remove('hidden');
+          }
+
+          // Ao carregar a página: se já atingiu o limite, nem mostra o formulário
+          if (candidaturaAtingiuLimite()) {
+            mostrarLimiteCandidatura();
+          }
+
           document.getElementById('candidatura-form').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            if (candidaturaAtingiuLimite()) {
+              mostrarLimiteCandidatura();
+              return;
+            }
+
             var f = this;
             var nome           = f.querySelector('[name="nome"]').value;
             var telefone       = f.querySelector('[name="telefone"]').value;
@@ -227,6 +269,7 @@ import Layout from '../layouts/Layout.astro';
 
             window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + subject + '&body=' + body;
 
+            registarCandidatura();
             f.style.display = 'none';
             document.getElementById('candidatura-sucesso').classList.remove('hidden');
           });
@@ -246,8 +289,31 @@ import Layout from '../layouts/Layout.astro';
         <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Esqueceu algo?</p>
         <h2 class="text-3xl md:text-4xl font-light text-white mb-6">Perdidos e Achados</h2>
         <div class="w-12 h-px bg-gold mx-auto mb-6"></div>
-        <p class="text-gray-400 font-light text-sm max-w-md mx-auto">Preencha o formulário e entraremos em contacto consigo o mais breve possível. A sua mensagem será enviada diretamente para o WhatsApp do restaurante.</p>
+        <p class="text-gray-400 font-light text-sm max-w-md mx-auto">Preencha o formulário e entraremos em contacto consigo o mais breve possível. A sua mensagem será enviada por email para o restaurante.</p>
       </div>
+
+      <div id="perdidos-grid" class="grid grid-cols-2 gap-4 md:gap-6 mb-14"></div>
+      <p id="perdidos-vazio" class="text-gray-500 text-sm text-center mb-14" style="display:none;">Sem objetos em exibição no momento.</p>
+
+      <script>
+        (function() {
+          try {
+            var itens = JSON.parse(localStorage.getItem('perdidosItens') || '[]');
+            var grid = document.getElementById('perdidos-grid');
+            var vazio = document.getElementById('perdidos-vazio');
+            if (!itens.length) { vazio.style.display = ''; return; }
+            itens.forEach(function(item) {
+              var div = document.createElement('div');
+              div.className = 'gallery-item';
+              var imgHtml = item.foto
+                ? '<img src="' + item.foto + '" alt="' + (item.desc || 'Objeto encontrado') + '" class="w-full h-40 object-cover" />'
+                : '<div class="w-full h-40 flex items-center justify-center" style="background:#1a1a1a;color:#555;font-size:0.7rem;">Sem foto</div>';
+              div.innerHTML = imgHtml + '<p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">' + (item.desc || '') + '</p>';
+              grid.appendChild(div);
+            });
+          } catch (e) {}
+        })();
+      </script>
 
       <form id="perdidos-form" class="flex flex-col gap-4">
         <div class="grid grid-cols-2 gap-4">
@@ -277,13 +343,13 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div class="text-center mt-2">
-          <button type="submit" class="btn-gold">Enviar via WhatsApp</button>
+          <button type="submit" class="btn-gold">Enviar por Email</button>
         </div>
       </form>
 
       <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #aea99555;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
         <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#aea995;margin-bottom:8px;">Mensagem enviada!</p>
-        <p class="text-gray-300 text-sm font-light">A sua mensagem foi enviada via WhatsApp. Entraremos em contacto brevemente.</p>
+        <p class="text-gray-300 text-sm font-light">Abrimos o seu email com a mensagem preparada. Basta enviar e entraremos em contacto brevemente.</p>
       </div>
 
       <script>
@@ -299,18 +365,17 @@ import Layout from '../layouts/Layout.astro';
           var partes = data.split('-');
           var dataFmt = partes.length === 3 ? partes[2] + '/' + partes[1] + '/' + partes[0] : data;
 
-          var msg =
-            'Olá! Perdi um objeto no restaurante e gostaria de saber se foi encontrado:\n\n' +
+          var subject = encodeURIComponent('Perdidos e Achados — ' + item);
+          var body = encodeURIComponent(
+            'Perdi um objeto no restaurante e gostaria de saber se foi encontrado:\n\n' +
             'Nome: ' + nome + '\n' +
             'Telefone: ' + tel + '\n' +
             'Data da visita: ' + dataFmt + '\n' +
             'Item perdido: ' + item +
-            (obs ? '\nObservações: ' + obs : '');
+            (obs ? '\nObservações: ' + obs : '')
+          );
 
-          var cfg = JSON.parse(localStorage.getItem('reservasConfig') || '{}');
-          var waNum = cfg.whatsapp || '351913977751';
-
-          window.open('https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg), '_blank');
+          window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + subject + '&body=' + body;
 
           f.style.display = 'none';
           document.getElementById('perdidos-sucesso').classList.remove('hidden');

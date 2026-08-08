@@ -251,6 +251,19 @@ const menuData = {
     </section>
   </div>
 
+  <!-- GALERIA -->
+  <section id="galeria" class="py-28 px-6" style="background: #0d0d0d;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center reveal mb-16">
+        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Da Nossa Cozinha</p>
+        <h2 class="text-4xl md:text-5xl font-light text-white">Galeria</h2>
+        <div class="w-12 h-px bg-gold mx-auto mt-6"></div>
+      </div>
+
+      <div id="galeria-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
+    </div>
+  </section>
+
   <!-- EMENTA -->
   <section id="ementa" class="py-28 px-6" style="background: #0d0d0d; position: relative; background-image: url('/images/polvo.jpg'); background-size: cover; background-position: center; background-attachment: scroll;">
     <div class="absolute inset-0" style="background: rgba(13,13,13,0.88);"></div>
@@ -389,12 +402,12 @@ const menuData = {
 
       <div style="display:grid; grid-template-columns:1fr; gap:2.5rem; position:relative; z-index:1;">
         <!-- Carne -->
-        <div>
+        <div id="mv-carne-wrap" style="display:none;">
           <p class="text-gold text-xs tracking-[0.3em] uppercase mb-4" style="font-family: Playfair Display, serif; text-align:center;">Carne</p>
           <div id="mv-carne-grid" class="mv-grid"></div>
         </div>
         <!-- Peixe -->
-        <div>
+        <div id="mv-peixe-wrap" style="display:none;">
           <p class="text-gold text-xs tracking-[0.3em] uppercase mb-4" style="font-family: Playfair Display, serif; text-align:center;">Peixe</p>
           <div id="mv-peixe-grid" class="mv-grid"></div>
         </div>
@@ -408,10 +421,12 @@ const menuData = {
         var peixe = data.peixe || [];
         if (!carne.length && !peixe.length) return;
 
-        function renderGrid(items, gridId) {
+        function renderGrid(items, gridId, wrapId) {
           var grid = document.getElementById(gridId);
+          var count = 0;
           items.forEach(function(item) {
             if (!item.nome) return;
+            count++;
             var card = document.createElement('div');
             card.style.cssText = 'background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;';
             card.innerHTML =
@@ -423,51 +438,14 @@ const menuData = {
               '</div>';
             grid.appendChild(card);
           });
+          if (count > 0) document.getElementById(wrapId).style.display = '';
         }
 
-        renderGrid(carne, 'mv-carne-grid');
-        renderGrid(peixe, 'mv-peixe-grid');
+        renderGrid(carne, 'mv-carne-grid', 'mv-carne-wrap');
+        renderGrid(peixe, 'mv-peixe-grid', 'mv-peixe-wrap');
         document.getElementById('mais-vendidos-section').style.display = '';
       })();
     </script>
-  </section>
-
-  <!-- GALERIA -->
-  <section id="galeria" class="py-28 px-6" style="background: #0d0d0d;">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center reveal mb-16">
-        <p class="text-gold tracking-[0.3em] text-xs uppercase mb-4" style="font-family: Playfair Display, serif;">Da Nossa Cozinha</p>
-        <h2 class="text-4xl md:text-5xl font-light text-white">Galeria</h2>
-        <div class="w-12 h-px bg-gold mx-auto mt-6"></div>
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-        <div class="gallery-item reveal">
-          <img src="/images/bacalhau.jpg" alt="Bacalhau" class="w-full h-64 object-cover" />
-          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Bacalhau na Brasa</p>
-        </div>
-        <div class="gallery-item reveal">
-          <img src="/images/bacalhaunatas.jpg" alt="Bacalhau com Natas" class="w-full h-64 object-cover" />
-          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Bacalhau com Natas</p>
-        </div>
-        <div class="gallery-item reveal">
-          <img src="/images/croquetes.jpg" alt="Croquetes de Alheira" class="w-full h-64 object-cover" />
-          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Croquetes de Alheira</p>
-        </div>
-        <div class="gallery-item reveal">
-          <img src="/images/misto.jpg" alt="Misto de Carne" class="w-full h-64 object-cover" />
-          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Misto de Carne</p>
-        </div>
-        <div class="gallery-item reveal">
-          <img src="/images/polvo.jpg" alt="Polvo à Lagareiro" class="w-full h-64 object-cover" />
-          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Polvo à Lagareiro</p>
-        </div>
-        <div class="gallery-item reveal">
-          <img src="/images/churrasco.jpeg" alt="Frango Grelhado no Carvão" class="w-full h-64 object-cover" />
-          <p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">Frango Grelhado no Carvão</p>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- RESERVAS — movido para /reservas -->
@@ -1219,7 +1197,7 @@ const menuData = {
       try {
         var menu = JSON.parse(localStorage.getItem('menuData') || 'null');
         if (menu) {
-          var catMap = { entradas: 'entradas', carnes: 'principais', peixe: 'peixe', sobremesas: 'sobremesas' };
+          var catMap = { entradas: 'entradas', carnes: 'principais', peixe: 'peixe', sobremesas: 'sobremesas', fimdesemana: 'fimdesemana', acompanhamentos: 'acompanhamentos' };
           Object.keys(catMap).forEach(function(key) {
             var panelId = catMap[key];
             var panel = document.querySelector('[data-panel="' + panelId + '"]');
@@ -1235,6 +1213,25 @@ const menuData = {
               panel.appendChild(div);
             });
           });
+        }
+      } catch(e) {}
+
+      // --- galeria ---
+      try {
+        var galeria = JSON.parse(localStorage.getItem('galeria') || '[]');
+        var galeriaSection = document.getElementById('galeria');
+        var galeriaGrid = document.getElementById('galeria-grid');
+        if (galeria.length) {
+          galeriaGrid.innerHTML = '';
+          galeria.forEach(function(item) {
+            var div = document.createElement('div');
+            div.className = 'gallery-item reveal';
+            var legendaHtml = item.legenda ? '<p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">' + item.legenda + '</p>' : '';
+            div.innerHTML = '<img src="' + item.foto + '" alt="' + (item.legenda || 'Galeria') + '" class="w-full h-64 object-cover" />' + legendaHtml;
+            galeriaGrid.appendChild(div);
+          });
+        } else {
+          galeriaSection.style.display = 'none';
         }
       } catch(e) {}
 
