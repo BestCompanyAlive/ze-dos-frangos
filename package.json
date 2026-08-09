@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "sh tests/start-dev.sh",
     "dev:site": "astro dev",
+    "dev:stop": "astro dev stop; pkill -f 'netlify dev' || true",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
