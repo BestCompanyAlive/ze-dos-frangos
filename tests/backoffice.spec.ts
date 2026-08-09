@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { abrirPainelReservas, clearStorage } from './helpers';
+import { abrirPainelReservas, clearStorage, TEST_ADMIN_PASSWORD } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/admin.html');
   await clearStorage(page);
+  // Evita o prompt de password ao Guardar — os testes usam a password de teste diretamente.
+  await page.evaluate((pwd) => sessionStorage.setItem('zdf_admin_pwd', pwd), TEST_ADMIN_PASSWORD);
   await page.reload();
 });
 
@@ -38,10 +40,13 @@ test('backoffice: entrada "Reservas" escondida enquanto as reservas online não 
 test('backoffice → site: sugestão do mês guardada aparece no site', async ({ page, context }) => {
   await page.locator('.nav-item').filter({ hasText: 'Sugestão do Mês' }).click();
 
-  await page.locator('#sugestao-admin-mes').selectOption('Julho');
-  await page.locator('#sugestao-admin-nome').fill('Leitão à Bairrada');
-  await page.locator('#sugestao-admin-preco').fill('16.00');
-  await page.getByRole('button', { name: /guardar e publicar/i }).first().click();
+  const painel = page.locator('#panel-sugestaoMes');
+  await painel.locator('#sugestao-admin-mes').selectOption('Julho');
+  await painel.locator('#sugestao-admin-nome').fill('Leitão à Bairrada');
+  await painel.locator('#sugestao-admin-preco').fill('16.00');
+  await painel.getByRole('button', { name: /guardar e publicar/i }).click();
+  // A gravação é assíncrona (publica na base de dados) — espera que a secção tranque.
+  await expect(painel).toHaveClass(/section-locked/);
 
   const sitePage = await context.newPage();
   await sitePage.goto('/');
@@ -55,10 +60,13 @@ test('backoffice → site: sugestão do mês guardada aparece no site', async ({
 test('backoffice → site: vinho do mês guardado aparece no site', async ({ page, context }) => {
   await page.locator('.nav-item').filter({ hasText: 'Vinho do Mês' }).click();
 
-  await page.locator('#vinho-admin-mes').selectOption('Julho');
-  await page.locator('#vinho-admin-nome').fill('Quinta do Crasto Reserva');
-  await page.locator('#vinho-admin-preco').fill('22.00');
-  await page.getByRole('button', { name: /guardar e publicar/i }).last().click();
+  const painel = page.locator('#panel-vinhoMes');
+  await painel.locator('#vinho-admin-mes').selectOption('Julho');
+  await painel.locator('#vinho-admin-nome').fill('Quinta do Crasto Reserva');
+  await painel.locator('#vinho-admin-preco').fill('22.00');
+  await painel.getByRole('button', { name: /guardar e publicar/i }).click();
+  // A gravação é assíncrona (publica na base de dados) — espera que a secção tranque.
+  await expect(painel).toHaveClass(/section-locked/);
 
   const sitePage = await context.newPage();
   await sitePage.goto('/');
@@ -75,6 +83,8 @@ test('backoffice → site: ementa guardada aparece no site', async ({ page, cont
   const firstInput = page.locator('.menu-item-row input').first();
   await firstInput.fill('Chouriço Especial');
   await page.getByRole('button', { name: /guardar ementa/i }).click();
+  // A gravação é assíncrona (publica na base de dados) — espera que a secção tranque.
+  await expect(page.locator('#panel-ementa')).toHaveClass(/section-locked/);
 
   const sitePage = await context.newPage();
   await sitePage.goto('/');
@@ -94,6 +104,8 @@ test('backoffice → site: menu de grupo aparece na tab de grupos', async ({ pag
   await page.locator('.g-desc').fill('Menu especial para ocasiões únicas.');
   // Grupos are saved by the main "Guardar Ementa" button (no separate grupos button)
   await page.getByRole('button', { name: /guardar ementa/i }).click();
+  // A gravação é assíncrona (publica na base de dados) — espera que a secção tranque.
+  await expect(page.locator('#panel-ementa')).toHaveClass(/section-locked/);
 
   const sitePage = await context.newPage();
   await sitePage.goto('/');
@@ -111,6 +123,8 @@ test('backoffice → site: mais vendidos aparecem no site após guardar', async 
   await page.locator('.mv-nome').first().fill('Frango Piri-Piri');
   await page.locator('.mv-preco').first().fill('9.50');
   await page.getByRole('button', { name: /guardar mais vendidos/i }).click();
+  // A gravação é assíncrona (publica na base de dados) — espera que a secção tranque.
+  await expect(page.locator('#panel-maisVendidos')).toHaveClass(/section-locked/);
 
   const sitePage = await context.newPage();
   await sitePage.goto('/');
@@ -129,6 +143,8 @@ test('backoffice → site: evento publicado aparece no site com layout editorial
   await page.locator('.ev-data-inicio').fill('2026-08-15');
   await page.locator('.ev-desc').fill('Uma noite especial no verão.');
   await page.getByRole('button', { name: /guardar e publicar/i }).click();
+  // A gravação é assíncrona (publica na base de dados) — espera que a secção tranque.
+  await expect(page.locator('#panel-eventos')).toHaveClass(/section-locked/);
 
   const sitePage = await context.newPage();
   await sitePage.goto('/');

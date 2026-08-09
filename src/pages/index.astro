@@ -67,6 +67,7 @@ const menuData = {
 ---
 
 <Layout title="Churrasqueira Zé dos Frangos — Vila Real" description="Frango de churrasco grelhado no carvão em Vila Real. Especialidade da casa desde há décadas. Largo do Pioledo, nº 14, Vila Real.">
+  <script src="/site-data.js" is:inline></script>
   <!-- NAV -->
   <nav
     id="main-nav"
@@ -156,24 +157,27 @@ const menuData = {
     }
   </style>
   <!-- O espaço por cima do aviso iguala o py-28 da secção seguinte -->
-  <div id="aviso-wrap" style="background: #0d0d0d; padding-top: 7rem;">
+  <!-- Começa escondido: o texto e a visibilidade vêm da base de dados (assíncrono),
+       por isso mostra-se só depois de sabermos o que o backoffice configurou. -->
+  <div id="aviso-wrap" style="background: #0d0d0d; padding-top: 7rem; display:none;">
     <div id="aviso-topo" style="padding: 16px 24px; background: rgba(201,168,76,0.12); border-top: 1px solid rgba(201,168,76,0.25); border-bottom: 1px solid rgba(201,168,76,0.25); text-align: center;">
       <p class="text-gold text-xs" style="font-family: Playfair Display, serif;">
         FÉRIAS DE VERÃO — Encerrados de <strong>14 a 22 de agosto</strong>. Reabrimos a <strong>23 de agosto</strong>. Obrigado pela compreensão.
       </p>
     </div>
   </div>
-  <!-- Texto e visibilidade definidos no backoffice (Informações Gerais → Aviso no Topo do Site).
-       Inline para o aviso nunca chegar a piscar quando está desativado. -->
+  <!-- Texto e visibilidade definidos no backoffice (Informações Gerais → Aviso no Topo do Site). -->
   <script is:inline>
-    (function() {
+    (async function() {
       var wrap = document.getElementById('aviso-wrap');
       if (!wrap) return;
       try {
-        var aviso = (JSON.parse(localStorage.getItem('siteGeral') || '{}') || {}).avisoTopo;
-        if (!aviso) return; // sem configuração: fica o aviso por defeito
-        if (!aviso.ativo || !aviso.texto) { wrap.style.display = 'none'; return; }
-        wrap.querySelector('#aviso-topo p').textContent = aviso.texto;
+        var aviso = (JSON.parse((await dataGet('siteGeral')) || '{}') || {}).avisoTopo;
+        if (aviso) {
+          if (!aviso.ativo || !aviso.texto) return; // configurado e desligado: fica escondido
+          wrap.querySelector('#aviso-topo p').textContent = aviso.texto;
+        }
+        wrap.style.display = ''; // sem configuração: mostra o aviso por defeito
       } catch (e) {}
     })();
   </script>
@@ -375,8 +379,8 @@ const menuData = {
         <p id="grupos-vazio" class="text-gray-500 text-sm text-center py-8" style="display:none;">Brevemente disponível. Contacte-nos para informações.</p>
       </div>
       <script>
-        (function() {
-          var grupos = JSON.parse(localStorage.getItem('menuGrupos') || '[]');
+        (async function() {
+          var grupos = JSON.parse((await dataGet('menuGrupos')) || '[]');
           var lista = document.getElementById('grupos-lista');
           var vazio = document.getElementById('grupos-vazio');
           if (!grupos.length) { vazio.style.display = ''; return; }
@@ -448,8 +452,8 @@ const menuData = {
     </div>
 
     <script>
-      (function() {
-        var data = JSON.parse(localStorage.getItem('maisVendidos') || '{}');
+      (async function() {
+        var data = JSON.parse((await dataGet('maisVendidos')) || '{}');
         var carne = data.carne || [];
         var peixe = data.peixe || [];
         if (!carne.length && !peixe.length) return;
@@ -820,8 +824,8 @@ const menuData = {
 
   <script>
     // ── Vinho do Mês ─────────────────────────────────────
-    (function() {
-      var d = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+    (async function() {
+      var d = JSON.parse((await dataGet('vinhoMes')) || '{}');
       if (!d.nome) return;
       var box = document.getElementById('vinho-mes-box');
       document.getElementById('vinho-label').textContent = d.mes ? 'Vinho de ' + d.mes : 'Vinho do Mês';
@@ -844,8 +848,8 @@ const menuData = {
 
   <script>
     // ── Sugestão do Mês ─────────────────────────────────
-    (function() {
-      var d = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+    (async function() {
+      var d = JSON.parse((await dataGet('sugestaoMes')) || '{}');
       if (!d.nome) return;
       var box = document.getElementById('sugestao-mes-box');
       document.getElementById('sugestao-label').textContent = d.mes ? 'Sugestão de ' + d.mes : 'Sugestão do Mês';
@@ -868,8 +872,8 @@ const menuData = {
 
   <script>
     // ── Prato do Dia ────────────────────────────────────
-    (function() {
-      const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
+    (async function() {
+      const data = JSON.parse((await dataGet('pratoDia')) || '{}');
       const dias = data.dias || {};
       const DIAS = [
         { key: 'terca',  label: 'Terça-Feira'  },
@@ -1057,8 +1061,8 @@ const menuData = {
   </div>
 
   <script>
-    (function() {
-      var eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+    (async function() {
+      var eventos = JSON.parse((await dataGet('eventos')) || '[]');
       var ev = eventos.find(function(e) { return e.titulo; });
       if (!ev) return;
 
@@ -1194,11 +1198,11 @@ const menuData = {
   </footer>
 
   <script>
-    // ── Carregar dados do Admin (localStorage) ──────────
-    (function() {
+    // ── Carregar dados do Admin (base de dados partilhada) ──────────
+    (async function() {
       // --- siteGeral ---
       try {
-        var geral = JSON.parse(localStorage.getItem('siteGeral') || '{}');
+        var geral = JSON.parse((await dataGet('siteGeral')) || '{}');
         var p1t = geral.sobreP1 || geral.sobre1;
         var p2t = geral.sobreP2 || geral.sobre2;
         if (p1t) { var p1 = document.getElementById('sobre-p1'); if (p1) p1.textContent = p1t; }
@@ -1221,7 +1225,7 @@ const menuData = {
 
       // --- menuData ---
       try {
-        var menu = JSON.parse(localStorage.getItem('menuData') || 'null');
+        var menu = JSON.parse((await dataGet('menuData')) || 'null');
         if (menu) {
           var catMap = { entradas: 'entradas', carnes: 'principais', peixe: 'peixe', sobremesas: 'sobremesas', fimdesemana: 'fimdesemana', acompanhamentos: 'acompanhamentos' };
           Object.keys(catMap).forEach(function(key) {
@@ -1244,7 +1248,7 @@ const menuData = {
 
       // --- galeria ---
       try {
-        var galeria = JSON.parse(localStorage.getItem('galeria') || '[]');
+        var galeria = JSON.parse((await dataGet('galeria')) || '[]');
         var galeriaSection = document.getElementById('galeria');
         var galeriaGrid = document.getElementById('galeria-grid');
         if (galeria.length) {
@@ -1263,7 +1267,7 @@ const menuData = {
 
       // --- takeaway nota ---
       try {
-        var ta = JSON.parse(localStorage.getItem('siteTakeaway') || '{}');
+        var ta = JSON.parse((await dataGet('siteTakeaway')) || '{}');
         if (ta.nota) {
           var notaEl = document.getElementById('takeaway-nota');
           var notaWrap = document.getElementById('takeaway-nota-wrap');
@@ -1273,7 +1277,7 @@ const menuData = {
 
       // --- siteContactos ---
       try {
-        var contactos = JSON.parse(localStorage.getItem('siteContactos') || '{}');
+        var contactos = JSON.parse((await dataGet('siteContactos')) || '{}');
         if (contactos.telefone) {
           var phoneEl = document.getElementById('footer-telefone');
           if (phoneEl) phoneEl.textContent = contactos.telefone;

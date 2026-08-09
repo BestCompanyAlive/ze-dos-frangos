@@ -1715,32 +1715,32 @@ var PANEL_STORAGE_KEY = {
   'panel-vagas': 'vagasEmprego',
 };
 
-function reloadPanelData(panelId) {
+async function reloadPanelData(panelId) {
   switch (panelId) {
-    case 'panel-geral': loadGeral(); break;
-    case 'panel-pratoDia': loadPratoDia(); break;
-    case 'panel-sugestaoMes': loadSugestaoMes(); break;
-    case 'panel-vinhoMes': loadVinhoMes(); break;
-    case 'panel-ementa': loadEmenta(); break;
-    case 'panel-eventos': loadEventos(); break;
-    case 'panel-maisVendidos': loadMaisVendidos(); break;
-    case 'panel-galeria': loadGaleria(); break;
-    case 'panel-perdidos': loadPerdidos(); break;
-    case 'panel-vagas': loadVagas(); break;
+    case 'panel-geral': await loadGeral(); break;
+    case 'panel-pratoDia': await loadPratoDia(); break;
+    case 'panel-sugestaoMes': await loadSugestaoMes(); break;
+    case 'panel-vinhoMes': await loadVinhoMes(); break;
+    case 'panel-ementa': await loadEmenta(); break;
+    case 'panel-eventos': await loadEventos(); break;
+    case 'panel-maisVendidos': await loadMaisVendidos(); break;
+    case 'panel-galeria': await loadGaleria(); break;
+    case 'panel-perdidos': await loadPerdidos(); break;
+    case 'panel-vagas': await loadVagas(); break;
   }
 }
 
 // Ao sair de uma secção destrancada (em edição) sem guardar, descarta as alterações e volta a trancar
-function discardUnsavedEdits(panelId) {
+async function discardUnsavedEdits(panelId) {
   var key = PANEL_STORAGE_KEY[panelId];
   if (!key) return;
-  var raw = localStorage.getItem(key);
+  var raw = await dataGet(key);
   if (!raw || raw === '{}' || raw === '[]' || raw === 'null') return;
-  reloadPanelData(panelId);
+  await reloadPanelData(panelId);
   lockSection(panelId);
 }
 
-function showPanel(id, el) {
+async function showPanel(id, el) {
   // Com alterações por guardar, pergunta primeiro o que fazer (ver secaoPorGuardar)
   var pendente = typeof secaoPorGuardar === 'function' ? secaoPorGuardar(document.querySelector('.panel.active')) : null;
   if (pendente) {
@@ -1749,7 +1749,7 @@ function showPanel(id, el) {
   }
   var prevPanel = document.querySelector('.panel.active');
   if (prevPanel && !prevPanel.classList.contains('section-locked')) {
-    discardUnsavedEdits(prevPanel.id);
+    await discardUnsavedEdits(prevPanel.id);
   }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1855,13 +1855,56 @@ function compressImage(file, callback, maxDim, quality) {
   reader.readAsDataURL(file);
 }
 
-// Guarda no localStorage com aviso claro se o limite de armazenamento for excedido
-function safeSetItem(key, value) {
+// ── Armazenamento partilhado (Netlify Blobs) — sem cache local ──────────
+// Todos os dados vivem só no Blob. Sem ligação ao servidor (ex: "npm run dev"
+// sem "netlify dev"), leituras devolvem null e gravações falham com aviso.
+var ADMIN_PASSWORD_KEY = 'zdf_admin_pwd';
+
+function getStoredAdminPassword() {
+  return sessionStorage.getItem(ADMIN_PASSWORD_KEY) || '';
+}
+
+async function ensureAdminPassword() {
+  var pwd = getStoredAdminPassword();
+  if (pwd) return pwd;
+  pwd = window.prompt('Palavra-passe de administrador (para publicar alterações):') || '';
+  if (pwd) sessionStorage.setItem(ADMIN_PASSWORD_KEY, pwd);
+  return pwd;
+}
+
+// Lê uma chave da base de dados partilhada. Devolve null se não existir ou se a função não estiver disponível.
+async function dataGet(key) {
   try {
-    localStorage.setItem(key, value);
+    var res = await fetch('/.netlify/functions/data?key=' + encodeURIComponent(key));
+    if (!res.ok) throw new Error('erro ao ler "' + key + '": ' + res.status);
+    var body = await res.json();
+    return body.value !== undefined ? body.value : null;
+  } catch (e) {
+    console.warn('Não foi possível ler "' + key + '" da base de dados:', e);
+    return null;
+  }
+}
+
+// Guarda uma chave na base de dados partilhada.
+async function dataSet(key, stringValue) {
+  var pwd = await ensureAdminPassword();
+  if (!pwd) { alert('É necessária a palavra-passe de administrador para guardar.'); return false; }
+  try {
+    var res = await fetch('/.netlify/functions/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key, value: stringValue, password: pwd }),
+    });
+    if (res.status === 401) {
+      sessionStorage.removeItem(ADMIN_PASSWORD_KEY);
+      alert('Palavra-passe incorreta. A alteração NÃO foi guardada — tenta novamente.');
+      return false;
+    }
+    if (!res.ok) throw new Error('save failed: ' + res.status);
     return true;
   } catch (e) {
-    alert('Não foi possível guardar: o armazenamento do browser ficou cheio (demasiadas fotos ou fotos muito grandes). Remove ou reduz algumas fotos e tenta novamente.');
+    console.warn('Não foi possível guardar "' + key + '":', e);
+    alert('Não foi possível guardar "' + key + '". Verifica a ligação e tenta novamente.');
     return false;
   }
 }
@@ -1945,7 +1988,7 @@ document.addEventListener('blur', function(e) {
 }, true);
 
 // ── GUARDAR GERAL ─────────────────────────────────────
-function saveGeral() {
+async function saveGeral() {
   function val(id) { var el = document.getElementById(id); return el ? el.value : ''; }
   const data = {
     nome: val('geral-nome'),
@@ -1963,12 +2006,12 @@ function saveGeral() {
       texto: val('geral-aviso-texto').trim(),
     },
   };
-  localStorage.setItem('siteGeral', JSON.stringify(data));
+  var published = await dataSet('siteGeral', JSON.stringify(data));
   lockSection('panel-geral');
   const fb = document.getElementById('geral-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
-  showToast('Informações gerais guardadas');
+  showToast(published ? 'Informações gerais guardadas' : 'Não foi possível publicar.');
 }
 
 // ── GUARDAR EMENTA ────────────────────────────────────
@@ -1985,7 +2028,7 @@ function getListItems(listId) {
   return items;
 }
 
-function saveEmenta() {
+async function saveEmenta() {
   const data = {
     entradas: getListItems('entradas-list'),
     carnes: getListItems('carnes-list'),
@@ -1994,7 +2037,6 @@ function saveEmenta() {
     fimdesemana: getListItems('fimdesemana-list'),
     acompanhamentos: getListItems('acompanhamentos-list'),
   };
-  localStorage.setItem('menuData', JSON.stringify(data));
 
   // Guardar menus de grupo
   var grupos = [];
@@ -2010,12 +2052,15 @@ function saveEmenta() {
       sobremesas: card.querySelector('.g-sobremesas').value.trim(),
     });
   });
-  localStorage.setItem('menuGrupos', JSON.stringify(grupos.filter(function(g) { return g.nome; })));
+
+  var okData = await dataSet('menuData', JSON.stringify(data));
+  var okGrupos = await dataSet('menuGrupos', JSON.stringify(grupos.filter(function(g) { return g.nome; })));
   lockSection('panel-ementa');
 
   const fb = document.getElementById('ementa-feedback');
+  fb.textContent = (okData && okGrupos) ? 'Guardado!' : 'Não foi possível publicar.';
   fb.style.display = '';
-  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado!'; }, 3000);
   showToast('Ementa guardada');
 }
 
@@ -2056,7 +2101,7 @@ function saveHorarios() {
     };
   });
   data.nota = document.getElementById('horarios-nota').value;
-  localStorage.setItem('siteHorarios', JSON.stringify(data));
+  dataSet('siteHorarios', JSON.stringify(data));
   const fb = document.getElementById('horarios-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -2076,7 +2121,7 @@ function saveContactos() {
     morada: morada + '<br />' + cp + '<br />' + pais,
     contacto: tel + '<br />' + email,
   };
-  localStorage.setItem('siteContactos', JSON.stringify(data));
+  dataSet('siteContactos', JSON.stringify(data));
   const fb = document.getElementById('contactos-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -2309,9 +2354,9 @@ var DEFAULT_GERAL = {};
 })();
 
 // Carregar (ou recarregar) as Informações Gerais guardadas — descarta qualquer edição não guardada
-function loadGeral() {
+async function loadGeral() {
   function set(id, value) { var el = document.getElementById(id); if (el) el.value = value; }
-  var d = JSON.parse(localStorage.getItem('siteGeral') || '{}');
+  var d = JSON.parse((await dataGet('siteGeral')) || '{}');
   var stats = d.stats || [];
   set('geral-nome', d.nome || DEFAULT_GERAL['geral-nome']);
   set('geral-tag', d.tag || DEFAULT_GERAL['geral-tag']);
@@ -2390,7 +2435,7 @@ function toggleDia(key, ativo) {
   document.getElementById('dia-thumb-' + key).style.left = ativo ? '19px' : '3px';
 }
 
-function savePratoDia() {
+async function savePratoDia() {
   const periodo = document.getElementById('pratoDia-periodo').value.trim();
   const dias = {};
   const ativos = {};
@@ -2403,22 +2448,23 @@ function savePratoDia() {
   document.querySelectorAll('#pratoDia-dias input[data-toggle]').forEach(function(cb) {
     ativos[cb.dataset.toggle] = cb.checked;
   });
-  localStorage.setItem('pratoDia', JSON.stringify({ periodo, dias, ativos }));
+  var published = await dataSet('pratoDia', JSON.stringify({ periodo, dias, ativos }));
   lockSection('panel-pratoDia');
   const fb = document.getElementById('pratoDia-feedback');
+  fb.textContent = published ? 'Guardado com sucesso!' : 'Não foi possível publicar.';
   fb.style.display = '';
-  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
 }
 
-function clearPratoDia() {
-  localStorage.removeItem('pratoDia');
+async function clearPratoDia() {
+  await dataSet('pratoDia', JSON.stringify({}));
   document.getElementById('pratoDia-periodo').value = '';
   buildPratoDiaForm({});
 }
 
 // Carregar (ou recarregar) o Prato do Dia guardado — descarta qualquer edição não guardada
-function loadPratoDia() {
-  const data = JSON.parse(localStorage.getItem('pratoDia') || '{}');
+async function loadPratoDia() {
+  const data = JSON.parse((await dataGet('pratoDia')) || '{}');
   document.getElementById('pratoDia-periodo').value = data.periodo || '';
   buildPratoDiaForm(data);
 }
@@ -2463,7 +2509,7 @@ function vagaCardHTML(v, idx) {
   </div>`;
 }
 
-var vagasData = JSON.parse(localStorage.getItem('vagasEmprego') || '[]');
+var vagasData = [];
 
 function renderVagasAdmin() {
   var lista = document.getElementById('vagas-admin-lista');
@@ -2488,17 +2534,18 @@ function updateVaga(idx, field, val) {
 function toggleVagaAtiva(idx, el) { vagasData[idx].ativa = el.checked; }
 function toggleVagaUrgente(idx, el) { vagasData[idx].urgente = el.checked; }
 
-function saveVagas() {
-  localStorage.setItem('vagasEmprego', JSON.stringify(vagasData));
+async function saveVagas() {
+  var published = await dataSet('vagasEmprego', JSON.stringify(vagasData));
   lockSection('panel-vagas');
   var fb = document.getElementById('vagas-feedback');
+  fb.textContent = published ? 'Guardado com sucesso!' : 'Não foi possível publicar.';
   fb.style.display = '';
-  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
 }
 
 // Carregar (ou recarregar) as vagas guardadas — descarta qualquer edição não guardada
-function loadVagas() {
-  vagasData = JSON.parse(localStorage.getItem('vagasEmprego') || '[]');
+async function loadVagas() {
+  vagasData = JSON.parse((await dataGet('vagasEmprego')) || '[]');
   renderVagasAdmin();
 }
 loadVagas();
@@ -2516,7 +2563,7 @@ function saveTakeaway() {
       nota: document.getElementById('takeaway-cabrito-nota').value.trim()
     }
   };
-  localStorage.setItem('siteTakeaway', JSON.stringify(data));
+  dataSet('siteTakeaway', JSON.stringify(data));
   var fb = document.getElementById('takeaway-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
@@ -2554,9 +2601,9 @@ function previewVinhoFoto(event) {
   });
 }
 
-function saveVinhoMes() {
+async function saveVinhoMes() {
   if (_vinhoMarkedForRemoval) {
-    localStorage.removeItem('vinhoMes');
+    await dataSet('vinhoMes', JSON.stringify({}));
     _vinhoMarkedForRemoval = false;
     _vinhoFotoBase64 = null;
     unlockSection('panel-vinhoMes');
@@ -2571,7 +2618,7 @@ function saveVinhoMes() {
   var desc = document.getElementById('vinho-admin-desc').value.trim();
   var preco = document.getElementById('vinho-admin-preco').value.trim();
   if (!nome) { alert('Insere o nome do vinho.'); return; }
-  var existing = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+  var existing = JSON.parse((await dataGet('vinhoMes')) || '{}');
   var data = {
     mes: mes,
     nome: nome,
@@ -2579,9 +2626,10 @@ function saveVinhoMes() {
     preco: preco,
     foto: _vinhoFotoBase64 || existing.foto || null
   };
-  if (!safeSetItem('vinhoMes', JSON.stringify(data))) return;
+  var published = await dataSet('vinhoMes', JSON.stringify(data));
   lockSection('panel-vinhoMes');
   var fb = document.getElementById('vinho-feedback');
+  fb.textContent = published ? 'Guardado com sucesso!' : 'Não foi possível publicar.';
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
 }
@@ -2599,7 +2647,7 @@ function clearVinhoMes() {
 }
 
 // Carregar (ou recarregar) dados guardados do vinho — descarta qualquer edição não guardada
-function loadVinhoMes() {
+async function loadVinhoMes() {
   _vinhoMarkedForRemoval = false;
   _vinhoFotoBase64 = null;
   document.getElementById('vinho-admin-mes').value = '';
@@ -2609,7 +2657,7 @@ function loadVinhoMes() {
   document.getElementById('vinho-admin-preview').src = '';
   document.getElementById('vinho-preview-wrap').style.display = 'none';
   document.getElementById('vinho-foto-nome').textContent = '';
-  var data = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
+  var data = JSON.parse((await dataGet('vinhoMes')) || '{}');
   definirMesSelect('vinho-admin-mes', data.mes);
   if (data.nome) document.getElementById('vinho-admin-nome').value = data.nome;
   if (data.desc) document.getElementById('vinho-admin-desc').value = data.desc;
@@ -2641,9 +2689,9 @@ function previewSugestaoFoto(event) {
   });
 }
 
-function saveSugestaoMes() {
+async function saveSugestaoMes() {
   if (_sugestaoMarkedForRemoval) {
-    localStorage.removeItem('sugestaoMes');
+    await dataSet('sugestaoMes', JSON.stringify({}));
     _sugestaoMarkedForRemoval = false;
     _sugestaoFotoBase64 = null;
     unlockSection('panel-sugestaoMes');
@@ -2658,7 +2706,7 @@ function saveSugestaoMes() {
   var desc = document.getElementById('sugestao-admin-desc').value.trim();
   var preco = document.getElementById('sugestao-admin-preco').value.trim();
   if (!nome) { showToast('Insere o nome do prato.'); return; }
-  var existing = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+  var existing = JSON.parse((await dataGet('sugestaoMes')) || '{}');
   var data = {
     mes: mes,
     nome: nome,
@@ -2666,11 +2714,12 @@ function saveSugestaoMes() {
     preco: preco,
     foto: _sugestaoFotoBase64 || existing.foto || null
   };
-  if (!safeSetItem('sugestaoMes', JSON.stringify(data))) return;
+  var published = await dataSet('sugestaoMes', JSON.stringify(data));
   lockSection('panel-sugestaoMes');
   var fb = document.getElementById('sugestao-feedback');
+  fb.textContent = published ? 'Guardado e publicado com sucesso!' : 'Guardado só neste browser (ver aviso).';
   fb.style.display = '';
-  setTimeout(function() { fb.style.display = 'none'; }, 3000);
+  setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
 }
 
 function clearSugestaoMes() {
@@ -2686,7 +2735,7 @@ function clearSugestaoMes() {
 }
 
 // Carregar (ou recarregar) dados guardados da sugestão — descarta qualquer edição não guardada
-function loadSugestaoMes() {
+async function loadSugestaoMes() {
   _sugestaoMarkedForRemoval = false;
   _sugestaoFotoBase64 = null;
   document.getElementById('sugestao-admin-mes').value = '';
@@ -2696,7 +2745,7 @@ function loadSugestaoMes() {
   document.getElementById('sugestao-admin-preview').src = '';
   document.getElementById('sugestao-preview-wrap').style.display = 'none';
   document.getElementById('sugestao-foto-nome').textContent = '';
-  var data = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
+  var data = JSON.parse((await dataGet('sugestaoMes')) || '{}');
   definirMesSelect('sugestao-admin-mes', data.mes);
   if (data.nome) document.getElementById('sugestao-admin-nome').value = data.nome;
   if (data.desc) document.getElementById('sugestao-admin-desc').value = data.desc;
@@ -2761,7 +2810,7 @@ function removeMvCard(btn) {
   card.remove();
 }
 
-function saveMaisVendidos() {
+async function saveMaisVendidos() {
   var result = { carne: [], peixe: [] };
   ['carne','peixe'].forEach(function(tipo) {
     document.querySelectorAll('.mv-card[data-tipo="' + tipo + '"]').forEach(function(card) {
@@ -2772,19 +2821,19 @@ function saveMaisVendidos() {
       });
     });
   });
-  if (!safeSetItem('maisVendidos', JSON.stringify(result))) return;
+  var published = await dataSet('maisVendidos', JSON.stringify(result));
   lockSection('panel-maisVendidos');
   var fb = document.getElementById('mv-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
-  showToast('Mais Vendidos guardado');
+  showToast(published ? 'Mais Vendidos guardado' : 'Não foi possível publicar.');
 }
 
-function loadMaisVendidos() {
+async function loadMaisVendidos() {
   document.getElementById('mv-carne-list').innerHTML = '';
   document.getElementById('mv-peixe-list').innerHTML = '';
   _mvFotos = {};
-  var data = JSON.parse(localStorage.getItem('maisVendidos') || '{}');
+  var data = JSON.parse((await dataGet('maisVendidos')) || '{}');
   (data.carne || []).forEach(function(d) { addMvCard('carne', d); });
   (data.peixe || []).forEach(function(d) { addMvCard('peixe', d); });
 }
@@ -2875,7 +2924,7 @@ function removeEventoCard(btn) {
   if (addBtn) addBtn.style.display = document.querySelectorAll('#eventos-lista .evento-card').length >= 1 ? 'none' : '';
 }
 
-function saveEventos() {
+async function saveEventos() {
   var cards = document.querySelectorAll('#eventos-lista .evento-card');
   var eventos = [];
   for (var i = 0; i < cards.length; i++) {
@@ -2896,8 +2945,8 @@ function saveEventos() {
       foto:      _eventoFotos[id] || null,
     });
   }
-  if (!safeSetItem('eventos', JSON.stringify(eventos))) return;
-  showToast('Evento guardado e publicado!');
+  var published = await dataSet('eventos', JSON.stringify(eventos));
+  showToast(published ? 'Evento guardado e publicado!' : 'Não foi possível publicar.');
   lockSection('panel-eventos');
   var fb = document.getElementById('eventos-feedback');
   fb.style.display = '';
@@ -2905,10 +2954,10 @@ function saveEventos() {
 }
 
 // Carregar (ou recarregar) eventos guardados (máximo 1) — descarta qualquer edição não guardada
-function loadEventos() {
+async function loadEventos() {
   document.getElementById('eventos-lista').innerHTML = '';
   _eventoFotos = {};
-  var eventos = JSON.parse(localStorage.getItem('eventos') || '[]').slice(0, 1);
+  var eventos = JSON.parse((await dataGet('eventos')) || '[]').slice(0, 1);
   eventos.forEach(function(ev) { addEventoCard(ev); });
 }
 loadEventos();
@@ -2969,7 +3018,7 @@ function removeGaleriaCard(btn) {
   if (addBtn) addBtn.style.display = document.querySelectorAll('#galeria-lista .evento-card').length >= 6 ? 'none' : '';
 }
 
-function saveGaleria() {
+async function saveGaleria() {
   var cards = document.querySelectorAll('#galeria-lista .evento-card');
   var fotos = [];
   cards.forEach(function(card) {
@@ -2978,19 +3027,19 @@ function saveGaleria() {
     var foto = _galeriaFotos[id] || null;
     if (foto) fotos.push({ legenda: legenda, foto: foto });
   });
-  if (!safeSetItem('galeria', JSON.stringify(fotos))) return;
-  showToast('Galeria guardada e publicada!');
+  var published = await dataSet('galeria', JSON.stringify(fotos));
+  showToast(published ? 'Galeria guardada e publicada!' : 'Não foi possível publicar.');
   lockSection('panel-galeria');
   var fb = document.getElementById('galeria-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
 }
 
-function loadGaleria() {
+async function loadGaleria() {
   var lista = document.getElementById('galeria-lista');
   lista.innerHTML = '';
   _galeriaFotos = {};
-  var fotos = JSON.parse(localStorage.getItem('galeria') || '[]');
+  var fotos = JSON.parse((await dataGet('galeria')) || '[]');
   fotos.forEach(function(f) { addGaleriaCard(f); });
 }
 </script>
@@ -3045,7 +3094,7 @@ function removePerdidoCard(btn) {
   card.remove();
 }
 
-function savePerdidos() {
+async function savePerdidos() {
   var cards = document.querySelectorAll('#perdidos-lista .evento-card');
   var itens = [];
   cards.forEach(function(card) {
@@ -3054,19 +3103,19 @@ function savePerdidos() {
     if (!desc) return;
     itens.push({ desc: desc, foto: _perdidoFotos[id] || null });
   });
-  if (!safeSetItem('perdidosItens', JSON.stringify(itens))) return;
-  showToast('Perdidos e Achados guardado e publicado!');
+  var published = await dataSet('perdidosItens', JSON.stringify(itens));
+  showToast(published ? 'Perdidos e Achados guardado e publicado!' : 'Não foi possível publicar.');
   lockSection('panel-perdidos');
   var fb = document.getElementById('perdidos-feedback');
   fb.style.display = '';
   setTimeout(function() { fb.style.display = 'none'; }, 3000);
 }
 
-function loadPerdidos() {
+async function loadPerdidos() {
   var lista = document.getElementById('perdidos-lista');
   lista.innerHTML = '';
   _perdidoFotos = {};
-  var itens = JSON.parse(localStorage.getItem('perdidosItens') || '[]');
+  var itens = JSON.parse((await dataGet('perdidosItens')) || '[]');
   itens.forEach(function(it) { addPerdidoCard(it); });
 }
 </script>
@@ -3188,21 +3237,24 @@ function fecharModalPorGuardar() {
   _saidaPendente = null;
 }
 
-function resolverModalPorGuardar(acao) {
+async function resolverModalPorGuardar(acao) {
   var pendente = _saidaPendente;
   if (!pendente) return;
   document.getElementById('unsaved-modal-overlay').classList.remove('open');
   _saidaPendente = null;
   if (acao === 'guardar') {
+    // As funções de guardar são assíncronas (publicam na base de dados) — espera
+    // que terminem antes de verificar se a secção ficou trancada.
     var guardar = pendente.seccao.querySelector('.btn-save');
-    if (guardar) guardar.click();
+    var m = guardar && /^(\w+)\(/.exec(guardar.getAttribute('onclick') || '');
+    if (m && typeof window[m[1]] === 'function') await window[m[1]]();
     // Se o guardar falhou (campos obrigatórios em falta), fica na secção
     if (!pendente.seccao.classList.contains('section-locked')) {
       _saidaPendente = pendente;
       return;
     }
   } else {
-    discardUnsavedEdits(pendente.seccao.id);
+    await discardUnsavedEdits(pendente.seccao.id);
   }
   SECOES_ALTERADAS[pendente.seccao.id] = false;
   if (pendente.continuar) pendente.continuar();
@@ -3238,20 +3290,20 @@ Object.keys(EMENTA_LIST_MAP).forEach(function(cat) {
   DEFAULT_MENU_ITEMS[cat] = getListItems(EMENTA_LIST_MAP[cat]);
 });
 // Carregar (ou recarregar) a ementa guardada — descarta qualquer edição não guardada
-function loadEmenta() {
-  var menu = JSON.parse(localStorage.getItem('menuData') || 'null');
+async function loadEmenta() {
+  var menu = JSON.parse((await dataGet('menuData')) || 'null');
   Object.keys(EMENTA_LIST_MAP).forEach(function(cat) {
     renderMenuList(EMENTA_LIST_MAP[cat], (menu && menu[cat]) ? menu[cat] : DEFAULT_MENU_ITEMS[cat]);
   });
   var gruposList = document.getElementById('grupos-admin-list');
   if (gruposList) gruposList.innerHTML = '';
-  var grupos = JSON.parse(localStorage.getItem('menuGrupos') || '[]');
+  var grupos = JSON.parse((await dataGet('menuGrupos')) || '[]');
   grupos.forEach(addGrupoCard);
 }
 loadEmenta();
 
 // Ao carregar: trancar secções que já têm dados guardados
-(function() {
+(async function() {
   var checks = [
     ['sugestaoMes', 'panel-sugestaoMes'],
     ['vinhoMes', 'panel-vinhoMes'],
@@ -3262,15 +3314,14 @@ loadEmenta();
     ['maisVendidos', 'panel-maisVendidos'],
     ['galeria', 'panel-galeria'],
     ['perdidosItens', 'panel-perdidos'],
-    ['reservasConfig', 'res-config'],
     ['vagasEmprego', 'panel-vagas'],
   ];
-  checks.forEach(function(pair) {
-    var raw = localStorage.getItem(pair[0]);
+  await Promise.all(checks.map(async function(pair) {
+    var raw = await dataGet(pair[0]);
     if (raw && raw !== '{}' && raw !== '[]' && raw !== 'null') {
       lockSection(pair[1]);
     }
-  });
+  }));
 })();
 
 // A barra de ações de cada secção (aviso de trancada, Guardar, Editar, Remover e a

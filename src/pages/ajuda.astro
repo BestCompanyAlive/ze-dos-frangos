@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Apoio — Churrasqueira Zé dos Frangos" description="Perdidos e achados e recrutamento da Churrasqueira Zé dos Frangos, Vila Real.">
+  <script src="/site-data.js" is:inline></script>
 
   <!-- NAV -->
   <nav
@@ -74,8 +75,8 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <script>
-        (function() {
-          var vagas = JSON.parse(localStorage.getItem('vagasEmprego') || '[]').filter(function(v) { return v.ativa; });
+        (async function() {
+          var vagas = JSON.parse((await dataGet('vagasEmprego')) || '[]').filter(function(v) { return v.ativa; });
           if (!vagas.length) return;
           // Vagas urgentes primeiro, mantendo a ordem definida no backoffice dentro de cada grupo
           vagas.sort(function(a, b) { return (b.urgente ? 1 : 0) - (a.urgente ? 1 : 0); });
@@ -298,9 +299,9 @@ import Layout from '../layouts/Layout.astro';
       <p id="perdidos-vazio" class="text-gray-500 text-sm text-center mb-14" style="display:none;">Sem objetos em exibição no momento.</p>
 
       <script>
-        (function() {
+        (async function() {
           try {
-            var itens = JSON.parse(localStorage.getItem('perdidosItens') || '[]');
+            var itens = JSON.parse((await dataGet('perdidosItens')) || '[]');
             var grid = document.getElementById('perdidos-grid');
             var vazio = document.getElementById('perdidos-vazio');
             if (!itens.length) { vazio.style.display = ''; return; }
