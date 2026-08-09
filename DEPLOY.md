@@ -93,16 +93,34 @@ Na barra lateral, **Definições da Conta**:
 
 ## Desenvolvimento e testes
 
+O projeto exige **Node ≥ 22.12** (ver `engines` no `package.json`). Com o Node
+errado, o `netlify dev` fica à espera do Astro e desiste ao fim de um minuto.
+
 ```bash
+nvm use 22                   # ou o gestor de versões que usar
 npm ci
 npx playwright test          # arranca netlify dev na porta 4323 e corre tudo
 ```
 
-As credenciais locais estão em `tests/start-dev.sh` e são só de desenvolvimento —
-em produção os valores vêm das definições do Netlify. Ver também `.env.example`.
+Para abrir o painel à mão: `sh tests/start-dev.sh`, depois
+http://localhost:4323/admin.html.
 
-Para abrir o painel localmente: `sh tests/start-dev.sh`, depois
-http://localhost:4323/admin.html com `admin` / `desenvolvimento-local-123`.
+**Qual é a palavra-passe local?** Depende de já ter corrido os testes ou não. Os
+dados locais ficam em `.netlify/blobs-serve/` e sobrevivem entre arranques:
+
+| Estado | Utilizador | Palavra-passe |
+|---|---|---|
+| `.netlify/blobs-serve/` vazio ou apagado | `admin` | `desenvolvimento-local-123` (de `tests/start-dev.sh`) |
+| Depois de correr os testes | `admin` | `Teste-E2E-Palavra-2026` (definida por `tests/auth.setup.ts`) |
+
+Para voltar ao princípio — conta por criar, contadores de tentativas a zero:
+
+```bash
+rm -rf .netlify/blobs-serve
+```
+
+Estas credenciais são só de desenvolvimento; em produção os valores vêm das
+definições do Netlify. Ver `.env.example`.
 
 ## Verificação depois de publicar
 
