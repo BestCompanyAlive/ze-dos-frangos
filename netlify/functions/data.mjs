@@ -1,6 +1,9 @@
 import { getStore } from '@netlify/blobs';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'zedosfrangos2026';
+// Sem valor por omissão: o repositório é público, por isso a password TEM de
+// vir de uma variável de ambiente (Netlify → Project configuration →
+// Environment variables → ADMIN_PASSWORD). Sem isso, todas as gravações falham.
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -28,7 +31,7 @@ export default async (req) => {
       return json({ error: 'invalid json' }, 400);
     }
     const { key, value, password } = body;
-    if (password !== ADMIN_PASSWORD) return json({ error: 'unauthorized' }, 401);
+    if (!ADMIN_PASSWORD || !password || password !== ADMIN_PASSWORD) return json({ error: 'unauthorized' }, 401);
     if (!key) return json({ error: 'missing key' }, 400);
     await store.set(key, JSON.stringify(value === undefined ? null : value));
     return json({ ok: true });
