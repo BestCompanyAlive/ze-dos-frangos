@@ -1,6 +1,12 @@
-// Registo de acessos: as últimas ocorrências relevantes na conta, para o
-// administrador conseguir ver entradas que não reconheça. Buffer circular — os
-// mais antigos caem fora.
+// Registo de acessos: as últimas ocorrências relevantes na conta. Buffer
+// circular — os mais antigos caem fora.
+//
+// Não é mostrado no painel (o cliente tem as sessões ativas para perceber se
+// alguém lá está). Fica gravado para quando for preciso perceber o que
+// aconteceu, e lê-se de fora:
+//
+//   netlify blobs:get auth audit          (produção)
+//   cat .netlify/blobs-serve/entries/unlinked/site:auth/audit   (local)
 import { getJSON, setJSON } from './store.mjs';
 
 const AUDIT_KEY = 'audit';
@@ -30,9 +36,4 @@ export async function audit(evento, { ip, userAgent } = {}) {
   } catch {
     // O registo nunca pode impedir a operação em si.
   }
-}
-
-export async function readAudit(limit = 50) {
-  const eventos = (await getJSON(AUDIT_KEY)) || [];
-  return eventos.slice(0, limit);
 }

@@ -43,7 +43,6 @@ const agora = Date.now();
 escrever('user', {
   username,
   displayName: 'Administrador',
-  email: '',
   passwordHash: await hashPassword(password),
   mustChangePassword: false, // sem troca forçada: é uma conta de desenvolvimento
   createdAt: agora,

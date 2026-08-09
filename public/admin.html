@@ -1773,7 +1773,7 @@ Equipa Zé dos Frangos</textarea>
           <div class="card-header">
             <div>
               <h3>Identificação</h3>
-              <div class="card-desc">O nome aparece no canto da barra lateral. O email serve só para o contactarmos.</div>
+              <div class="card-desc">O nome aparece no canto da barra lateral.</div>
             </div>
           </div>
           <div class="card-body">
@@ -1786,12 +1786,6 @@ Equipa Zé dos Frangos</textarea>
               <div class="field">
                 <label>Nome a apresentar</label>
                 <input type="text" id="conta-displayname" maxlength="80" />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Email de contacto</label>
-                <input type="email" id="conta-email" maxlength="160" autocomplete="email" />
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
@@ -1863,24 +1857,6 @@ Equipa Zé dos Frangos</textarea>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Registo de acessos</h3>
-              <div class="card-desc">As últimas entradas e alterações na conta. Se vir alguma que não reconhece, mude já a palavra-passe.</div>
-            </div>
-          </div>
-          <div class="card-body">
-            <table class="res-table conta-tabela">
-              <thead>
-                <tr><th>Ocorrência</th><th>Quando</th><th>Endereço IP</th></tr>
-              </thead>
-              <tbody id="registo-lista">
-                <tr><td colspan="3" style="color:var(--muted);">A carregar…</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -3621,7 +3597,6 @@ function aplicarUtilizador(user) {
   document.getElementById('sessao-nome').textContent = user.displayName || user.username;
   document.getElementById('conta-username').value = user.username || '';
   document.getElementById('conta-displayname').value = user.displayName || '';
-  document.getElementById('conta-email').value = user.email || '';
   document.getElementById('password-obrigatoria').style.display = user.mustChangePassword ? 'block' : 'none';
 }
 
@@ -3635,7 +3610,6 @@ async function guardarPerfilConta() {
     method: 'POST',
     body: JSON.stringify({
       displayName: document.getElementById('conta-displayname').value,
-      email: document.getElementById('conta-email').value,
     }),
   });
   if (res.status === 401) return irParaEntrada('expirada');
@@ -3727,38 +3701,21 @@ function formatarInstante(ms) {
 }
 
 async function carregarSeguranca() {
-  var sessoesEl = document.getElementById('sessoes-lista');
-  var registoEl = document.getElementById('registo-lista');
-
   var sessoes = await apiAuth('sessions');
   if (sessoes.status === 401) return irParaEntrada('expirada');
-  if (sessoes.ok) {
-    var linhas = (sessoes.corpo.sessoes || []).map(function(s) {
-      return '<tr>' +
-        '<td>' + escHtml(descreverDispositivo(s.userAgent)) +
-          (s.atual ? ' <span class="badge badge-green">Esta sessão</span>' : '') + '</td>' +
-        '<td class="secundario">' + escHtml(s.ip || '—') + '</td>' +
-        '<td class="secundario">' + escHtml(formatarInstante(s.criadaEm)) + '</td>' +
-        '<td class="secundario">' + escHtml(formatarInstante(s.ultimaAtividade)) + '</td>' +
-        '</tr>';
-    });
-    sessoesEl.innerHTML = linhas.length ? linhas.join('') :
-      '<tr><td colspan="4" style="color:var(--muted);">Nenhuma sessão ativa.</td></tr>';
-  }
+  if (!sessoes.ok) return;
 
-  var registo = await apiAuth('audit');
-  if (registo.status === 401) return irParaEntrada('expirada');
-  if (registo.ok) {
-    var eventos = (registo.corpo.eventos || []).map(function(ev) {
-      return '<tr>' +
-        '<td>' + escHtml(ev.evento) + '</td>' +
-        '<td class="secundario">' + escHtml(formatarInstante(ev.em)) + '</td>' +
-        '<td class="secundario">' + escHtml(ev.ip || '—') + '</td>' +
-        '</tr>';
-    });
-    registoEl.innerHTML = eventos.length ? eventos.join('') :
-      '<tr><td colspan="3" style="color:var(--muted);">Ainda sem registos.</td></tr>';
-  }
+  var linhas = (sessoes.corpo.sessoes || []).map(function(s) {
+    return '<tr>' +
+      '<td>' + escHtml(descreverDispositivo(s.userAgent)) +
+        (s.atual ? ' <span class="badge badge-green">Esta sessão</span>' : '') + '</td>' +
+      '<td class="secundario">' + escHtml(s.ip || '—') + '</td>' +
+      '<td class="secundario">' + escHtml(formatarInstante(s.criadaEm)) + '</td>' +
+      '<td class="secundario">' + escHtml(formatarInstante(s.ultimaAtividade)) + '</td>' +
+      '</tr>';
+  });
+  document.getElementById('sessoes-lista').innerHTML = linhas.length ? linhas.join('') :
+    '<tr><td colspan="4" style="color:var(--muted);">Nenhuma sessão ativa.</td></tr>';
 }
 
 async function terminarOutrasSessoes() {

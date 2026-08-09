@@ -75,7 +75,6 @@ function novoUtilizador() {
   return {
     username: (process.env.ADMIN_USERNAME || 'admin').toLowerCase(),
     displayName: 'Administrador',
-    email: '',
     passwordHash: '',
     mustChangePassword: true,
     createdAt: Date.now(),
@@ -106,10 +105,10 @@ export function validatePassword(password, user) {
   if (PASSWORDS_PROIBIDAS.some((p) => minusculas === p || minusculas.includes(p))) {
     return 'Essa palavra-passe é demasiado previsível. Escolha outra.';
   }
-  for (const campo of [user?.username, user?.displayName, user?.email]) {
+  for (const campo of [user?.username, user?.displayName]) {
     const valor = String(campo || '').trim().toLowerCase();
     if (valor.length >= 4 && minusculas.includes(valor)) {
-      return 'A palavra-passe não pode conter o seu nome de utilizador, nome ou email.';
+      return 'A palavra-passe não pode conter o seu nome de utilizador nem o seu nome.';
     }
   }
   // Um único caractere repetido, ou uma sequência trivial.
@@ -136,7 +135,6 @@ export function publicUser(user) {
   return {
     username: user.username,
     displayName: user.displayName || '',
-    email: user.email || '',
     mustChangePassword: !!user.mustChangePassword,
     passwordChangedAt: user.passwordChangedAt || 0,
     lastLoginAt: user.lastLoginAt || 0,

@@ -73,11 +73,19 @@ isso deve mesmo ser removida.
 
 Na barra lateral, **Definições da Conta**:
 
-- **Perfil** — nome a apresentar e email de contacto.
+- **Perfil** — nome a apresentar.
 - **Palavra-passe** — mudar a palavra-passe. Termina todas as sessões abertas.
-- **Segurança** — sessões ativas (com "Terminar as outras sessões") e o registo
-  dos últimos 50 acessos. Se aparecer uma entrada de um IP ou dispositivo
-  desconhecido, mude já a palavra-passe: isso corta o acesso a quem lá esteja.
+- **Segurança** — sessões ativas, com "Terminar as outras sessões". Se aparecer
+  um dispositivo ou IP desconhecido, mude já a palavra-passe: isso corta o acesso
+  a quem lá esteja.
+
+O servidor continua a registar entradas, saídas, tentativas falhadas e mudanças
+de palavra-passe (as últimas 100), mas isso não aparece no painel. Para
+consultar quando for preciso perceber o que aconteceu:
+
+```bash
+netlify blobs:get auth audit
+```
 
 ## O que está protegido
 

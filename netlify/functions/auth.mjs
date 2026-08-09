@@ -18,7 +18,7 @@ import {
   publicUser,
 } from './_shared/user.mjs';
 import { checkLimit, recordFailure, clearFailures } from './_shared/ratelimit.mjs';
-import { audit, readAudit, EVENTOS } from './_shared/audit.mjs';
+import { audit, EVENTOS } from './_shared/audit.mjs';
 
 export const config = {
   path: ['/api/auth/:accao', '/api/auth/:accao/:sub'],
@@ -47,7 +47,6 @@ export default async (req) => {
       case 'POST profile': return await guardarPerfil(req);
       case 'GET sessions': return await sessoes(req);
       case 'POST sessions/revoke-others': return await terminarOutras(req);
-      case 'GET audit': return await registoAcessos(req);
       default: return json({ error: 'não encontrado' }, 404);
     }
   } catch (erro) {
@@ -197,14 +196,9 @@ async function guardarPerfil(req) {
   if (invalid) return json({ error: 'pedido inválido' }, 400);
 
   const displayName = String(data?.displayName ?? user.displayName ?? '').trim().slice(0, 80);
-  const email = String(data?.email ?? user.email ?? '').trim().slice(0, 160);
-
   if (!displayName) return json({ error: 'O nome não pode ficar vazio.' }, 400);
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-    return json({ error: 'O email não parece válido.' }, 400);
-  }
 
-  const actualizado = await saveUser({ ...user, displayName, email });
+  const actualizado = await saveUser({ ...user, displayName });
   await audit(EVENTOS.PERFIL_ALTERADO, {
     ip: getClientIp(req),
     userAgent: req.headers.get('user-agent'),
@@ -227,12 +221,6 @@ async function terminarOutras(req) {
     userAgent: req.headers.get('user-agent'),
   });
   return json({ ok: true, terminadas });
-}
-
-async function registoAcessos(req) {
-  const auth = await requireSession(req);
-  if (auth instanceof Response) return auth;
-  return json({ eventos: await readAudit(50) });
 }
 
 function respostaBloqueio(segundos) {

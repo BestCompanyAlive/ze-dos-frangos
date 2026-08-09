@@ -54,7 +54,7 @@ test.describe('sem sessão', () => {
   });
 
   test('nem os endpoints de conta respondem', async ({ page }) => {
-    for (const caminho of ['me', 'sessions', 'audit']) {
+    for (const caminho of ['me', 'sessions']) {
       const res = await page.request.get(`/api/auth/${caminho}`);
       expect(res.status(), `/api/auth/${caminho}`).toBe(401);
     }
@@ -129,14 +129,13 @@ test('só é possível escrever nas chaves conhecidas', async ({ page }) => {
   expect(res.status()).toBe(400);
 });
 
-test('o painel de conta mostra a sessão atual e o registo de acessos', async ({ page }) => {
+test('o painel de conta mostra a sessão atual', async ({ page }) => {
   await page.goto('/admin.html');
   await page.locator('#nav-conta').click();
   await expect(page.locator('#topbar-title')).toHaveText('Definições da Conta');
 
   await page.locator('.conta-tab[data-conta-tab="seguranca"]').click();
   await expect(page.locator('#sessoes-lista')).toContainText('Esta sessão');
-  await expect(page.locator('#registo-lista')).toContainText('entrada');
 });
 
 test('terminar sessão limpa o cookie e volta a fechar o backoffice', async ({ browser }) => {
