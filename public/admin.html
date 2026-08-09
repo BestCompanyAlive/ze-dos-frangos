@@ -499,23 +499,26 @@ textarea { resize: vertical; min-height: 90px; }
 .badge-grey { background: #f3f4f6; color: #666; }
 
 /* SECTION DIVIDER */
+/* O nome da secção vive na barra de topo. Aqui fica só a linha que explica o
+   que a secção faz, por isso o espaçamento é mais curto do que quando havia
+   também um título. */
 .section-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
 .section-header h2 { font-size: 17px; font-weight: 700; }
-.section-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.section-header p { font-size: 13px; color: var(--muted); }
+.section-header h2 + p { margin-top: 4px; }
 
 .panel-header {
-  margin-bottom: 28px;
-  padding-bottom: 20px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
-.panel-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .panel-subtitle { font-size: 13px; color: var(--muted); }
 
 /* TABS within panel */
@@ -932,7 +935,6 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- SUGESTÃO DO MÊS -->
     <div class="panel" id="panel-sugestaoMes">
       <div class="panel-header">
-        <div class="panel-title">Sugestão do Mês</div>
         <div class="panel-subtitle">Destaque especial com foto — aparece em secção própria no site</div>
       </div>
 
@@ -1001,7 +1003,6 @@ textarea { resize: vertical; min-height: 90px; }
 
     <div class="panel" id="panel-vinhoMes">
       <div class="panel-header">
-        <div class="panel-title">Vinho do Mês</div>
         <div class="panel-subtitle">Destaque especial com foto — aparece em secção própria no site</div>
       </div>
 
@@ -1070,7 +1071,6 @@ textarea { resize: vertical; min-height: 90px; }
 
     <div class="panel" id="panel-pratoDia">
       <div class="panel-header">
-        <div class="panel-title">Prato do Dia</div>
         <div class="panel-subtitle">Atualiza semanalmente — aparece no site em destaque na ementa</div>
       </div>
 
@@ -1102,7 +1102,7 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- INFORMAÇÕES GERAIS -->
     <div class="panel" id="panel-geral">
       <div class="section-header">
-        <div><h2>Informações Gerais</h2><p>Textos principais que aparecem em todo o site</p></div>
+        <div><p>Textos principais que aparecem em todo o site</p></div>
       </div>
       <div class="card">
         <div class="card-header"><div><h3>Identidade</h3></div></div>
@@ -1191,7 +1191,7 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- EMENTA -->
     <div class="panel" id="panel-ementa">
       <div class="section-header">
-        <div><h2>Ementa</h2><p>Adicione, edite ou remova pratos em cada categoria</p></div>
+        <div><p>Adicione, edite ou remova pratos em cada categoria</p></div>
       </div>
 
       <div class="sub-tabs">
@@ -1397,7 +1397,6 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- MAIS VENDIDOS -->
     <div class="panel" id="panel-maisVendidos">
       <div class="panel-header">
-        <div class="panel-title">Mais Vendidos</div>
         <div class="panel-subtitle">Aparecem no rodapé da ementa — máximo 3 de carne e 3 de peixe, com foto</div>
       </div>
       <div style="max-width:700px;">
@@ -1423,7 +1422,6 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- EVENTOS -->
     <div class="panel" id="panel-eventos">
       <div class="panel-header">
-        <div class="panel-title">Eventos & Campanhas</div>
         <div class="panel-subtitle">Adiciona eventos futuros — aparecem no site numa secção de destaque</div>
       </div>
       <div style="max-width:700px;">
@@ -1441,7 +1439,6 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- GALERIA -->
     <div class="panel" id="panel-galeria">
       <div class="panel-header">
-        <div class="panel-title">Galeria</div>
         <div class="panel-subtitle">Fotos em destaque no site, antes da Ementa — até 6 fotos</div>
       </div>
       <div style="max-width:700px;">
@@ -1459,7 +1456,6 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- PERDIDOS E ACHADOS -->
     <div class="panel" id="panel-perdidos">
       <div class="panel-header">
-        <div class="panel-title">Perdidos e Achados</div>
         <div class="panel-subtitle">Objetos encontrados no restaurante — aparecem na página de Ajuda</div>
       </div>
       <div style="max-width:700px;">
@@ -1477,7 +1473,7 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- RESERVAS -->
     <div class="panel" id="panel-reservas">
       <div class="section-header">
-        <div><h2>Reservas</h2><p>Gestão e histórico de todas as reservas</p></div>
+        <div><p>Gestão e histórico de todas as reservas</p></div>
       </div>
 
       <div class="sub-tabs" style="margin-bottom:20px;">
@@ -1615,7 +1611,6 @@ textarea { resize: vertical; min-height: 90px; }
     <!-- VAGAS DE EMPREGO -->
     <div class="panel" id="panel-vagas">
       <div class="panel-header">
-        <div class="panel-title">Vagas de Emprego</div>
         <div class="panel-subtitle">Vagas ativas aparecem no site. Sem vagas ativas, a secção desaparece.</div>
       </div>
 
@@ -1756,7 +1751,6 @@ Equipa Zé dos Frangos</textarea>
     <div class="panel" id="panel-conta">
       <div class="section-header">
         <div>
-          <h2>Definições da Conta</h2>
           <p>Os seus dados de acesso ao painel</p>
         </div>
       </div>
