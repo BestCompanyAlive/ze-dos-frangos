@@ -1143,20 +1143,6 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
 
-      <!-- FORMSPREE -->
-      <div class="card">
-        <div class="card-header"><div><h3>Formulários / Emails</h3><div class="card-desc">Envio dos formulários de Perdidos e Achados e de Candidaturas — sem isto configurado, abrem o email do próprio visitante em vez de enviarem diretamente</div></div></div>
-        <div class="card-body">
-          <div class="form-row">
-            <div class="field">
-              <label>ID do formulário Formspree</label>
-              <input type="text" id="geral-formspree" placeholder="ex: xpwzabcd" />
-              <div style="font-size:11px;color:var(--muted);margin-top:4px;">Regista em <strong style="color:#aea995;">formspree.io</strong> → New Form → copia o ID do URL (a parte depois de "/f/").</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="card">
         <div class="card-header"><div><h3>Secção "Sobre Nós"</h3></div></div>
         <div class="card-body">
@@ -2087,7 +2073,6 @@ async function saveGeral() {
       ativo: !!document.getElementById('geral-aviso-ativo').checked,
       texto: val('geral-aviso-texto').trim(),
     },
-    formspree: val('geral-formspree').trim(),
   };
   var published = await dataSet('siteGeral', JSON.stringify(data));
   lockSection('panel-geral');
@@ -2430,7 +2415,7 @@ updateReservasBadge();
 // Captura os valores por defeito (do HTML estático) antes de qualquer substituição — usados para repor quando não há nada guardado
 var DEFAULT_GERAL = {};
 (function() {
-  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl','geral-aviso-texto','geral-formspree'].forEach(function(id) {
+  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl','geral-aviso-texto'].forEach(function(id) {
     var el = document.getElementById(id);
     DEFAULT_GERAL[id] = el ? el.value : '';
   });
@@ -2457,7 +2442,6 @@ async function loadGeral() {
   var avisoChk = document.getElementById('geral-aviso-ativo');
   if (avisoChk) avisoChk.checked = d.avisoTopo ? !!aviso.ativo : true;
   set('geral-aviso-texto', aviso.texto || DEFAULT_GERAL['geral-aviso-texto']);
-  set('geral-formspree', d.formspree || DEFAULT_GERAL['geral-formspree']);
 }
 loadGeral();
 

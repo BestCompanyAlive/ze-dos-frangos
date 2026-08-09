@@ -1,21 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+// Definido no Netlify (Project configuration → Environment variables → PUBLIC_FORMSPREE_ID),
+// não no backoffice — é configuração do site, não conteúdo do restaurante.
+const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
 ---
 
 <Layout title="Apoio — Churrasqueira Zé dos Frangos" description="Perdidos e achados e recrutamento da Churrasqueira Zé dos Frangos, Vila Real.">
   <script src="/site-data.js" is:inline></script>
-  <script is:inline>
-    // Envia por Formspree (configurado no backoffice → Informações Gerais) se
-    // houver um ID configurado; caso contrário, ou se falhar, usa "mailto:" como reserva.
+  <script is:inline define:vars={{ FORMSPREE_ID }}>
+    // Envia por Formspree se houver um ID configurado (variável de ambiente do site);
+    // caso contrário, ou se o envio falhar, usa "mailto:" como reserva.
     async function submeterFormulario(subject, campos) {
       var mailtoBody = campos.map(function(c) { return c.label + ': ' + c.value; }).join('\n');
       try {
-        var geral = JSON.parse((await dataGet('siteGeral')) || '{}');
-        if (geral.formspree) {
+        if (FORMSPREE_ID) {
           var data = {};
           campos.forEach(function(c) { data[c.label] = c.value; });
           data._subject = subject;
-          var res = await fetch('https://formspree.io/f/' + geral.formspree, {
+          var res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
             body: JSON.stringify(data),
