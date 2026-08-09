@@ -23,6 +23,7 @@ que fazer quando alguma coisa corre mal.
 | `ADMIN_BOOTSTRAP_PASSWORD` | Só no primeiro deploy | Cria a conta de administrador |
 | `ADMIN_USERNAME` | Não | Nome de utilizador (por omissão `admin`) |
 | `ADMIN_PASSWORD_RESET` | Só para repor | Ver "Palavra-passe perdida" |
+| `PUBLIC_FORMSPREE_ID` | Não | Formulários de `/ajuda`; sem ele caem para `mailto:` |
 
 ⚠️ Deixe as variáveis em **All scopes** (o valor por omissão). A `SESSION_SECRET`
 é lida tanto pelas Functions como pela Edge Function que guarda o painel — se o
