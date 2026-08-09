@@ -105,15 +105,29 @@ npx playwright test          # arranca netlify dev na porta 4323 e corre tudo
 Para abrir o painel à mão: `sh tests/start-dev.sh`, depois
 http://localhost:4323/admin.html.
 
-**Qual é a palavra-passe local?** Depende de já ter corrido os testes ou não. Os
-dados locais ficam em `.netlify/blobs-serve/` e sobrevivem entre arranques:
+**Qual é a palavra-passe local?** Depende do que correu por último. Os dados
+locais ficam em `.netlify/blobs-serve/` e sobrevivem entre arranques:
 
 | Estado | Utilizador | Palavra-passe |
 |---|---|---|
 | `.netlify/blobs-serve/` vazio ou apagado | `admin` | `desenvolvimento-local-123` (de `tests/start-dev.sh`) |
-| Depois de correr os testes | `admin` | `Teste-E2E-Palavra-2026` (definida por `tests/auth.setup.ts`) |
+| Depois de correr os testes | `admin` | `Teste-E2E-Palavra-2026` (de `tests/auth.setup.ts`) |
+| Depois de `tests/repor-admin-local.mjs` | `admin` | `admin` |
 
-Para voltar ao princípio — conta por criar, contadores de tentativas a zero:
+Para trabalhar à mão sem andar a decorar palavras-passe:
+
+```bash
+node tests/repor-admin-local.mjs        # admin / admin, sem troca forçada
+```
+
+Esse script escreve diretamente no armazenamento local e limpa sessões e
+contadores de tentativas (útil se ficar bloqueado a experimentar). Recusa correr
+onde não exista `.netlify/blobs-serve/`, por isso não tem como afetar produção —
+e é também por não passar pela API que consegue definir uma palavra-passe curta
+como `admin`. **Correr os testes volta a tomar conta da conta**; é só voltar a
+correr o script a seguir.
+
+Para começar do zero — conta por criar, tudo limpo:
 
 ```bash
 rm -rf .netlify/blobs-serve
