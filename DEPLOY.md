@@ -69,6 +69,30 @@ A reposição só é aplicada uma vez por valor: deixar a variável lá não rep
 palavra-passe a cada deploy, mas deixa-a escrita nas definições do projeto — por
 isso deve mesmo ser removida.
 
+## "Não consigo entrar, diz que tentei demasiadas vezes"
+
+Cinco tentativas falhadas trancam a conta 15 minutos; dez trancam uma hora; vinte
+trancam um dia. É a defesa contra quem anda a adivinhar palavras-passe.
+
+O reverso disto, e é uma decisão consciente: como o nome de utilizador é `admin`
+— previsível — qualquer pessoa consegue disparar o bloqueio de fora e deixar o
+cliente à porta. Não dá acesso a ninguém, mas chateia. Se acontecer com
+frequência, a solução é mudar `ADMIN_USERNAME` para algo que não se adivinhe:
+as tentativas contra `admin` passam a cair num contador à parte que nunca toca
+na conta verdadeira.
+
+Para desbloquear já, sem esperar:
+
+```bash
+# a chave é rl:conta:<sha256 do nome de utilizador, em base64url>
+node -e "console.log('rl:conta:'+require('crypto').createHash('sha256').update('admin').digest('base64url'))"
+netlify blobs:delete auth "rl:conta:jGl25bVBBBW96Qi9Te4V37Fnqchz_Eu4qB9vKrRIqRg"
+```
+
+Há também um contador por endereço IP (`rl:ip:<sha256 do IP>`), que se apaga da
+mesma forma. Em desenvolvimento é mais simples: `node tests/repor-admin-local.mjs`
+limpa tudo.
+
 ## Definições da Conta
 
 Na barra lateral, **Definições da Conta**:
