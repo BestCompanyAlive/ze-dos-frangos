@@ -13,6 +13,18 @@
 # placeholder — o "netlify dev" não reconhece o formato de log mais recente do
 # Astro como sinal de "servidor pronto".
 
+# O Astro exige Node >= 22.12 (ver "engines" no package.json). Com o Node errado
+# ele morre em silêncio e o "netlify dev" fica um minuto à espera de uma porta
+# que nunca abre, o que não diz nada a ninguém. Mais vale parar já.
+NODE_MAJOR=$(node -p "process.versions.node.split('.')[0]" 2>/dev/null || echo 0)
+if [ "$NODE_MAJOR" -lt 22 ]; then
+  echo ""
+  echo "  Node $(node -v 2>/dev/null || echo 'não encontrado') — este projeto precisa de >= 22.12."
+  echo "  Experimente:  nvm use        (há um .nvmrc na raiz)"
+  echo ""
+  exit 1
+fi
+
 # As variáveis de ambiente TÊM de vir de um ficheiro .env: o "netlify dev"
 # ignora as do processo e é o .env que injeta tanto nas functions como nas edge
 # functions. Sem isto, o guarda de /admin.html não vê a SESSION_SECRET e
@@ -32,5 +44,5 @@ garantir_var SESSION_SECRET dev-apenas-nao-usar-em-producao-0123456789abcdef
 garantir_var ADMIN_USERNAME admin
 garantir_var ADMIN_BOOTSTRAP_PASSWORD desenvolvimento-local-123
 
-npm run dev -- --port 4399 &
+npm run dev:site -- --port 4399 &
 exec npx netlify dev --offline

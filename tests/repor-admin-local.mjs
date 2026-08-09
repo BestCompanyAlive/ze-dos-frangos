@@ -24,7 +24,7 @@ if (!existsSync(RAIZ)) {
   console.error(
     'Não encontrei .netlify/blobs-serve/.\n' +
       'Este script é só para desenvolvimento local: arranque primeiro o servidor\n' +
-      'com "sh tests/start-dev.sh" (ao menos uma vez) e volte a tentar.'
+      'com "npm run dev" (ao menos uma vez) e volte a tentar.'
   );
   process.exit(1);
 }
@@ -67,4 +67,4 @@ for (const ficheiro of readdirSync(ENTRADAS)) {
 
 console.log(`Conta local reposta: ${username} / ${password}`);
 console.log(`Sessões e contadores de tentativas limpos: ${limpos}`);
-console.log('Arranque com "sh tests/start-dev.sh" e abra http://localhost:4323/admin.html');
+console.log('Arranque com "npm run dev" e abra http://localhost:4323/admin.html');

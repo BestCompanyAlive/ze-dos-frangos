@@ -102,8 +102,11 @@ npm ci
 npx playwright test          # arranca netlify dev na porta 4323 e corre tudo
 ```
 
-Para abrir o painel à mão: `sh tests/start-dev.sh`, depois
-http://localhost:4323/admin.html.
+Para abrir o painel à mão: `npm run dev`, depois http://localhost:4323/admin.html.
+
+(`npm run dev` arranca o Astro numa porta interna e o `netlify dev` por cima, na
+4323 — é o que dá as funções e a guarda do backoffice. O `npm run dev:site` é o
+Astro cru, sem nada disso.)
 
 **Qual é a palavra-passe local?** Depende do que correu por último. Os dados
 locais ficam em `.netlify/blobs-serve/` e sobrevivem entre arranques:

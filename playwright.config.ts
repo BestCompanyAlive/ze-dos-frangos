@@ -28,7 +28,7 @@ export default defineConfig({
     // "netlify dev" por cima do Astro — dá acesso às funções reais (Netlify
     // Blobs local, autenticação, guarda de borda) tal como em produção.
     // Ver tests/start-dev.sh.
-    command: 'sh tests/start-dev.sh',
+    command: 'npm run dev',
     url: 'http://localhost:4323',
     reuseExistingServer: true,
     // O primeiro arranque tem de compilar o ambiente das edge functions (Deno),
