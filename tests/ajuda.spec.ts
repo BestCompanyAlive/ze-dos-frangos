@@ -15,6 +15,23 @@ test('ajuda: Recrutamento aparece antes de Perdidos e Achados', async ({ page })
   expect(recY).toBeLessThan(perdY);
 });
 
+// Apontavam para "/#reservas", uma âncora para a secção da página inicial que
+// ficou escondida quando as reservas passaram para /reservas — carregar em
+// Reservar deixava a pessoa no topo da homepage, sem nada acontecer.
+test('ajuda: os botões Reservar levam à página de reservas', async ({ page }) => {
+  await page.goto('/ajuda');
+  const links = page.locator('a', { hasText: /^Reservar$/ });
+  const total = await links.count();
+  expect(total).toBeGreaterThan(0);
+  for (let i = 0; i < total; i += 1) {
+    await expect(links.nth(i)).toHaveAttribute('href', '/reservas');
+  }
+
+  await page.locator('nav a', { hasText: /^Reservar$/ }).first().click();
+  await expect(page).toHaveURL(/\/reservas$/);
+  await expect(page.getByRole('heading', { name: /Reserve a Sua Mesa/i })).toBeVisible();
+});
+
 test('ajuda: formulário de recrutamento tem campos obrigatórios visíveis', async ({ page }) => {
   await page.goto('/ajuda');
   const inputs = page.locator('input[type="text"], input[type="email"], textarea').first();
