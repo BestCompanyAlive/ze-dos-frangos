@@ -1,11 +1,16 @@
 # Cabeçalhos de segurança. Este ficheiro é copiado para dist/ e lido pelo Netlify.
 # As regras mais específicas somam-se às de /* (não as substituem).
 
+# Nota sobre o HSTS: deliberadamente SEM "includeSubDomains". Com essa diretiva,
+# os browsers passariam a exigir HTTPS em todos os subdomínios do cliente
+# durante um ano — e como fica em cache no browser de cada visitante, um
+# subdomínio antigo servido em HTTP deixaria de abrir e a correção demoraria
+# meses a chegar a toda a gente. Protege-se este site, que é o que interessa.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Strict-Transport-Security: max-age=31536000
 
 # O painel nunca pode ficar em cache (é servido por trás do guarda de borda),
 # nem ser indexado, nem ser carregado dentro de uma frame — sem frame-ancestors,
