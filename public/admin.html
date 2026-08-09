@@ -20,6 +20,9 @@
   --muted: #888;
   --success: #16a34a;
   --danger: #dc2626;
+  /* O vermelho de cima é para fundos claros; sobre a barra lateral (#111) fica
+     em 3,9:1, abaixo do mínimo para texto pequeno. Este dá 5:1. */
+  --danger-escuro: #ef4444;
   --input-focus: #C9A84C;
   --radius: 6px;
 }
@@ -117,13 +120,13 @@ aside {
   background: none;
   border: none;
   padding: 0;
-  color: var(--gold);
+  color: var(--danger-escuro);
   font-family: inherit;
   font-size: 11.5px;
   cursor: pointer;
   text-decoration: underline;
 }
-.sessao-info button:hover { color: #e0c46a; }
+.sessao-info button:hover { color: #f87171; }
 .btn-preview {
   display: flex;
   align-items: center;
