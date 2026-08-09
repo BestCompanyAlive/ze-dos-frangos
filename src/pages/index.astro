@@ -1238,6 +1238,7 @@ const menuData = {
               div.innerHTML = '<div><h3 class="text-white font-light text-sm">' + item.nome + '</h3>' + descHtml + '</div>' +
                 '<span class="text-gold whitespace-nowrap text-sm shrink-0" style="font-family:Montserrat,sans-serif;">' + item.preco + ' €</span>';
               panel.appendChild(div);
+              if (window.__revealObserver) window.__revealObserver.observe(div); else div.classList.add('visible');
             });
           });
         }
@@ -1256,6 +1257,7 @@ const menuData = {
             var legendaHtml = item.legenda ? '<p class="text-center text-gray-400 text-xs uppercase tracking-widest mt-3 font-light">' + item.legenda + '</p>' : '';
             div.innerHTML = '<img src="' + item.foto + '" alt="' + (item.legenda || 'Galeria') + '" class="w-full h-64 object-cover" />' + legendaHtml;
             galeriaGrid.appendChild(div);
+            if (window.__revealObserver) window.__revealObserver.observe(div); else div.classList.add('visible');
           });
         } else {
           galeriaSection.style.display = 'none';

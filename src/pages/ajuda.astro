@@ -227,7 +227,7 @@ const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
 
         <div id="candidatura-sucesso" class="hidden" style="margin-top:24px;border:1px solid #aea99555;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
           <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#aea995;margin-bottom:8px;">Candidatura enviada!</p>
-          <p class="text-gray-300 text-sm font-light">Recebemos a sua candidatura e entraremos em contacto em breve.</p>
+          <p id="candidatura-sucesso-texto" class="text-gray-300 text-sm font-light">Recebemos a sua candidatura e entraremos em contacto em breve.</p>
         </div>
 
         <div id="candidatura-limite" class="hidden" style="margin-top:24px;border:1px solid rgba(220,38,38,0.35);background:rgba(220,38,38,0.06);border-radius:6px;padding:28px;text-align:center;">
@@ -284,7 +284,7 @@ const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
             var mensagem       = f.querySelector('[name="mensagem"]').value;
             var disponibilidade = f.querySelector('[name="disponibilidade"]').value;
 
-            await submeterFormulario('Candidatura — ' + funcao + ' | ' + nome, [
+            var enviadoPorFormspree = await submeterFormulario('Candidatura — ' + funcao + ' | ' + nome, [
               { label: 'Nome', value: nome },
               { label: 'Telefone', value: telefone },
               { label: 'Email do candidato', value: email },
@@ -295,6 +295,9 @@ const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
             ]);
 
             registarCandidatura();
+            document.getElementById('candidatura-sucesso-texto').textContent = enviadoPorFormspree
+              ? 'Recebemos a sua candidatura e entraremos em contacto em breve.'
+              : 'Abrimos o seu email com a candidatura preparada. Basta enviar e entraremos em contacto em breve.';
             f.style.display = 'none';
             document.getElementById('candidatura-sucesso').classList.remove('hidden');
           });
@@ -374,7 +377,7 @@ const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
 
       <div id="perdidos-sucesso" class="hidden" style="margin-top:24px;border:1px solid #aea99555;background:rgba(201,168,76,0.07);border-radius:6px;padding:28px;text-align:center;">
         <p style="font-family:Playfair Display,serif;font-size:1.2rem;color:#aea995;margin-bottom:8px;">Mensagem enviada!</p>
-        <p class="text-gray-300 text-sm font-light">Abrimos o seu email com a mensagem preparada. Basta enviar e entraremos em contacto brevemente.</p>
+        <p id="perdidos-sucesso-texto" class="text-gray-300 text-sm font-light">A sua mensagem foi enviada com sucesso. Entraremos em contacto brevemente.</p>
       </div>
 
       <script>
@@ -397,8 +400,11 @@ const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
             { label: 'Item perdido', value: item },
           ];
           if (obs) campos.push({ label: 'Observações', value: obs });
-          await submeterFormulario('Perdidos e Achados — ' + item, campos);
+          var enviadoPorFormspree = await submeterFormulario('Perdidos e Achados — ' + item, campos);
 
+          document.getElementById('perdidos-sucesso-texto').textContent = enviadoPorFormspree
+            ? 'A sua mensagem foi enviada com sucesso. Entraremos em contacto brevemente.'
+            : 'Abrimos o seu email com a mensagem preparada. Basta enviar e entraremos em contacto brevemente.';
           f.style.display = 'none';
           document.getElementById('perdidos-sucesso').classList.remove('hidden');
         });
