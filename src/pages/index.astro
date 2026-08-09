@@ -147,6 +147,37 @@ const menuData = {
 
   </section>
 
+  <!-- Aviso (férias, horário especial…) — entre o hero e a secção "A Nossa História" -->
+  <style>
+    #aviso-topo p { letter-spacing: 0.15em; }
+    @media (max-width: 640px) {
+      #aviso-topo { padding: 12px 16px; }
+      #aviso-topo p { letter-spacing: 0.04em; line-height: 1.5; }
+    }
+  </style>
+  <!-- O espaço por cima do aviso iguala o py-28 da secção seguinte -->
+  <div id="aviso-wrap" style="background: #0d0d0d; padding-top: 7rem;">
+    <div id="aviso-topo" style="padding: 16px 24px; background: rgba(201,168,76,0.12); border-top: 1px solid rgba(201,168,76,0.25); border-bottom: 1px solid rgba(201,168,76,0.25); text-align: center;">
+      <p class="text-gold text-xs" style="font-family: Playfair Display, serif;">
+        FÉRIAS DE VERÃO — Encerrados de <strong>14 a 22 de agosto</strong>. Reabrimos a <strong>23 de agosto</strong>. Obrigado pela compreensão.
+      </p>
+    </div>
+  </div>
+  <!-- Texto e visibilidade definidos no backoffice (Informações Gerais → Aviso no Topo do Site).
+       Inline para o aviso nunca chegar a piscar quando está desativado. -->
+  <script is:inline>
+    (function() {
+      var wrap = document.getElementById('aviso-wrap');
+      if (!wrap) return;
+      try {
+        var aviso = (JSON.parse(localStorage.getItem('siteGeral') || '{}') || {}).avisoTopo;
+        if (!aviso) return; // sem configuração: fica o aviso por defeito
+        if (!aviso.ativo || !aviso.texto) { wrap.style.display = 'none'; return; }
+        wrap.querySelector('#aviso-topo p').textContent = aviso.texto;
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- SOBRE NÓS -->
   <section id="sobre" class="py-28 px-6" style="background: #0d0d0d;">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-stretch">
@@ -389,9 +420,11 @@ const menuData = {
 
     <!-- Mais Vendidos -->
     <style>
-      .mv-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
-      @media (max-width:640px) { .mv-grid { grid-template-columns:1fr; } }
-      @media (min-width:641px) and (max-width:900px) { .mv-grid { grid-template-columns:repeat(3,1fr); } }
+      /* 3 por linha, mas com a última linha incompleta centrada (1 ou 2 cartões).
+         Os cartões são criados por JS, por isso o seletor tem de ser :global. */
+      .mv-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:1.25rem; }
+      .mv-grid > :global(*) { flex:0 1 calc((100% - 2.5rem) / 3); max-width:calc((100% - 2.5rem) / 3); }
+      @media (max-width:640px) { .mv-grid > :global(*) { flex-basis:100%; max-width:100%; } }
     </style>
     <div id="mais-vendidos-section" style="display:none; max-width:1100px; margin:4rem auto 0; padding:0 1.5rem;">
       <div style="text-align:center; margin-bottom:2.5rem;">
@@ -1083,13 +1116,6 @@ const menuData = {
 
   <!-- FOOTER / CONTACTOS -->
   <footer id="contactos" style="background: #0a0a0a; border-top: 1px solid #1a1a1a;">
-
-    <!-- Aviso de férias -->
-    <div style="background: rgba(201,168,76,0.08); border-bottom: 1px solid rgba(201,168,76,0.2); padding: 14px 24px; text-align: center;">
-      <p class="text-gold text-xs tracking-widest" style="font-family: Playfair Display, serif; letter-spacing: 0.15em;">
-        FÉRIAS DE VERÃO — Encerrados de <strong>14 a 22 de agosto</strong>. Reabrimos a <strong>23 de agosto</strong>. Obrigado pela compreensão.
-      </p>
-    </div>
 
     <!-- Contactos -->
     <div class="px-6 py-16 max-w-6xl mx-auto">

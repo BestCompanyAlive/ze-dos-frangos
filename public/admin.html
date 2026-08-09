@@ -275,6 +275,11 @@ textarea { resize: vertical; min-height: 90px; }
   font-size:12.5px; color:#8a7f5f;
 }
 .section-locked .locked-hint { display:flex; }
+/* Barra de ações (aviso de trancada, Guardar, Editar, Remover) no topo de cada secção */
+.lock-bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:20px; }
+.lock-bar .locked-hint { margin-bottom:0; }
+.lock-bar .btn-edit-section { margin-left:0; }
+.lock-bar > p { margin:0 !important; }
 
 .mv-card {
   border: 1px solid #e5e3de;
@@ -597,8 +602,8 @@ textarea { resize: vertical; min-height: 90px; }
 .res-stat.highlight { border-color: var(--gold); background: var(--gold-dim); }
 .res-stat.highlight .val { color: #a07830; }
 
-/* ── Modal cancelamento ── */
-#cancel-modal-overlay {
+/* ── Modais (cancelamento de reserva, alterações por guardar) ── */
+.modal-overlay {
   display: none;
   position: fixed;
   inset: 0;
@@ -608,10 +613,10 @@ textarea { resize: vertical; min-height: 90px; }
   justify-content: center;
   padding: 16px;
 }
-#cancel-modal-overlay.open {
+.modal-overlay.open {
   display: flex;
 }
-#cancel-modal {
+.modal-box {
   background: #fff;
   border-radius: 8px;
   padding: 28px 24px 20px;
@@ -620,25 +625,25 @@ textarea { resize: vertical; min-height: 90px; }
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
   text-align: center;
 }
-#cancel-modal h3 {
+.modal-box h3 {
   font-size: 16px;
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 8px;
 }
-#cancel-modal p {
+.modal-box p {
   font-size: 13px;
   color: #666;
   margin-bottom: 20px;
   line-height: 1.5;
 }
-#cancel-modal .modal-btns {
+.modal-box .modal-btns {
   display: flex;
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
 }
-#cancel-modal .modal-btns button {
+.modal-box .modal-btns button {
   padding: 9px 22px;
   border-radius: 4px;
   font-size: 13px;
@@ -653,6 +658,10 @@ textarea { resize: vertical; min-height: 90px; }
 .modal-btn-cancel {
   background: #f1f1f1;
   color: #333;
+}
+.modal-btn-primary {
+  background: var(--gold);
+  color: #1a1a1a;
 }
 
 /* ── Responsive mobile ── */
@@ -876,7 +885,21 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- mes -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Mês</label>
-          <input id="sugestao-admin-mes" type="text" placeholder="ex: Julho" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+          <select id="sugestao-admin-mes" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;cursor:pointer;">
+            <option value="">— Sem mês —</option>
+            <option value="Janeiro">Janeiro</option>
+            <option value="Fevereiro">Fevereiro</option>
+            <option value="Março">Março</option>
+            <option value="Abril">Abril</option>
+            <option value="Maio">Maio</option>
+            <option value="Junho">Junho</option>
+            <option value="Julho">Julho</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Setembro">Setembro</option>
+            <option value="Outubro">Outubro</option>
+            <option value="Novembro">Novembro</option>
+            <option value="Dezembro">Dezembro</option>
+          </select>
         </div>
 
         <!-- nome -->
@@ -894,7 +917,7 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- preco -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Preço (€)</label>
-          <input id="sugestao-admin-preco" class="price-input" type="text" inputmode="decimal" placeholder="ex: 14.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+          <input id="sugestao-admin-preco" class="price-input" type="text" inputmode="decimal" placeholder="ex: 14,50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;">
@@ -931,7 +954,21 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- mes -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Mês</label>
-          <input id="vinho-admin-mes" type="text" placeholder="ex: Julho" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+          <select id="vinho-admin-mes" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;cursor:pointer;">
+            <option value="">— Sem mês —</option>
+            <option value="Janeiro">Janeiro</option>
+            <option value="Fevereiro">Fevereiro</option>
+            <option value="Março">Março</option>
+            <option value="Abril">Abril</option>
+            <option value="Maio">Maio</option>
+            <option value="Junho">Junho</option>
+            <option value="Julho">Julho</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Setembro">Setembro</option>
+            <option value="Outubro">Outubro</option>
+            <option value="Novembro">Novembro</option>
+            <option value="Dezembro">Dezembro</option>
+          </select>
         </div>
 
         <!-- nome -->
@@ -949,7 +986,7 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- preco -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Preço (€)</label>
-          <input id="vinho-admin-preco" class="price-input" type="text" inputmode="decimal" placeholder="ex: 18.50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
+          <input id="vinho-admin-preco" class="price-input" type="text" inputmode="decimal" placeholder="ex: 18,50" style="width:180px;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:14px;" />
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;">
@@ -1017,6 +1054,24 @@ textarea { resize: vertical; min-height: 90px; }
             <div class="field">
               <label>Descrição Principal (hero)</label>
               <textarea id="geral-desc">O melhor frango grelhado no carvão de Vila Real. Uma tradição que se mantém fiel ao sabor autêntico de Trás-os-Montes.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVISO NO TOPO DO SITE -->
+      <div class="card">
+        <div class="card-header"><div><h3>Aviso no Topo do Site</h3><div class="card-desc">Faixa de destaque no topo da página inicial — férias, horário especial, encerramento</div></div></div>
+        <div class="card-body">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;margin-bottom:14px;">
+            <input type="checkbox" id="geral-aviso-ativo" checked style="accent-color:var(--gold);width:16px;height:16px;" />
+            Mostrar aviso no topo do site
+          </label>
+          <div class="form-row full">
+            <div class="field">
+              <label>Mensagem</label>
+              <input type="text" id="geral-aviso-texto" value="FÉRIAS DE VERÃO — Encerrados de 14 a 22 de agosto. Reabrimos a 23 de agosto. Obrigado pela compreensão." />
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;">Aparece no topo da página inicial. Desmarca a caixa acima para o esconder.</div>
             </div>
           </div>
         </div>
@@ -1686,6 +1741,12 @@ function discardUnsavedEdits(panelId) {
 }
 
 function showPanel(id, el) {
+  // Com alterações por guardar, pergunta primeiro o que fazer (ver secaoPorGuardar)
+  var pendente = typeof secaoPorGuardar === 'function' ? secaoPorGuardar(document.querySelector('.panel.active')) : null;
+  if (pendente) {
+    pedirDecisaoPorGuardar(pendente, function() { showPanel(id, el); });
+    return;
+  }
   var prevPanel = document.querySelector('.panel.active');
   if (prevPanel && !prevPanel.classList.contains('section-locked')) {
     discardUnsavedEdits(prevPanel.id);
@@ -1805,16 +1866,83 @@ function safeSetItem(key, value) {
   }
 }
 
-// Campos de preço só aceitam números (dígitos, vírgula, ponto, barra para 2 preços e espaço)
+// ── Campos de preço ───────────────────────────────────
+// Só aceitam o formato "12,50" ou "9,00 / 14,00" (meia dose / dose). Enquanto se
+// escreve, tudo o resto é rejeitado — um só separador decimal, no máximo 2 casas,
+// uma só barra. Ao sair do campo, o valor é normalizado (14 → 14,00; 14.5 → 14,50).
+var PRECO_MAX_INTEIROS = 5;
+
+function isCampoPreco(el) {
+  if (!el || el.tagName !== 'INPUT') return false;
+  return el.classList.contains('price-input') || el.classList.contains('mv-preco') || el.classList.contains('g-preco') ||
+    (el.closest('.menu-item-row') && el.matches('.menu-item-row input:nth-of-type(3)'));
+}
+
+// Um único valor: mantém dígitos, aceita o primeiro separador decimal e até 2 casas
+function limparValorPreco(txt) {
+  var inteiros = '';
+  var decimais = null; // null = ainda sem separador decimal
+  for (var i = 0; i < txt.length; i++) {
+    var c = txt.charAt(i);
+    if (c >= '0' && c <= '9') {
+      if (decimais === null) {
+        if (inteiros.length < PRECO_MAX_INTEIROS) inteiros += c;
+      } else if (decimais.length < 2) {
+        decimais += c;
+      }
+    } else if ((c === ',' || c === '.') && decimais === null && inteiros.length) {
+      decimais = '';
+    }
+  }
+  return decimais === null ? inteiros : inteiros + ',' + decimais;
+}
+
+function limparPreco(valor) {
+  var partes = String(valor).split('/');
+  var primeiro = limparValorPreco(partes[0]);
+  if (partes.length === 1) return primeiro;
+  return primeiro + ' / ' + limparValorPreco(partes.slice(1).join(''));
+}
+
+// Completa as casas decimais e tira zeros à esquerda — só no fim da edição
+function formatarValorPreco(txt) {
+  var limpo = limparValorPreco(txt);
+  if (!limpo) return '';
+  var partes = limpo.split(',');
+  var inteiros = partes[0].replace(/^0+(?=\d)/, '');
+  var decimais = (partes[1] || '');
+  while (decimais.length < 2) decimais += '0';
+  return inteiros + ',' + decimais;
+}
+
+function formatarPreco(valor) {
+  var partes = String(valor).split('/');
+  var primeiro = formatarValorPreco(partes[0]);
+  if (partes.length === 1 || !primeiro) return primeiro;
+  var segundo = formatarValorPreco(partes.slice(1).join(''));
+  return segundo ? primeiro + ' / ' + segundo : primeiro;
+}
+
 document.addEventListener('input', function(e) {
   var el = e.target;
-  if (!el || el.tagName !== 'INPUT') return;
-  var isPriceField = el.classList.contains('price-input') || el.classList.contains('mv-preco') || el.classList.contains('g-preco') ||
-    (el.closest('.menu-item-row') && el.matches('.menu-item-row input:nth-of-type(3)'));
-  if (!isPriceField) return;
-  var cleaned = el.value.replace(/[^0-9.,/\s]/g, '');
-  if (cleaned !== el.value) el.value = cleaned;
+  if (!isCampoPreco(el)) return;
+  var limpo = limparPreco(el.value);
+  if (limpo === el.value) return;
+  var pos = el.selectionStart;
+  var delta = limpo.length - el.value.length;
+  el.value = limpo;
+  if (pos !== null) {
+    var novo = Math.max(0, Math.min(limpo.length, pos + delta));
+    el.setSelectionRange(novo, novo);
+  }
 });
+
+document.addEventListener('blur', function(e) {
+  var el = e.target;
+  if (!isCampoPreco(el)) return;
+  var formatado = formatarPreco(el.value);
+  if (formatado !== el.value) el.value = formatado;
+}, true);
 
 // ── GUARDAR GERAL ─────────────────────────────────────
 function saveGeral() {
@@ -1830,6 +1958,10 @@ function saveGeral() {
       { val: val('geral-stat2-val'), lbl: val('geral-stat2-lbl') },
       { val: val('geral-stat3-val'), lbl: val('geral-stat3-lbl') },
     ],
+    avisoTopo: {
+      ativo: !!document.getElementById('geral-aviso-ativo').checked,
+      texto: val('geral-aviso-texto').trim(),
+    },
   };
   localStorage.setItem('siteGeral', JSON.stringify(data));
   lockSection('panel-geral');
@@ -2170,7 +2302,7 @@ updateReservasBadge();
 // Captura os valores por defeito (do HTML estático) antes de qualquer substituição — usados para repor quando não há nada guardado
 var DEFAULT_GERAL = {};
 (function() {
-  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl'].forEach(function(id) {
+  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl','geral-aviso-texto'].forEach(function(id) {
     var el = document.getElementById(id);
     DEFAULT_GERAL[id] = el ? el.value : '';
   });
@@ -2192,6 +2324,11 @@ function loadGeral() {
   set('geral-stat2-lbl', (stats[1] && stats[1].lbl) || DEFAULT_GERAL['geral-stat2-lbl']);
   set('geral-stat3-val', (stats[2] && stats[2].val) || DEFAULT_GERAL['geral-stat3-val']);
   set('geral-stat3-lbl', (stats[2] && stats[2].lbl) || DEFAULT_GERAL['geral-stat3-lbl']);
+  // Aviso no topo: sem nada guardado, fica o texto por defeito e visível (como está no site)
+  var aviso = d.avisoTopo || {};
+  var avisoChk = document.getElementById('geral-aviso-ativo');
+  if (avisoChk) avisoChk.checked = d.avisoTopo ? !!aviso.ativo : true;
+  set('geral-aviso-texto', aviso.texto || DEFAULT_GERAL['geral-aviso-texto']);
 }
 loadGeral();
 
@@ -2386,6 +2523,20 @@ function saveTakeaway() {
 }
 
 
+// Selecciona o mês na lista. Aceita valores antigos guardados como texto livre
+// (ex: "julho", "MARCO") — se não corresponder a nenhum mês, fica sem mês.
+function definirMesSelect(selectId, valor) {
+  var sel = document.getElementById(selectId);
+  var normalizar = function(s) {
+    return String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  };
+  var alvo = normalizar(valor);
+  for (var i = 0; i < sel.options.length; i++) {
+    if (normalizar(sel.options[i].value) === alvo) { sel.selectedIndex = i; return; }
+  }
+  sel.value = '';
+}
+
 // ── Vinho do Mês ─────────────────────────────────────
 var _vinhoFotoBase64 = null;
 var _vinhoMarkedForRemoval = false;
@@ -2459,7 +2610,7 @@ function loadVinhoMes() {
   document.getElementById('vinho-preview-wrap').style.display = 'none';
   document.getElementById('vinho-foto-nome').textContent = '';
   var data = JSON.parse(localStorage.getItem('vinhoMes') || '{}');
-  if (data.mes) document.getElementById('vinho-admin-mes').value = data.mes;
+  definirMesSelect('vinho-admin-mes', data.mes);
   if (data.nome) document.getElementById('vinho-admin-nome').value = data.nome;
   if (data.desc) document.getElementById('vinho-admin-desc').value = data.desc;
   if (data.preco) document.getElementById('vinho-admin-preco').value = data.preco;
@@ -2546,7 +2697,7 @@ function loadSugestaoMes() {
   document.getElementById('sugestao-preview-wrap').style.display = 'none';
   document.getElementById('sugestao-foto-nome').textContent = '';
   var data = JSON.parse(localStorage.getItem('sugestaoMes') || '{}');
-  if (data.mes) document.getElementById('sugestao-admin-mes').value = data.mes;
+  definirMesSelect('sugestao-admin-mes', data.mes);
   if (data.nome) document.getElementById('sugestao-admin-nome').value = data.nome;
   if (data.desc) document.getElementById('sugestao-admin-desc').value = data.desc;
   if (data.preco) document.getElementById('sugestao-admin-preco').value = data.preco;
@@ -2921,8 +3072,8 @@ function loadPerdidos() {
 </script>
 
 <!-- Modal: confirmação de cancelamento -->
-<div id="cancel-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
-  <div id="cancel-modal">
+<div id="cancel-modal-overlay" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="cancel-modal" class="modal-box">
     <h3>Cancelar reserva?</h3>
     <p>Esta ação envia um email de cancelamento ao cliente e não pode ser desfeita.</p>
     <div class="modal-btns">
@@ -2932,7 +3083,23 @@ function loadPerdidos() {
   </div>
 </div>
 
+<!-- Modal: alterações por guardar ao sair de uma secção -->
+<div id="unsaved-modal-overlay" class="modal-overlay" onclick="if(event.target===this)fecharModalPorGuardar()">
+  <div class="modal-box">
+    <h3>Alterações por guardar</h3>
+    <p id="unsaved-modal-texto">Tem alterações que ainda não foram guardadas.</p>
+    <div class="modal-btns">
+      <button class="modal-btn-primary" onclick="resolverModalPorGuardar('guardar')">Guardar e continuar</button>
+      <button class="modal-btn-confirm" onclick="resolverModalPorGuardar('descartar')">Sair sem guardar</button>
+      <button class="modal-btn-cancel" onclick="fecharModalPorGuardar()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// Secções com alterações ainda não guardadas (id da secção -> true)
+var SECOES_ALTERADAS = {};
+
 // ── Modo edição: trancar secções depois de guardadas ──
 function lockSection(containerId) {
   var c = document.getElementById(containerId);
@@ -2944,6 +3111,7 @@ function lockSection(containerId) {
   c.querySelectorAll('.btn-save').forEach(function(el){ el.style.display = 'none'; });
   c.querySelectorAll('.btn-edit-section').forEach(function(el){ el.style.display = 'inline-block'; });
   c.classList.add('section-locked');
+  SECOES_ALTERADAS[containerId] = false;
 }
 function unlockSection(containerId) {
   var c = document.getElementById(containerId);
@@ -2962,8 +3130,90 @@ function unlockSection(containerId) {
     if (addGalBtn) addGalBtn.style.display = document.querySelectorAll('#galeria-lista .evento-card').length >= 6 ? 'none' : '';
   }
   c.classList.remove('section-locked');
+  SECOES_ALTERADAS[containerId] = false;
   showToast('Modo de edição ativado');
 }
+
+// ── Alterações por guardar ────────────────────────────
+// Marca a secção como alterada assim que se mexe em alguma coisa dentro dela, para
+// avisar antes de mudar de painel ou fechar a página em vez de perder o trabalho.
+var _saidaPendente = null;
+
+function seccaoDe(el) {
+  var c = el && el.closest ? el.closest('.panel, #res-config') : null;
+  // res-config vive dentro do painel de reservas e tem bloqueio próprio
+  if (c && c.id === 'panel-reservas') c = el.closest('#res-config') || c;
+  return c && c.querySelector('.lock-bar') ? c : null;
+}
+
+function marcarAlterada(e) {
+  var c = seccaoDe(e.target);
+  if (c && !c.classList.contains('section-locked')) SECOES_ALTERADAS[c.id] = true;
+}
+document.addEventListener('input', marcarAlterada, true);
+document.addEventListener('change', marcarAlterada, true);
+document.addEventListener('click', function(e) {
+  if (e.target.closest && e.target.closest('.btn-add, .btn-remove')) marcarAlterada(e);
+}, true);
+
+// Devolve a secção em edição com alterações por guardar dentro do painel (ou null)
+function secaoPorGuardar(painel) {
+  if (!painel) return null;
+  var candidatos = [painel].concat(Array.prototype.slice.call(painel.querySelectorAll('#res-config')));
+  for (var i = 0; i < candidatos.length; i++) {
+    var c = candidatos[i];
+    if (c.querySelector('.lock-bar') && !c.classList.contains('section-locked') && SECOES_ALTERADAS[c.id]) return c;
+  }
+  return null;
+}
+
+function temAlteracoesPorGuardar() {
+  return Object.keys(SECOES_ALTERADAS).some(function(id) {
+    var c = document.getElementById(id);
+    return SECOES_ALTERADAS[id] && c && !c.classList.contains('section-locked');
+  });
+}
+
+function pedirDecisaoPorGuardar(seccao, aoContinuar) {
+  _saidaPendente = { seccao: seccao, continuar: aoContinuar };
+  var titulo = seccao.querySelector('.panel-title, .section-header h2');
+  var nome = titulo ? titulo.textContent.trim() : document.getElementById('topbar-title').textContent.trim();
+  document.getElementById('unsaved-modal-texto').textContent =
+    'As alterações em "' + nome + '" ainda não foram guardadas.';
+  document.getElementById('unsaved-modal-overlay').classList.add('open');
+}
+
+function fecharModalPorGuardar() {
+  document.getElementById('unsaved-modal-overlay').classList.remove('open');
+  _saidaPendente = null;
+}
+
+function resolverModalPorGuardar(acao) {
+  var pendente = _saidaPendente;
+  if (!pendente) return;
+  document.getElementById('unsaved-modal-overlay').classList.remove('open');
+  _saidaPendente = null;
+  if (acao === 'guardar') {
+    var guardar = pendente.seccao.querySelector('.btn-save');
+    if (guardar) guardar.click();
+    // Se o guardar falhou (campos obrigatórios em falta), fica na secção
+    if (!pendente.seccao.classList.contains('section-locked')) {
+      _saidaPendente = pendente;
+      return;
+    }
+  } else {
+    discardUnsavedEdits(pendente.seccao.id);
+  }
+  SECOES_ALTERADAS[pendente.seccao.id] = false;
+  if (pendente.continuar) pendente.continuar();
+}
+
+// Fechar ou recarregar o separador: aviso do próprio browser
+window.addEventListener('beforeunload', function(e) {
+  if (!temAlteracoesPorGuardar()) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
 
 // Recarregar itens da ementa guardados (senão mostra sempre os pratos por defeito)
 function renderMenuList(listId, items) {
@@ -3020,6 +3270,34 @@ loadEmenta();
     if (raw && raw !== '{}' && raw !== '[]' && raw !== 'null') {
       lockSection(pair[1]);
     }
+  });
+})();
+
+// A barra de ações de cada secção (aviso de trancada, Guardar, Editar, Remover e a
+// mensagem de confirmação) passa para o topo — em painéis longos ficava no fim e só
+// era vista depois de percorrer tudo.
+(function() {
+  document.querySelectorAll('.btn-edit-section').forEach(function(btn) {
+    var m = /unlockSection\('([^']+)'\)/.exec(btn.getAttribute('onclick') || '');
+    var container = m ? document.getElementById(m[1]) : null;
+    if (!container) return;
+    var barra = document.createElement('div');
+    barra.className = 'lock-bar';
+    var acoes = btn.parentNode;
+    if (acoes && acoes !== container) {
+      // A linha original só tem o aviso, os botões e a mensagem de confirmação
+      while (acoes.firstChild) barra.appendChild(acoes.firstChild);
+      var fb = acoes.nextElementSibling;
+      if (fb && fb.tagName === 'P' && /feedback/.test(fb.id || '')) barra.appendChild(fb);
+      acoes.parentNode.removeChild(acoes);
+    } else {
+      var hint = container.querySelector('.locked-hint');
+      if (hint) barra.appendChild(hint);
+      barra.appendChild(btn);
+    }
+    var header = container.querySelector('.panel-header, .section-header');
+    if (header && header.parentNode === container) header.insertAdjacentElement('afterend', barra);
+    else container.insertBefore(barra, container.firstChild);
   });
 })();
 </script>

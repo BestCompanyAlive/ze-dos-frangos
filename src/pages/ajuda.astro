@@ -77,6 +77,8 @@ import Layout from '../layouts/Layout.astro';
         (function() {
           var vagas = JSON.parse(localStorage.getItem('vagasEmprego') || '[]').filter(function(v) { return v.ativa; });
           if (!vagas.length) return;
+          // Vagas urgentes primeiro, mantendo a ordem definida no backoffice dentro de cada grupo
+          vagas.sort(function(a, b) { return (b.urgente ? 1 : 0) - (a.urgente ? 1 : 0); });
           document.getElementById('vagas-wrap').style.display = '';
           var lista = document.getElementById('vagas-lista');
           vagas.forEach(function(v) {
