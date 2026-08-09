@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { clearStorage } from './helpers';
+import { abrirPainelReservas, clearStorage } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/admin.html');
@@ -11,13 +11,16 @@ test.beforeEach(async ({ page }) => {
 
 test('backoffice: navegação entre painéis actualiza título da topbar', async ({ page }) => {
   const paineis = [
-    { nav: 'Prato do Dia',    titulo: 'Prato do Dia' },
-    { nav: 'Sugestão do Mês', titulo: 'Sugestão do Mês' },
-    { nav: 'Vinho do Mês',    titulo: 'Vinho do Mês' },
-    { nav: 'Ementa',          titulo: 'Ementa' },
-    { nav: 'Eventos',         titulo: 'Eventos & Campanhas' },
-    { nav: 'Mais Vendidos',   titulo: 'Mais Vendidos' },
-    { nav: 'Reservas',        titulo: 'Reservas' },
+    { nav: 'Informações Gerais', titulo: 'Informações Gerais' },
+    { nav: 'Prato do Dia',       titulo: 'Prato do Dia' },
+    { nav: 'Sugestão do Mês',    titulo: 'Sugestão do Mês' },
+    { nav: 'Vinho do Mês',       titulo: 'Vinho do Mês' },
+    { nav: 'Ementa',             titulo: 'Ementa' },
+    { nav: 'Eventos',            titulo: 'Eventos & Campanhas' },
+    { nav: 'Mais Vendidos',      titulo: 'Mais Vendidos' },
+    { nav: 'Vagas de Emprego',   titulo: 'Vagas de Emprego' },
+    { nav: 'Galeria',            titulo: 'Galeria' },
+    { nav: 'Perdidos e Achados', titulo: 'Perdidos e Achados' },
   ];
 
   for (const p of paineis) {
@@ -26,12 +29,16 @@ test('backoffice: navegação entre painéis actualiza título da topbar', async
   }
 });
 
+test('backoffice: entrada "Reservas" escondida enquanto as reservas online não estão activas', async ({ page }) => {
+  await expect(page.locator('#nav-reservas')).toBeHidden();
+});
+
 // ── SUGESTÃO DO MÊS ──────────────────────────────────────────────────────
 
 test('backoffice → site: sugestão do mês guardada aparece no site', async ({ page, context }) => {
   await page.locator('.nav-item').filter({ hasText: 'Sugestão do Mês' }).click();
 
-  await page.locator('#sugestao-admin-mes').fill('Julho');
+  await page.locator('#sugestao-admin-mes').selectOption('Julho');
   await page.locator('#sugestao-admin-nome').fill('Leitão à Bairrada');
   await page.locator('#sugestao-admin-preco').fill('16.00');
   await page.getByRole('button', { name: /guardar e publicar/i }).first().click();
@@ -48,7 +55,7 @@ test('backoffice → site: sugestão do mês guardada aparece no site', async ({
 test('backoffice → site: vinho do mês guardado aparece no site', async ({ page, context }) => {
   await page.locator('.nav-item').filter({ hasText: 'Vinho do Mês' }).click();
 
-  await page.locator('#vinho-admin-mes').fill('Julho');
+  await page.locator('#vinho-admin-mes').selectOption('Julho');
   await page.locator('#vinho-admin-nome').fill('Quinta do Crasto Reserva');
   await page.locator('#vinho-admin-preco').fill('22.00');
   await page.getByRole('button', { name: /guardar e publicar/i }).last().click();
@@ -152,7 +159,7 @@ test('backoffice: reserva pendente aparece na gestão', async ({ page }) => {
 
   // renderReservations() runs on page load — reload so it picks up injected data
   await page.reload();
-  await page.locator('.nav-item').filter({ hasText: 'Reservas' }).click();
+  await abrirPainelReservas(page);
   await expect(page.getByText('Maria Santos')).toBeVisible();
 });
 
@@ -173,7 +180,7 @@ test('backoffice: confirmar reserva muda estado para confirmada', async ({ page 
   }, tomorrow.toISOString().split('T')[0]);
 
   await page.reload();
-  await page.locator('.nav-item').filter({ hasText: 'Reservas' }).click();
+  await abrirPainelReservas(page);
   await expect(page.getByText('João Teste')).toBeVisible();
   await page.getByRole('button', { name: 'Confirmar' }).first().click();
   await expect(page.getByText(/confirmada/i).first()).toBeVisible();
@@ -196,7 +203,7 @@ test('backoffice: cancelar reserva confirmada pede confirmação no modal', asyn
   }, tomorrow.toISOString().split('T')[0]);
 
   await page.reload();
-  await page.locator('.nav-item').filter({ hasText: 'Reservas' }).click();
+  await abrirPainelReservas(page);
   await page.getByRole('button', { name: 'Cancelar' }).first().click();
 
   await expect(page.locator('#cancel-modal-overlay')).toBeVisible();

@@ -106,6 +106,17 @@ export async function setupEmenta(page: Page) {
   });
 }
 
+// A entrada "Reservas" está escondida na sidebar enquanto as reservas online
+// não estiverem activas (ver src/pages/reservas.astro). O painel continua a
+// existir e a funcionar — revelamos a entrada para poder chegar-lhe.
+export async function abrirPainelReservas(page: Page) {
+  await page.evaluate(() => {
+    const nav = document.getElementById('nav-reservas');
+    if (nav) nav.style.display = '';
+  });
+  await page.locator('#nav-reservas').click();
+}
+
 export async function injectReserva(page: Page, overrides: Record<string, unknown> = {}) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 5);
