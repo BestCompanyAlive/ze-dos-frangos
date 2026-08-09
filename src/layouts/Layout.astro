@@ -42,6 +42,10 @@ const {
         { threshold: 0.1 }
       );
       document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+      // Exposto para conteúdo inserido mais tarde (ex: dados da base de dados,
+      // carregados de forma assíncrona) poder registar-se no mesmo observador —
+      // sem isto, esses elementos ficavam com opacidade 0 para sempre.
+      window.__revealObserver = observer;
 
       // Sticky nav
       const nav = document.getElementById('main-nav');
