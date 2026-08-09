@@ -10,6 +10,6 @@
 [dev]
   framework = "#custom"
   command = "sh .netlify-dev-noop.sh"
-  targetPort = 4321
+  targetPort = 4399
   port = 4323
   autoLaunch = false

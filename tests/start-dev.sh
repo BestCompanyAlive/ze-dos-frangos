@@ -1,9 +1,17 @@
 #!/bin/sh
-# Arranca o Astro sozinho na porta 4321 e o "netlify dev" por cima na 4323
-# (proxy + functions + edge functions + Blobs). Ver netlify.toml [dev] e
-# .netlify-dev-noop.sh para o porquê do comando placeholder — o "netlify dev"
-# não reconhece o formato de log mais recente do Astro como sinal de
-# "servidor pronto".
+# Arranca o Astro numa porta interna (4399) e o "netlify dev" por cima na 4323
+# (proxy + functions + edge functions + Blobs).
+#
+# ►► O site a sério é o http://localhost:4323 ◄◄
+#
+# A porta interna é deliberadamente esquisita. Enquanto foi a 4321 — a porta por
+# omissão do Astro, a que toda a gente escreve — ficava lá um site a responder
+# que parecia bom mas não tinha funções nenhumas: o login dava 404 e o
+# /admin.html abria sem guarda. Agora quem escrever 4321 não encontra nada.
+#
+# Ver netlify.toml [dev] e .netlify-dev-noop.sh para o porquê do comando
+# placeholder — o "netlify dev" não reconhece o formato de log mais recente do
+# Astro como sinal de "servidor pronto".
 
 # As variáveis de ambiente TÊM de vir de um ficheiro .env: o "netlify dev"
 # ignora as do processo e é o .env que injeta tanto nas functions como nas edge
@@ -24,5 +32,5 @@ garantir_var SESSION_SECRET dev-apenas-nao-usar-em-producao-0123456789abcdef
 garantir_var ADMIN_USERNAME admin
 garantir_var ADMIN_BOOTSTRAP_PASSWORD desenvolvimento-local-123
 
-npm run dev -- --port 4321 &
+npm run dev -- --port 4399 &
 exec npx netlify dev --offline
