@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { abrirPainelReservas, clearStorage, TEST_ADMIN_PASSWORD } from './helpers';
+import { abrirPainelReservas, clearStorage } from './helpers';
 
+// A sessão de administrador vem do storageState gravado em tests/auth.setup.ts,
+// por isso /admin.html abre diretamente sem passar pela página de entrada.
 test.beforeEach(async ({ page }) => {
   await page.goto('/admin.html');
   await clearStorage(page);
-  // Evita o prompt de password ao Guardar — os testes usam a password de teste diretamente.
-  await page.evaluate((pwd) => sessionStorage.setItem('zdf_admin_pwd', pwd), TEST_ADMIN_PASSWORD);
   await page.reload();
 });
 

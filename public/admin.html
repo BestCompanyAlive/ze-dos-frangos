@@ -98,6 +98,32 @@ aside {
   padding: 16px 20px;
   border-top: 1px solid #222;
 }
+.sessao-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--sidebar-text);
+}
+.sessao-info #sessao-nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sessao-info button {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.sessao-info button:hover { color: #e0c46a; }
 .btn-preview {
   display: flex;
   align-items: center;
@@ -520,6 +546,40 @@ textarea { resize: vertical; min-height: 90px; }
 .menu-tab-panel { display: none; }
 .menu-tab-panel.active { display: block; }
 
+/* DEFINIÇÕES DA CONTA */
+.conta-panel { display: none; }
+.conta-panel.active { display: block; }
+.conta-msg { font-size: 12px; }
+.conta-msg.ok { color: var(--success); }
+.conta-msg.erro { color: var(--danger); }
+.conta-aviso {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  background: #fdf6e3;
+  border: 1px solid #e6dcbe;
+  color: #6b5a1e;
+}
+.forca-barra {
+  height: 4px;
+  margin-top: 7px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+.forca-barra span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  background: var(--danger);
+  transition: width 0.2s, background 0.2s;
+}
+.conta-tabela td { vertical-align: top; }
+.conta-tabela .secundario { color: var(--muted); font-size: 12px; }
+
 /* RESERVAS TABLE */
 .res-table { width: 100%; border-collapse: collapse; }
 .res-table th {
@@ -772,10 +832,19 @@ textarea { resize: vertical; min-height: 90px; }
     <span class="icon">◎</span> Perdidos e Achados
   </div>
 
+  <div class="sidebar-section-label">Conta</div>
+  <div class="nav-item" onclick="showPanel('conta', this)" id="nav-conta">
+    <span class="icon">⚙</span> Definições da Conta
+  </div>
+
   <div class="sidebar-footer">
     <a class="btn-preview" href="/" target="_blank">
       ↗ Ver Site
     </a>
+    <div class="sessao-info">
+      <span id="sessao-nome">…</span>
+      <button type="button" id="btn-terminar-sessao" onclick="terminarSessao()">Terminar sessão</button>
+    </div>
   </div>
 </aside>
 
@@ -1680,6 +1749,141 @@ Equipa Zé dos Frangos</textarea>
       </div>
     </div>
 
+    <!-- DEFINIÇÕES DA CONTA -->
+    <!-- Sem .lock-bar nem .btn-edit-section de propósito: este painel não passa
+         pelo bloqueio de secções nem pelo aviso de alterações por guardar, que
+         são para conteúdo publicado. Aqui cada formulário grava sozinho. -->
+    <div class="panel" id="panel-conta">
+      <div class="section-header">
+        <div>
+          <h2>Definições da Conta</h2>
+          <p>Os seus dados de acesso ao painel</p>
+        </div>
+      </div>
+
+      <div class="sub-tabs">
+        <button class="sub-tab conta-tab active" data-conta-tab="perfil" onclick="switchContaTab('perfil', this)">Perfil</button>
+        <button class="sub-tab conta-tab" data-conta-tab="password" onclick="switchContaTab('password', this)">Palavra-passe</button>
+        <button class="sub-tab conta-tab" data-conta-tab="seguranca" onclick="switchContaTab('seguranca', this)">Segurança</button>
+      </div>
+
+      <!-- PERFIL -->
+      <div class="conta-panel active" id="conta-perfil">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Identificação</h3>
+              <div class="card-desc">O nome aparece no canto da barra lateral. O email serve só para o contactarmos.</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field">
+                <label>Nome de utilizador</label>
+                <input type="text" id="conta-username" disabled />
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;">Não pode ser alterado.</div>
+              </div>
+              <div class="field">
+                <label>Nome a apresentar</label>
+                <input type="text" id="conta-displayname" maxlength="80" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Email de contacto</label>
+                <input type="email" id="conta-email" maxlength="160" autocomplete="email" />
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
+              <button class="btn-save" onclick="guardarPerfilConta()">Guardar perfil</button>
+              <span class="conta-msg" id="perfil-msg"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALAVRA-PASSE -->
+      <div class="conta-panel" id="conta-password">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Mudar palavra-passe</h3>
+              <div class="card-desc">Ao mudar, todas as sessões abertas (incluindo noutros dispositivos) são terminadas.</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="password-obrigatoria" class="conta-aviso" style="display:none;">
+              Por segurança, defina uma palavra-passe sua antes de continuar. Até lá não é possível publicar alterações no site.
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Palavra-passe atual</label>
+                <input type="password" id="pwd-atual" autocomplete="current-password" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Nova palavra-passe</label>
+                <input type="password" id="pwd-nova" autocomplete="new-password" oninput="avaliarForcaPassword()" />
+                <div class="forca-barra"><span id="forca-nivel"></span></div>
+                <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="forca-texto">Mínimo 12 caracteres. Uma frase que só você saiba é melhor do que símbolos difíceis de decorar.</div>
+              </div>
+              <div class="field">
+                <label>Confirmar nova palavra-passe</label>
+                <input type="password" id="pwd-confirmar" autocomplete="new-password" />
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
+              <button class="btn-save" onclick="mudarPasswordConta()">Mudar palavra-passe</button>
+              <span class="conta-msg" id="password-msg"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEGURANÇA -->
+      <div class="conta-panel" id="conta-seguranca">
+        <div class="card">
+          <div class="card-header" style="justify-content:space-between;">
+            <div>
+              <h3>Sessões ativas</h3>
+              <div class="card-desc">Onde a sua conta está aberta neste momento.</div>
+            </div>
+            <button class="btn-add" onclick="terminarOutrasSessoes()">Terminar as outras sessões</button>
+          </div>
+          <div class="card-body">
+            <table class="res-table conta-tabela">
+              <thead>
+                <tr><th>Dispositivo</th><th>Endereço IP</th><th>Início</th><th>Última atividade</th></tr>
+              </thead>
+              <tbody id="sessoes-lista">
+                <tr><td colspan="4" style="color:var(--muted);">A carregar…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Registo de acessos</h3>
+              <div class="card-desc">As últimas entradas e alterações na conta. Se vir alguma que não reconhece, mude já a palavra-passe.</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="res-table conta-tabela">
+              <thead>
+                <tr><th>Ocorrência</th><th>Quando</th><th>Endereço IP</th></tr>
+              </thead>
+              <tbody id="registo-lista">
+                <tr><td colspan="3" style="color:var(--muted);">A carregar…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </main>
 
@@ -1769,8 +1973,10 @@ async function showPanel(id, el) {
     perdidos: 'Perdidos e Achados',
     reservas: 'Reservas',
     vagas: 'Vagas de Emprego',
+    conta: 'Definições da Conta',
   };
   document.getElementById('topbar-title').textContent = titles[id] || id;
+  if (id === 'conta') carregarPainelConta();
   // Só carrega na primeira visita (painel ainda vazio) — evita apagar trabalho em curso não guardado ao voltar a entrar
   if (id === 'maisVendidos' && !document.querySelector('#mv-carne-list .mv-card, #mv-peixe-list .mv-card')) loadMaisVendidos();
   if (id === 'galeria' && document.getElementById('galeria-lista').children.length === 0) loadGaleria();
@@ -1855,27 +2061,40 @@ function compressImage(file, callback, maxDim, quality) {
   reader.readAsDataURL(file);
 }
 
+// ── Sessão do administrador ─────────────────────────────
+// A autenticação está num cookie HttpOnly emitido por /api/auth/login. O
+// browser nunca chega a ver a palavra-passe e nenhum script lhe consegue tocar
+// — ao contrário do que acontecia quando ela era pedida por prompt e guardada
+// no sessionStorage.
+var SESSAO_TERMINADA = false;
+var UTILIZADOR = null;
+
+function irParaEntrada(motivo) {
+  if (SESSAO_TERMINADA) return;
+  SESSAO_TERMINADA = true; // silencia o aviso de "alterações por guardar": já não há como as guardar
+  location.replace('/admin-login.html' + (motivo ? '?motivo=' + motivo : ''));
+}
+
+// Chamada a /api/auth/*. Devolve { ok, status, corpo }.
+async function apiAuth(caminho, opcoes) {
+  var cfg = Object.assign({ credentials: 'same-origin' }, opcoes || {});
+  cfg.headers = Object.assign({ 'Content-Type': 'application/json' }, cfg.headers || {});
+  var res = await fetch('/api/auth/' + caminho, cfg);
+  var corpo = await res.json().catch(function() { return {}; });
+  return { ok: res.ok, status: res.status, corpo: corpo };
+}
+
 // ── Armazenamento partilhado (Netlify Blobs) — sem cache local ──────────
 // Todos os dados vivem só no Blob. Sem ligação ao servidor (ex: "npm run dev"
 // sem "netlify dev"), leituras devolvem null e gravações falham com aviso.
-var ADMIN_PASSWORD_KEY = 'zdf_admin_pwd';
-
-function getStoredAdminPassword() {
-  return sessionStorage.getItem(ADMIN_PASSWORD_KEY) || '';
-}
-
-async function ensureAdminPassword() {
-  var pwd = getStoredAdminPassword();
-  if (pwd) return pwd;
-  pwd = window.prompt('Palavra-passe de administrador (para publicar alterações):') || '';
-  if (pwd) sessionStorage.setItem(ADMIN_PASSWORD_KEY, pwd);
-  return pwd;
-}
 
 // Lê uma chave da base de dados partilhada. Devolve null se não existir ou se a função não estiver disponível.
 async function dataGet(key) {
   try {
-    var res = await fetch('/.netlify/functions/data?key=' + encodeURIComponent(key));
+    var res = await fetch('/.netlify/functions/data?key=' + encodeURIComponent(key), {
+      credentials: 'same-origin',
+    });
+    if (res.status === 401) { irParaEntrada('expirada'); return null; }
     if (!res.ok) throw new Error('erro ao ler "' + key + '": ' + res.status);
     var body = await res.json();
     return body.value !== undefined ? body.value : null;
@@ -1887,17 +2106,21 @@ async function dataGet(key) {
 
 // Guarda uma chave na base de dados partilhada.
 async function dataSet(key, stringValue) {
-  var pwd = await ensureAdminPassword();
-  if (!pwd) { alert('É necessária a palavra-passe de administrador para guardar.'); return false; }
   try {
     var res = await fetch('/.netlify/functions/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: key, value: stringValue, password: pwd }),
+      credentials: 'same-origin',
+      body: JSON.stringify({ key: key, value: stringValue }),
     });
-    if (res.status === 401) {
-      sessionStorage.removeItem(ADMIN_PASSWORD_KEY);
-      alert('Palavra-passe incorreta. A alteração NÃO foi guardada — tenta novamente.');
+    if (res.status === 401) { irParaEntrada('expirada'); return false; }
+    if (res.status === 403) {
+      alert('Tem de definir uma nova palavra-passe antes de poder publicar alterações.');
+      abrirPainelConta('password');
+      return false;
+    }
+    if (res.status === 413) {
+      alert('O conteúdo é demasiado grande para ser guardado. Reduza o número ou o tamanho das fotos.');
       return false;
     }
     if (!res.ok) throw new Error('save failed: ' + res.status);
@@ -3145,6 +3368,18 @@ async function loadPerdidos() {
   </div>
 </div>
 
+<!-- Modal: sessão prestes a terminar por inatividade -->
+<div id="idle-modal-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Ainda aí está?</h3>
+    <p>Por segurança, a sessão termina dentro de <strong id="idle-contagem">2:00</strong> por falta de atividade.</p>
+    <div class="modal-btns">
+      <button class="modal-btn-primary" onclick="continuarSessao()">Continuar a trabalhar</button>
+      <button class="modal-btn-cancel" onclick="terminarSessao()">Terminar sessão</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // Secções com alterações ainda não guardadas (id da secção -> true)
 var SECOES_ALTERADAS = {};
@@ -3217,6 +3452,9 @@ function secaoPorGuardar(painel) {
 }
 
 function temAlteracoesPorGuardar() {
+  // Com a sessão terminada não há como guardar seja o que for — avisar só
+  // impediria a saída para a página de entrada.
+  if (SESSAO_TERMINADA) return false;
   return Object.keys(SECOES_ALTERADAS).some(function(id) {
     var c = document.getElementById(id);
     return SECOES_ALTERADAS[id] && c && !c.classList.contains('section-locked');
@@ -3350,6 +3588,266 @@ loadEmenta();
     if (header && header.parentNode === container) header.insertAdjacentElement('afterend', barra);
     else container.insertBefore(barra, container.firstChild);
   });
+})();
+
+// ══════════════════════════════════════════════════════════
+// DEFINIÇÕES DA CONTA
+// ══════════════════════════════════════════════════════════
+
+function switchContaTab(id, el) {
+  document.querySelectorAll('.conta-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.conta-panel').forEach(function(p) { p.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var painel = document.getElementById('conta-' + id);
+  if (painel) painel.classList.add('active');
+  if (id === 'seguranca') carregarSeguranca();
+}
+
+function abrirPainelConta(aba) {
+  showPanel('conta', document.getElementById('nav-conta'));
+  if (aba) switchContaTab(aba, document.querySelector('.conta-tab[data-conta-tab="' + aba + '"]'));
+}
+
+function mostrarMsgConta(id, texto, tipo) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = texto;
+  el.className = 'conta-msg ' + (tipo || '');
+  if (tipo === 'ok') setTimeout(function() { if (el.textContent === texto) el.textContent = ''; }, 5000);
+}
+
+function aplicarUtilizador(user) {
+  UTILIZADOR = user;
+  document.getElementById('sessao-nome').textContent = user.displayName || user.username;
+  document.getElementById('conta-username').value = user.username || '';
+  document.getElementById('conta-displayname').value = user.displayName || '';
+  document.getElementById('conta-email').value = user.email || '';
+  document.getElementById('password-obrigatoria').style.display = user.mustChangePassword ? 'block' : 'none';
+}
+
+function carregarPainelConta() {
+  if (UTILIZADOR) aplicarUtilizador(UTILIZADOR);
+  if (document.getElementById('conta-seguranca').classList.contains('active')) carregarSeguranca();
+}
+
+async function guardarPerfilConta() {
+  var res = await apiAuth('profile', {
+    method: 'POST',
+    body: JSON.stringify({
+      displayName: document.getElementById('conta-displayname').value,
+      email: document.getElementById('conta-email').value,
+    }),
+  });
+  if (res.status === 401) return irParaEntrada('expirada');
+  if (!res.ok) return mostrarMsgConta('perfil-msg', res.corpo.error || 'Não foi possível guardar.', 'erro');
+  aplicarUtilizador(res.corpo.user);
+  mostrarMsgConta('perfil-msg', 'Perfil guardado.', 'ok');
+  showToast('Perfil guardado');
+}
+
+// Medidor indicativo: comprimento a pesar mais do que a variedade de símbolos,
+// que é o que de facto torna uma palavra-passe difícil de adivinhar.
+function avaliarForcaPassword() {
+  var pwd = document.getElementById('pwd-nova').value;
+  var barra = document.getElementById('forca-nivel');
+  var texto = document.getElementById('forca-texto');
+  if (!pwd) {
+    barra.style.width = '0';
+    texto.textContent = 'Mínimo 12 caracteres. Uma frase que só você saiba é melhor do que símbolos difíceis de decorar.';
+    return;
+  }
+  var pontos = 0;
+  if (pwd.length >= 12) pontos += 2;
+  else if (pwd.length >= 8) pontos += 1;
+  if (pwd.length >= 16) pontos += 1;
+  var variedade = 0;
+  if (/[a-z]/.test(pwd)) variedade++;
+  if (/[A-Z]/.test(pwd)) variedade++;
+  if (/[0-9]/.test(pwd)) variedade++;
+  if (/[^a-zA-Z0-9]/.test(pwd)) variedade++;
+  if (variedade >= 3) pontos += 1;
+  var niveis = [
+    { largura: '20%', cor: 'var(--danger)', txt: 'Demasiado fraca.' },
+    { largura: '40%', cor: '#e07b39', txt: 'Fraca — precisa de pelo menos 12 caracteres.' },
+    { largura: '60%', cor: '#d4a017', txt: 'Razoável.' },
+    { largura: '80%', cor: '#7fa650', txt: 'Boa.' },
+    { largura: '100%', cor: 'var(--success)', txt: 'Muito boa.' },
+  ];
+  var n = niveis[Math.min(pontos, 4)];
+  barra.style.width = n.largura;
+  barra.style.background = n.cor;
+  texto.textContent = n.txt;
+}
+
+async function mudarPasswordConta() {
+  var atual = document.getElementById('pwd-atual').value;
+  var nova = document.getElementById('pwd-nova').value;
+  var confirmar = document.getElementById('pwd-confirmar').value;
+
+  if (!atual || !nova) return mostrarMsgConta('password-msg', 'Preencha todos os campos.', 'erro');
+  if (nova !== confirmar) return mostrarMsgConta('password-msg', 'A confirmação não coincide com a nova palavra-passe.', 'erro');
+
+  mostrarMsgConta('password-msg', 'A guardar…', '');
+  var res = await apiAuth('password', {
+    method: 'POST',
+    body: JSON.stringify({ atual: atual, nova: nova }),
+  });
+  if (res.status === 401 && res.corpo.error && /sessão/i.test(res.corpo.error)) return irParaEntrada('expirada');
+  if (!res.ok) return mostrarMsgConta('password-msg', res.corpo.error || 'Não foi possível mudar a palavra-passe.', 'erro');
+
+  document.getElementById('pwd-atual').value = '';
+  document.getElementById('pwd-nova').value = '';
+  document.getElementById('pwd-confirmar').value = '';
+  avaliarForcaPassword();
+  aplicarUtilizador(res.corpo.user);
+  mostrarMsgConta('password-msg', 'Palavra-passe alterada. As outras sessões foram terminadas.', 'ok');
+  showToast('Palavra-passe alterada');
+  carregarSeguranca();
+}
+
+function descreverDispositivo(ua) {
+  ua = ua || '';
+  var so = /iPhone|iPad/.test(ua) ? 'iOS'
+    : /Android/.test(ua) ? 'Android'
+    : /Mac OS X/.test(ua) ? 'Mac'
+    : /Windows/.test(ua) ? 'Windows'
+    : /Linux/.test(ua) ? 'Linux' : 'Desconhecido';
+  var browser = /Edg\//.test(ua) ? 'Edge'
+    : /Chrome\//.test(ua) ? 'Chrome'
+    : /Safari\//.test(ua) ? 'Safari'
+    : /Firefox\//.test(ua) ? 'Firefox' : 'Navegador desconhecido';
+  return browser + ' · ' + so;
+}
+
+function formatarInstante(ms) {
+  if (!ms) return '—';
+  return new Date(ms).toLocaleString('pt-PT', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+}
+
+async function carregarSeguranca() {
+  var sessoesEl = document.getElementById('sessoes-lista');
+  var registoEl = document.getElementById('registo-lista');
+
+  var sessoes = await apiAuth('sessions');
+  if (sessoes.status === 401) return irParaEntrada('expirada');
+  if (sessoes.ok) {
+    var linhas = (sessoes.corpo.sessoes || []).map(function(s) {
+      return '<tr>' +
+        '<td>' + escHtml(descreverDispositivo(s.userAgent)) +
+          (s.atual ? ' <span class="badge badge-green">Esta sessão</span>' : '') + '</td>' +
+        '<td class="secundario">' + escHtml(s.ip || '—') + '</td>' +
+        '<td class="secundario">' + escHtml(formatarInstante(s.criadaEm)) + '</td>' +
+        '<td class="secundario">' + escHtml(formatarInstante(s.ultimaAtividade)) + '</td>' +
+        '</tr>';
+    });
+    sessoesEl.innerHTML = linhas.length ? linhas.join('') :
+      '<tr><td colspan="4" style="color:var(--muted);">Nenhuma sessão ativa.</td></tr>';
+  }
+
+  var registo = await apiAuth('audit');
+  if (registo.status === 401) return irParaEntrada('expirada');
+  if (registo.ok) {
+    var eventos = (registo.corpo.eventos || []).map(function(ev) {
+      return '<tr>' +
+        '<td>' + escHtml(ev.evento) + '</td>' +
+        '<td class="secundario">' + escHtml(formatarInstante(ev.em)) + '</td>' +
+        '<td class="secundario">' + escHtml(ev.ip || '—') + '</td>' +
+        '</tr>';
+    });
+    registoEl.innerHTML = eventos.length ? eventos.join('') :
+      '<tr><td colspan="3" style="color:var(--muted);">Ainda sem registos.</td></tr>';
+  }
+}
+
+async function terminarOutrasSessoes() {
+  var res = await apiAuth('sessions/revoke-others', { method: 'POST' });
+  if (res.status === 401) return irParaEntrada('expirada');
+  if (!res.ok) { showToast('Não foi possível terminar as outras sessões'); return; }
+  showToast(res.corpo.terminadas ? 'Terminadas ' + res.corpo.terminadas + ' sessão(ões)' : 'Não havia outras sessões');
+  carregarSeguranca();
+}
+
+async function terminarSessao() {
+  try {
+    await apiAuth('logout', { method: 'POST' });
+  } catch (e) { /* sair à mesma */ }
+  irParaEntrada();
+}
+
+// ══════════════════════════════════════════════════════════
+// FIM DE SESSÃO POR INATIVIDADE
+// ══════════════════════════════════════════════════════════
+// O servidor já corta a sessão aos 30 minutos parados; aqui o corte é aos 15,
+// com aviso aos 13 — um painel aberto e esquecido num computador partilhado é
+// a forma mais provável de isto ser mal usado.
+var IDLE_AVISO_MS = 13 * 60 * 1000;
+var IDLE_FIM_MS = 15 * 60 * 1000;
+var idleTimerAviso = null;
+var idleTimerFim = null;
+var idleContagem = null;
+
+function reiniciarIdle() {
+  clearTimeout(idleTimerAviso);
+  clearTimeout(idleTimerFim);
+  clearInterval(idleContagem);
+  document.getElementById('idle-modal-overlay').classList.remove('open');
+  if (SESSAO_TERMINADA) return;
+  idleTimerAviso = setTimeout(mostrarAvisoIdle, IDLE_AVISO_MS);
+  idleTimerFim = setTimeout(function() { terminarSessao(); }, IDLE_FIM_MS);
+}
+
+function mostrarAvisoIdle() {
+  var restante = Math.round((IDLE_FIM_MS - IDLE_AVISO_MS) / 1000);
+  var el = document.getElementById('idle-contagem');
+  document.getElementById('idle-modal-overlay').classList.add('open');
+  el.textContent = Math.floor(restante / 60) + ':' + String(restante % 60).padStart(2, '0');
+  idleContagem = setInterval(function() {
+    restante -= 1;
+    if (restante <= 0) { clearInterval(idleContagem); return; }
+    el.textContent = Math.floor(restante / 60) + ':' + String(restante % 60).padStart(2, '0');
+  }, 1000);
+}
+
+function continuarSessao() {
+  reiniciarIdle();
+}
+
+// Só reinicia a contagem com atividade real, e no máximo de 30 em 30 segundos —
+// sem isto seria um temporizador reiniciado a cada pixel de rato.
+(function() {
+  var ultimoReinicio = 0;
+  function aoMexer() {
+    if (document.getElementById('idle-modal-overlay').classList.contains('open')) return;
+    var agora = Date.now();
+    if (agora - ultimoReinicio < 30000) return;
+    ultimoReinicio = agora;
+    reiniciarIdle();
+  }
+  ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(function(evento) {
+    document.addEventListener(evento, aoMexer, { passive: true });
+  });
+})();
+
+// ══════════════════════════════════════════════════════════
+// ARRANQUE: confirmar a sessão antes de mostrar seja o que for
+// ══════════════════════════════════════════════════════════
+// O guarda de borda já barra quem não tem cookie válido, mas não consulta o
+// armazenamento — uma sessão revogada (terminada noutro dispositivo, ou
+// invalidada por mudança de palavra-passe) ainda consegue carregar esta página.
+// É aqui que ela é expulsa.
+(async function() {
+  var res = await apiAuth('me').catch(function() { return { ok: false, status: 0, corpo: {} }; });
+  if (res.status === 401) return irParaEntrada('expirada');
+  if (!res.ok) {
+    console.warn('Não foi possível confirmar a sessão:', res.status, res.corpo);
+    document.getElementById('sessao-nome').textContent = 'Sessão por confirmar';
+    return;
+  }
+  aplicarUtilizador(res.corpo.user);
+  reiniciarIdle();
+  if (res.corpo.user.mustChangePassword) abrirPainelConta('password');
 })();
 </script>
 </body>

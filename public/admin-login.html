@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<title>Entrar — Painel de Gestão</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #C9A84C;
+  --sidebar-bg: #111;
+  --card-bg: #fff;
+  --border: #E5E3DE;
+  --text: #1a1a1a;
+  --muted: #888;
+  --danger: #dc2626;
+  --radius: 6px;
+}
+
+body {
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  background: var(--sidebar-bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+
+.brand { text-align: center; margin-bottom: 26px; }
+.brand .logo-tag {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.brand .logo-name { font-size: 19px; font-weight: 600; letter-spacing: 0.02em; }
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+}
+.field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+
+button[type="submit"] {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px;
+  background: var(--gold);
+  color: #111;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+button[type="submit"]:hover:not(:disabled) { background: #b8983f; }
+button[type="submit"]:disabled { opacity: 0.55; cursor: default; }
+
+.aviso {
+  display: none;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.aviso.erro { display: block; background: #fdeaea; color: var(--danger); border: 1px solid #f6cccc; }
+.aviso.info { display: block; background: #f4f1e6; color: #6b5a1e; border: 1px solid #e6dcbe; }
+
+.rodape {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<main class="login-card">
+  <div class="brand">
+    <div class="logo-tag">Painel de Gestão</div>
+    <div class="logo-name">Zé dos Frangos</div>
+  </div>
+
+  <div id="aviso" class="aviso" role="alert" aria-live="polite"></div>
+
+  <form id="form-entrada" autocomplete="on">
+    <div class="field">
+      <label for="username">Utilizador</label>
+      <input type="text" id="username" name="username" autocomplete="username"
+             autocapitalize="none" spellcheck="false" required autofocus />
+    </div>
+    <div class="field">
+      <label for="password">Palavra-passe</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required />
+    </div>
+    <button type="submit" id="btn-entrar">Entrar</button>
+  </form>
+
+  <p class="rodape">Acesso reservado à gestão do restaurante.</p>
+</main>
+
+<script>
+var aviso = document.getElementById('aviso');
+var botao = document.getElementById('btn-entrar');
+var contagem = null;
+
+function mostrar(texto, tipo) {
+  aviso.textContent = texto;
+  aviso.className = 'aviso ' + (tipo || 'erro');
+}
+
+// Motivo do reencaminhamento vindo do guarda de borda.
+var motivo = new URLSearchParams(location.search).get('motivo');
+if (motivo === 'expirada') mostrar('A sua sessão terminou. Entre novamente.', 'info');
+if (motivo === 'config') mostrar('A autenticação ainda não está configurada no servidor. Contacte o responsável técnico.', 'erro');
+
+function bloquear(segundos) {
+  clearInterval(contagem);
+  botao.disabled = true;
+  function tick() {
+    if (segundos <= 0) {
+      clearInterval(contagem);
+      botao.disabled = false;
+      mostrar('Já pode tentar novamente.', 'info');
+      return;
+    }
+    var min = Math.floor(segundos / 60);
+    var seg = segundos % 60;
+    mostrar('Demasiadas tentativas. Tente novamente em ' + (min ? min + ' min ' : '') + seg + ' s.', 'erro');
+    segundos -= 1;
+  }
+  tick();
+  contagem = setInterval(tick, 1000);
+}
+
+document.getElementById('form-entrada').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (botao.disabled) return;
+
+  botao.disabled = true;
+  var textoOriginal = botao.textContent;
+  botao.textContent = 'A entrar…';
+  aviso.className = 'aviso';
+
+  try {
+    var res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+      }),
+    });
+    var corpo = await res.json().catch(function() { return {}; });
+
+    if (res.ok) {
+      location.replace('/admin.html');
+      return;
+    }
+
+    document.getElementById('password').value = '';
+    botao.textContent = textoOriginal;
+
+    if (res.status === 429) {
+      bloquear(Number(corpo.retryAfter) || 900);
+      return;
+    }
+    botao.disabled = false;
+    mostrar(corpo.error || 'Não foi possível entrar. Tente novamente.', 'erro');
+  } catch (erro) {
+    botao.disabled = false;
+    botao.textContent = textoOriginal;
+    mostrar('Não foi possível contactar o servidor. Verifique a ligação.', 'erro');
+  }
+});
+</script>
+</body>
+</html>

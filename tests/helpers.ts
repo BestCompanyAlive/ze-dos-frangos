@@ -2,12 +2,25 @@ import { Page } from '@playwright/test';
 
 // Os dados do backoffice vivem no Netlify Blobs (via netlify/functions/data.mjs),
 // não em localStorage. Os testes correm sobre "netlify dev" (ver playwright.config.ts)
-// para ter a função a sério disponível, e semeiam dados com a mesma password de admin.
-export const TEST_ADMIN_PASSWORD = 'teste1234';
+// para terem as funções a sério disponíveis.
+export const BASE_URL = 'http://localhost:4323';
+export const UTILIZADOR_TESTES = 'admin';
 
+// Tem de coincidir com ADMIN_BOOTSTRAP_PASSWORD em tests/start-dev.sh e em
+// playwright.config.ts — é a palavra-passe com que a conta é criada.
+export const PASSWORD_ARRANQUE = 'desenvolvimento-local-123';
+
+// A palavra-passe definitiva dos testes, definida uma vez em tests/auth.setup.ts.
+// Cumpre a política do servidor (mínimo 12 caracteres, sem termos previsíveis).
+export const PASSWORD_TESTES = 'Teste-E2E-Palavra-2026';
+
+// Escrever exige sessão de administrador (o cookie vem do storageState) e o
+// cabeçalho Origin, que o servidor verifica como defesa contra CSRF. O
+// APIRequestContext do Playwright não o envia sozinho, ao contrário do browser.
 async function setData(page: Page, key: string, value: unknown) {
   const res = await page.request.post('/.netlify/functions/data', {
-    data: { key, value: JSON.stringify(value), password: TEST_ADMIN_PASSWORD },
+    headers: { origin: BASE_URL },
+    data: { key, value: JSON.stringify(value) },
   });
   if (!res.ok()) {
     throw new Error(`Falha ao semear "${key}" para os testes: ${res.status()} ${await res.text()}`);
