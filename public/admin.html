@@ -718,6 +718,72 @@ textarea { resize: vertical; min-height: 90px; }
 </head>
 <body>
 
+<!-- PORTA DE ENTRADA: pede a password antes de mostrar o que quer que seja do backoffice -->
+<div id="login-gate" style="position:fixed;inset:0;z-index:99999;background:#1a1a1a;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:8px;padding:44px 36px;max-width:360px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.35);">
+    <div style="font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:#aea995;margin-bottom:6px;font-weight:600;">Painel de Gestão</div>
+    <h1 style="font-size:19px;font-weight:700;color:#1a1a1a;margin:0 0 26px;">Zé dos Frangos</h1>
+    <form id="login-gate-form">
+      <input type="password" id="login-gate-password" placeholder="Palavra-passe" autocomplete="current-password"
+        style="width:100%;background:#f9f8f6;border:1px solid #e5e3de;color:#1a1a1a;padding:12px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;box-sizing:border-box;" />
+      <button type="submit" id="login-gate-submit"
+        style="width:100%;background:#aea995;border:none;color:#1a1a1a;padding:12px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:.05em;cursor:pointer;">Entrar</button>
+      <p id="login-gate-error" style="display:none;color:#c0392b;font-size:12px;margin-top:14px;">Palavra-passe incorreta. Tenta novamente.</p>
+    </form>
+  </div>
+</div>
+<script>
+(function() {
+  var gate = document.getElementById('login-gate');
+  var form = document.getElementById('login-gate-form');
+  var input = document.getElementById('login-gate-password');
+  var error = document.getElementById('login-gate-error');
+  var submitBtn = document.getElementById('login-gate-submit');
+
+  function unlock(pwd) {
+    sessionStorage.setItem('zdf_admin_pwd', pwd);
+    gate.style.display = 'none';
+  }
+
+  // Já autenticado nesta sessão do browser — não voltar a pedir.
+  var cached = sessionStorage.getItem('zdf_admin_pwd');
+  if (cached) {
+    gate.style.display = 'none';
+  } else {
+    input.focus();
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var pwd = input.value;
+    if (!pwd) return;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'A verificar…';
+    error.style.display = 'none';
+    try {
+      var res = await fetch('/.netlify/functions/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'verify', password: pwd }),
+      });
+      if (res.ok) {
+        unlock(pwd);
+      } else {
+        error.style.display = '';
+        input.value = '';
+        input.focus();
+      }
+    } catch (err) {
+      error.textContent = 'Sem ligação ao servidor. Tenta novamente.';
+      error.style.display = '';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Entrar';
+    }
+  });
+})();
+</script>
+
 <!-- SIDEBAR -->
 <aside>
   <div class="sidebar-brand">
@@ -1072,6 +1138,20 @@ textarea { resize: vertical; min-height: 90px; }
               <label>Mensagem</label>
               <input type="text" id="geral-aviso-texto" value="FÉRIAS DE VERÃO — Encerrados de 14 a 22 de agosto. Reabrimos a 23 de agosto. Obrigado pela compreensão." />
               <div style="font-size:11px;color:var(--muted);margin-top:4px;">Aparece no topo da página inicial. Desmarca a caixa acima para o esconder.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMSPREE -->
+      <div class="card">
+        <div class="card-header"><div><h3>Formulários / Emails</h3><div class="card-desc">Envio dos formulários de Perdidos e Achados e de Candidaturas — sem isto configurado, abrem o email do próprio visitante em vez de enviarem diretamente</div></div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="field">
+              <label>ID do formulário Formspree</label>
+              <input type="text" id="geral-formspree" placeholder="ex: xpwzabcd" />
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;">Regista em <strong style="color:#aea995;">formspree.io</strong> → New Form → copia o ID do URL (a parte depois de "/f/").</div>
             </div>
           </div>
         </div>
@@ -1864,12 +1944,14 @@ function getStoredAdminPassword() {
   return sessionStorage.getItem(ADMIN_PASSWORD_KEY) || '';
 }
 
+// A password já foi pedida e validada na porta de entrada (#login-gate) ao carregar
+// a página — chegar aqui sem ela guardada só acontece se a sessão expirou entretanto.
 async function ensureAdminPassword() {
   var pwd = getStoredAdminPassword();
   if (pwd) return pwd;
-  pwd = window.prompt('Palavra-passe de administrador (para publicar alterações):') || '';
-  if (pwd) sessionStorage.setItem(ADMIN_PASSWORD_KEY, pwd);
-  return pwd;
+  alert('A sessão expirou. A página vai recarregar para pedires a password outra vez.');
+  location.reload();
+  return '';
 }
 
 // Lê uma chave da base de dados partilhada. Devolve null se não existir ou se a função não estiver disponível.
@@ -2005,6 +2087,7 @@ async function saveGeral() {
       ativo: !!document.getElementById('geral-aviso-ativo').checked,
       texto: val('geral-aviso-texto').trim(),
     },
+    formspree: val('geral-formspree').trim(),
   };
   var published = await dataSet('siteGeral', JSON.stringify(data));
   lockSection('panel-geral');
@@ -2347,7 +2430,7 @@ updateReservasBadge();
 // Captura os valores por defeito (do HTML estático) antes de qualquer substituição — usados para repor quando não há nada guardado
 var DEFAULT_GERAL = {};
 (function() {
-  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl','geral-aviso-texto'].forEach(function(id) {
+  ['geral-nome','geral-tag','geral-desc','geral-sobre1','geral-sobre2','geral-stat1-val','geral-stat1-lbl','geral-stat2-val','geral-stat2-lbl','geral-stat3-val','geral-stat3-lbl','geral-aviso-texto','geral-formspree'].forEach(function(id) {
     var el = document.getElementById(id);
     DEFAULT_GERAL[id] = el ? el.value : '';
   });
@@ -2374,6 +2457,7 @@ async function loadGeral() {
   var avisoChk = document.getElementById('geral-aviso-ativo');
   if (avisoChk) avisoChk.checked = d.avisoTopo ? !!aviso.ativo : true;
   set('geral-aviso-texto', aviso.texto || DEFAULT_GERAL['geral-aviso-texto']);
+  set('geral-formspree', d.formspree || DEFAULT_GERAL['geral-formspree']);
 }
 loadGeral();
 

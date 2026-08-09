@@ -30,8 +30,10 @@ export default async (req) => {
     } catch {
       return json({ error: 'invalid json' }, 400);
     }
-    const { key, value, password } = body;
+    const { key, value, password, action } = body;
     if (!ADMIN_PASSWORD || !password || password !== ADMIN_PASSWORD) return json({ error: 'unauthorized' }, 401);
+    // Modo só de verificação (usado para pedir a password à entrada do backoffice, sem gravar nada)
+    if (action === 'verify') return json({ ok: true });
     if (!key) return json({ error: 'missing key' }, 400);
     await store.set(key, JSON.stringify(value === undefined ? null : value));
     return json({ ok: true });

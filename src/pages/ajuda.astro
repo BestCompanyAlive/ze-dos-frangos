@@ -4,6 +4,29 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Apoio — Churrasqueira Zé dos Frangos" description="Perdidos e achados e recrutamento da Churrasqueira Zé dos Frangos, Vila Real.">
   <script src="/site-data.js" is:inline></script>
+  <script is:inline>
+    // Envia por Formspree (configurado no backoffice → Informações Gerais) se
+    // houver um ID configurado; caso contrário, ou se falhar, usa "mailto:" como reserva.
+    async function submeterFormulario(subject, campos) {
+      var mailtoBody = campos.map(function(c) { return c.label + ': ' + c.value; }).join('\n');
+      try {
+        var geral = JSON.parse((await dataGet('siteGeral')) || '{}');
+        if (geral.formspree) {
+          var data = {};
+          campos.forEach(function(c) { data[c.label] = c.value; });
+          data._subject = subject;
+          var res = await fetch('https://formspree.io/f/' + geral.formspree, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) return true;
+        }
+      } catch (e) { /* sem ligação ou Formspree por configurar — cai para o mailto */ }
+      window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(mailtoBody);
+      return false;
+    }
+  </script>
 
   <!-- NAV -->
   <nav
@@ -241,7 +264,7 @@ import Layout from '../layouts/Layout.astro';
             mostrarLimiteCandidatura();
           }
 
-          document.getElementById('candidatura-form').addEventListener('submit', function(e) {
+          document.getElementById('candidatura-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             if (candidaturaAtingiuLimite()) {
@@ -258,19 +281,15 @@ import Layout from '../layouts/Layout.astro';
             var mensagem       = f.querySelector('[name="mensagem"]').value;
             var disponibilidade = f.querySelector('[name="disponibilidade"]').value;
 
-            var subject = encodeURIComponent('Candidatura — ' + funcao + ' | ' + nome);
-            var body = encodeURIComponent(
-              'Nova candidatura recebida pelo site:\n\n' +
-              'Nome: ' + nome + '\n' +
-              'Telefone: ' + telefone + '\n' +
-              'Email do candidato: ' + email + '\n' +
-              'Função pretendida: ' + funcao + '\n' +
-              'Experiência: ' + experiencia + '\n' +
-              'Disponibilidade: ' + disponibilidade + '\n\n' +
-              'Apresentação:\n' + mensagem
-            );
-
-            window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + subject + '&body=' + body;
+            await submeterFormulario('Candidatura — ' + funcao + ' | ' + nome, [
+              { label: 'Nome', value: nome },
+              { label: 'Telefone', value: telefone },
+              { label: 'Email do candidato', value: email },
+              { label: 'Função pretendida', value: funcao },
+              { label: 'Experiência', value: experiencia },
+              { label: 'Disponibilidade', value: disponibilidade },
+              { label: 'Apresentação', value: mensagem },
+            ]);
 
             registarCandidatura();
             f.style.display = 'none';
@@ -356,7 +375,7 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <script>
-        document.getElementById('perdidos-form').addEventListener('submit', function(e) {
+        document.getElementById('perdidos-form').addEventListener('submit', async function(e) {
           e.preventDefault();
           var f = this;
           var nome  = f.querySelector('[name="nome"]').value;
@@ -368,17 +387,14 @@ import Layout from '../layouts/Layout.astro';
           var partes = data.split('-');
           var dataFmt = partes.length === 3 ? partes[2] + '/' + partes[1] + '/' + partes[0] : data;
 
-          var subject = encodeURIComponent('Perdidos e Achados — ' + item);
-          var body = encodeURIComponent(
-            'Perdi um objeto no restaurante e gostaria de saber se foi encontrado:\n\n' +
-            'Nome: ' + nome + '\n' +
-            'Telefone: ' + tel + '\n' +
-            'Data da visita: ' + dataFmt + '\n' +
-            'Item perdido: ' + item +
-            (obs ? '\nObservações: ' + obs : '')
-          );
-
-          window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + subject + '&body=' + body;
+          var campos = [
+            { label: 'Nome', value: nome },
+            { label: 'Telefone', value: tel },
+            { label: 'Data da visita', value: dataFmt },
+            { label: 'Item perdido', value: item },
+          ];
+          if (obs) campos.push({ label: 'Observações', value: obs });
+          await submeterFormulario('Perdidos e Achados — ' + item, campos);
 
           f.style.display = 'none';
           document.getElementById('perdidos-sucesso').classList.remove('hidden');
