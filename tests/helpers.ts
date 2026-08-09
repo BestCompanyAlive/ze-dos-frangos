@@ -14,6 +14,19 @@ export const PASSWORD_ARRANQUE = 'desenvolvimento-local-123';
 // Cumpre a política do servidor (mínimo 12 caracteres, sem termos previsíveis).
 export const PASSWORD_TESTES = 'Teste-E2E-Palavra-2026';
 
+// A que o tests/repor-admin-local.mjs deixa, para trabalhar no painel à mão.
+export const PASSWORD_LOCAL_SIMPLES = 'admin';
+
+// Os estados em que a conta local pode estar quando os testes arrancam. O
+// armazenamento em .netlify/blobs-serve/ sobrevive entre corridas, por isso o
+// setup tem de aceitar qualquer um destes em vez de assumir só um — senão basta
+// alguém repor a conta à mão para a suite inteira deixar de arrancar.
+export const PASSWORDS_LOCAIS_CONHECIDAS = [
+  PASSWORD_TESTES,
+  PASSWORD_LOCAL_SIMPLES,
+  PASSWORD_ARRANQUE,
+];
+
 // Escrever exige sessão de administrador (o cookie vem do storageState) e o
 // cabeçalho Origin, que o servidor verifica como defesa contra CSRF. O
 // APIRequestContext do Playwright não o envia sozinho, ao contrário do browser.

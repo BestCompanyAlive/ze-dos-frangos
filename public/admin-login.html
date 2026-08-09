@@ -201,7 +201,28 @@ document.getElementById('form-entrada').addEventListener('submit', async functio
       bloquear(Number(corpo.retryAfter) || 900);
       return;
     }
+
     botao.disabled = false;
+
+    // Distinguir "credenciais erradas" de "o serviço não está lá" é o que evita
+    // alguém passar meia hora convencido de que escreveu mal a palavra-passe.
+    if (res.status === 404 || res.status >= 500) {
+      console.error(
+        'A autenticação não respondeu (' + res.status + ').\n' +
+        'Em produção: confirmar que a função netlify/functions/auth.mjs foi publicada ' +
+        'e que a SESSION_SECRET está definida.\n' +
+        'Em desenvolvimento: o site tem de correr com "sh tests/start-dev.sh" (netlify dev, porta 4323). ' +
+        'O "astro dev" sozinho serve as páginas mas não tem funções, e o /api/auth/login dá 404.'
+      );
+      mostrar(
+        res.status === 404
+          ? 'O serviço de autenticação não está disponível. Isto não é da sua palavra-passe — contacte o responsável técnico.'
+          : 'O serviço de autenticação está com problemas. Tente novamente daqui a pouco.',
+        'erro'
+      );
+      return;
+    }
+
     mostrar(corpo.error || 'Não foi possível entrar. Tente novamente.', 'erro');
   } catch (erro) {
     botao.disabled = false;
