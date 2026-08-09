@@ -42,8 +42,15 @@ async function setData(page: Page, key: string, value: unknown) {
 
 // Limpa todas as chaves do backoffice usadas pelos testes, para cada teste partir de um estado vazio.
 export async function clearStorage(page: Page) {
-  const keys = ['sugestaoMes', 'vinhoMes', 'maisVendidos', 'eventos', 'menuGrupos', 'vagasEmprego', 'menuData', 'galeria', 'perdidosItens', 'siteGeral', 'pratoDia'];
-  await Promise.all(keys.map((key) => setData(page, key, {})));
+  // Cada chave tem de ficar com a forma vazia CERTA. Escrever "{}" numa chave
+  // que é uma lista deixava o painel a rebentar com ".forEach is not a function"
+  // — um erro que só aparecia na consola do browser, nunca nos testes.
+  const objetos = ['sugestaoMes', 'vinhoMes', 'maisVendidos', 'menuData', 'siteGeral', 'pratoDia'];
+  const listas = ['eventos', 'menuGrupos', 'vagasEmprego', 'galeria', 'perdidosItens'];
+  await Promise.all([
+    ...objetos.map((key) => setData(page, key, {})),
+    ...listas.map((key) => setData(page, key, [])),
+  ]);
   // Reservas ainda não foi migrado (funcionalidade escondida) — continua em localStorage.
   await page.evaluate(() => localStorage.clear());
 }

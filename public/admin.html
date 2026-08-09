@@ -2074,6 +2074,22 @@ async function dataGet(key) {
   }
 }
 
+// Lê uma chave que deve conter uma lista. Se o que lá estiver não for uma lista
+// — JSON partido, ou um formato de uma versão anterior — devolve lista vazia em
+// vez de deixar rebentar um ".forEach is not a function" que apaga a secção
+// inteira do painel sem dizer porquê.
+async function dataGetLista(key) {
+  try {
+    var valor = JSON.parse((await dataGet(key)) || '[]');
+    if (Array.isArray(valor)) return valor;
+    console.warn('"' + key + '" não é uma lista; a ignorar o conteúdo guardado.', valor);
+    return [];
+  } catch (e) {
+    console.warn('Não foi possível interpretar "' + key + '":', e);
+    return [];
+  }
+}
+
 // Guarda uma chave na base de dados partilhada.
 async function dataSet(key, stringValue) {
   try {
@@ -2738,7 +2754,7 @@ async function saveVagas() {
 
 // Carregar (ou recarregar) as vagas guardadas — descarta qualquer edição não guardada
 async function loadVagas() {
-  vagasData = JSON.parse((await dataGet('vagasEmprego')) || '[]');
+  vagasData = await dataGetLista('vagasEmprego');
   renderVagasAdmin();
 }
 loadVagas();
@@ -3150,7 +3166,7 @@ async function saveEventos() {
 async function loadEventos() {
   document.getElementById('eventos-lista').innerHTML = '';
   _eventoFotos = {};
-  var eventos = JSON.parse((await dataGet('eventos')) || '[]').slice(0, 1);
+  var eventos = (await dataGetLista('eventos')).slice(0, 1);
   eventos.forEach(function(ev) { addEventoCard(ev); });
 }
 loadEventos();
@@ -3232,7 +3248,7 @@ async function loadGaleria() {
   var lista = document.getElementById('galeria-lista');
   lista.innerHTML = '';
   _galeriaFotos = {};
-  var fotos = JSON.parse((await dataGet('galeria')) || '[]');
+  var fotos = await dataGetLista('galeria');
   fotos.forEach(function(f) { addGaleriaCard(f); });
 }
 </script>
@@ -3308,7 +3324,7 @@ async function loadPerdidos() {
   var lista = document.getElementById('perdidos-lista');
   lista.innerHTML = '';
   _perdidoFotos = {};
-  var itens = JSON.parse((await dataGet('perdidosItens')) || '[]');
+  var itens = await dataGetLista('perdidosItens');
   itens.forEach(function(it) { addPerdidoCard(it); });
 }
 </script>
@@ -3505,7 +3521,7 @@ async function loadEmenta() {
   });
   var gruposList = document.getElementById('grupos-admin-list');
   if (gruposList) gruposList.innerHTML = '';
-  var grupos = JSON.parse((await dataGet('menuGrupos')) || '[]');
+  var grupos = await dataGetLista('menuGrupos');
   grupos.forEach(addGrupoCard);
 }
 loadEmenta();
