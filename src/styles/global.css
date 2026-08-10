@@ -79,6 +79,31 @@
   color: #aea995;
 }
 
+/* Menu panels: empilhados na mesma célula da grid, para que a altura de
+   #ementa-panels seja sempre a do painel mais alto — sem isto, cada troca de
+   categoria muda a altura de #ementa e o background-image (cover) "salta".
+   Escondidos com opacity, não visibility: os itens ".reveal" definem a sua
+   própria "visibility" quando entram no ecrã (scroll reveal), o que anulava
+   o "visibility:hidden" do painel-pai e fazia aparecer pratos de separadores
+   não selecionados. "opacity" não pode ser assim anulado por um filho. */
+#ementa-panels {
+  display: grid;
+}
+#ementa-panels > .menu-panel {
+  grid-column: 1;
+  grid-row: 1;
+  /* Sem isto, um painel com poucos pratos esticava-se (align-self: stretch,
+     a omissão) até à altura do painel mais alto empilhado na mesma célula,
+     e as linhas afastavam-se verticalmente para preencher esse espaço. */
+  align-self: start;
+  opacity: 0;
+  pointer-events: none;
+}
+#ementa-panels > .menu-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Gallery */
 .gallery-item { overflow: hidden; }
 .gallery-item img { transition: transform 0.5s ease; }

@@ -357,24 +357,26 @@ const menuData = {
         <button class="menu-tab" data-tab="grupos">Menus de Grupo</button>
       </div>
 
-      {(['entradas','principais','peixe','sobremesas','fimdesemana','acompanhamentos'] as const).map((cat, i) => (
-        <div class="menu-panel grid md:grid-cols-2 gap-x-12" data-panel={cat} style={i > 0 ? 'display:none' : ''}>
-          {menuData[cat].map((item) => (
-            <div class="reveal flex justify-between items-baseline gap-4 py-4 border-b" style="border-color: #222;">
-              <div>
-                <h3 class="text-white font-light text-sm">{item.nome}</h3>
-                {item.desc && <p class="text-gray-400 text-xs mt-0.5">{item.desc}</p>}
+      <div id="ementa-panels">
+        {(['entradas','principais','peixe','sobremesas','fimdesemana','acompanhamentos'] as const).map((cat, i) => (
+          <div class={`menu-panel grid md:grid-cols-2 gap-x-12 ${i === 0 ? 'active' : ''}`} data-panel={cat} aria-hidden={i === 0 ? 'false' : 'true'}>
+            {menuData[cat].map((item) => (
+              <div class="reveal flex justify-between items-baseline gap-4 py-4 border-b" style="border-color: #222;">
+                <div>
+                  <h3 class="text-white font-light text-sm">{item.nome}</h3>
+                  {item.desc && <p class="text-gray-400 text-xs mt-0.5">{item.desc}</p>}
+                </div>
+                <span class="text-gold whitespace-nowrap text-sm shrink-0" style="font-family: Playfair Display, serif;">{item.preco} €</span>
               </div>
-              <span class="text-gold whitespace-nowrap text-sm shrink-0" style="font-family: Playfair Display, serif;">{item.preco} €</span>
-            </div>
-          ))}
-        </div>
-      ))}
+            ))}
+          </div>
+        ))}
 
-      <!-- Menus de Grupo (lido do localStorage) -->
-      <div class="menu-panel" data-panel="grupos" style="display:none;">
-        <div id="grupos-lista" class="flex flex-col gap-8"></div>
-        <p id="grupos-vazio" class="text-gray-500 text-sm text-center py-8" style="display:none;">Brevemente disponível. Contacte-nos para informações.</p>
+        <!-- Menus de Grupo (lido do localStorage) -->
+        <div class="menu-panel" data-panel="grupos" aria-hidden="true">
+          <div id="grupos-lista" class="flex flex-col gap-8"></div>
+          <p id="grupos-vazio" class="text-gray-500 text-sm text-center py-8" style="display:none;">Brevemente disponível. Contacte-nos para informações.</p>
+        </div>
       </div>
       <script>
         (async function() {

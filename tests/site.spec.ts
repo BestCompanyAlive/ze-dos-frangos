@@ -30,11 +30,14 @@ test('navegação: botão Reservar leva para /reservas', async ({ page }) => {
 
 test('ementa: tabs alternam correctamente', async ({ page }) => {
   await page.goto('/');
-  const tabs = ['Carnes', 'Peixe', 'Sobremesas'];
-  for (const tab of tabs) {
-    await page.getByRole('button', { name: tab }).click();
-    // active panel gets display:grid via Layout.astro tab handler
-    await expect(page.locator('.menu-panel[style*="grid"]').first()).toBeVisible();
+  // rótulo do botão → data-panel correspondente (ver src/pages/index.astro)
+  const tabs: Record<string, string> = { Carnes: 'principais', Peixe: 'peixe', Sobremesas: 'sobremesas' };
+  for (const [label, panel] of Object.entries(tabs)) {
+    await page.getByRole('button', { name: label }).click();
+    // painel activo ganha a classe "active" (opacity:1) via Layout.astro tab handler
+    const painel = page.locator(`.menu-panel[data-panel="${panel}"]`);
+    await expect(painel).toHaveClass(/active/);
+    await expect(painel).toHaveCSS('opacity', '1');
   }
 });
 

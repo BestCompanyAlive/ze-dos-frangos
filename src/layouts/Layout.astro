@@ -76,8 +76,10 @@ const {
           tabs.forEach((t) => t.classList.remove('active'));
           tab.classList.add('active');
           panels.forEach((p) => {
-            (p as HTMLElement).style.display =
-              (p as HTMLElement).dataset.panel === target ? 'grid' : 'none';
+            const el = p as HTMLElement;
+            const active = el.dataset.panel === target;
+            el.classList.toggle('active', active);
+            el.setAttribute('aria-hidden', active ? 'false' : 'true');
           });
         });
       });
