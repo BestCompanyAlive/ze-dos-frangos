@@ -2,12 +2,38 @@ import { Page } from '@playwright/test';
 
 // Os dados do backoffice vivem no Netlify Blobs (via netlify/functions/data.mjs),
 // não em localStorage. Os testes correm sobre "netlify dev" (ver playwright.config.ts)
-// para ter a função a sério disponível, e semeiam dados com a mesma password de admin.
-export const TEST_ADMIN_PASSWORD = 'teste1234';
+// para terem as funções a sério disponíveis.
+export const BASE_URL = 'http://localhost:4323';
+export const UTILIZADOR_TESTES = 'admin';
 
+// Tem de coincidir com ADMIN_BOOTSTRAP_PASSWORD em tests/start-dev.sh e em
+// playwright.config.ts — é a palavra-passe com que a conta é criada.
+export const PASSWORD_ARRANQUE = 'desenvolvimento-local-123';
+
+// A palavra-passe definitiva dos testes, definida uma vez em tests/auth.setup.ts.
+// Cumpre a política do servidor (mínimo 12 caracteres, sem termos previsíveis).
+export const PASSWORD_TESTES = 'Teste-E2E-Palavra-2026';
+
+// A que o tests/repor-admin-local.mjs deixa, para trabalhar no painel à mão.
+export const PASSWORD_LOCAL_SIMPLES = 'admin';
+
+// Os estados em que a conta local pode estar quando os testes arrancam. O
+// armazenamento em .netlify/blobs-serve/ sobrevive entre corridas, por isso o
+// setup tem de aceitar qualquer um destes em vez de assumir só um — senão basta
+// alguém repor a conta à mão para a suite inteira deixar de arrancar.
+export const PASSWORDS_LOCAIS_CONHECIDAS = [
+  PASSWORD_TESTES,
+  PASSWORD_LOCAL_SIMPLES,
+  PASSWORD_ARRANQUE,
+];
+
+// Escrever exige sessão de administrador (o cookie vem do storageState) e o
+// cabeçalho Origin, que o servidor verifica como defesa contra CSRF. O
+// APIRequestContext do Playwright não o envia sozinho, ao contrário do browser.
 async function setData(page: Page, key: string, value: unknown) {
   const res = await page.request.post('/.netlify/functions/data', {
-    data: { key, value: JSON.stringify(value), password: TEST_ADMIN_PASSWORD },
+    headers: { origin: BASE_URL },
+    data: { key, value: JSON.stringify(value) },
   });
   if (!res.ok()) {
     throw new Error(`Falha ao semear "${key}" para os testes: ${res.status()} ${await res.text()}`);
@@ -16,8 +42,15 @@ async function setData(page: Page, key: string, value: unknown) {
 
 // Limpa todas as chaves do backoffice usadas pelos testes, para cada teste partir de um estado vazio.
 export async function clearStorage(page: Page) {
-  const keys = ['sugestaoMes', 'vinhoMes', 'maisVendidos', 'eventos', 'menuGrupos', 'vagasEmprego', 'menuData', 'galeria', 'perdidosItens', 'siteGeral', 'pratoDia'];
-  await Promise.all(keys.map((key) => setData(page, key, {})));
+  // Cada chave tem de ficar com a forma vazia CERTA. Escrever "{}" numa chave
+  // que é uma lista deixava o painel a rebentar com ".forEach is not a function"
+  // — um erro que só aparecia na consola do browser, nunca nos testes.
+  const objetos = ['sugestaoMes', 'vinhoMes', 'maisVendidos', 'menuData', 'siteGeral', 'pratoDia'];
+  const listas = ['eventos', 'menuGrupos', 'vagasEmprego', 'galeria', 'perdidosItens'];
+  await Promise.all([
+    ...objetos.map((key) => setData(page, key, {})),
+    ...listas.map((key) => setData(page, key, [])),
+  ]);
   // Reservas ainda não foi migrado (funcionalidade escondida) — continua em localStorage.
   await page.evaluate(() => localStorage.clear());
 }
