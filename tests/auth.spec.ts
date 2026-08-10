@@ -1,6 +1,6 @@
 import { test, expect, request } from '@playwright/test';
 import { SESSAO_ADMIN } from '../playwright.config';
-import { BASE_URL, PASSWORD_TESTES, UTILIZADOR_TESTES } from './helpers';
+import { BASE_URL, PASSWORD_TEMPORARIA, PASSWORD_TESTES, UTILIZADOR_TESTES } from './helpers';
 
 // ══════════════════════════════════════════════════════════════════════════
 // SEM SESSÃO — o que uma pessoa de fora consegue alcançar
@@ -162,52 +162,83 @@ test('terminar sessão limpa o cookie e volta a fechar o backoffice', async ({ b
   await contexto.close();
 });
 
-test('mudar a palavra-passe termina as sessões abertas noutros dispositivos', async ({ browser }) => {
-  const PASSWORD_TEMPORARIA = 'Temporaria-E2E-2026';
+// Deixa a conta em PASSWORD_TESTES venha ela do estado em que vier, e reescreve a
+// sessão partilhada do storageState — mudar a palavra-passe revoga-a, e sem isto
+// os testes dos outros ficheiros entravam sem cookie.
+//
+// Tenta primeiro a palavra-passe de testes: no caminho feliz acerta à primeira e
+// não gasta tentativas falhadas, que ao fim de 5 em 15 minutos trancam a conta
+// (ver netlify/functions/_shared/ratelimit.mjs).
+async function reporPasswordDeTestes() {
+  const ctx = await request.newContext({ baseURL: BASE_URL });
+  const entrar = (password: string) =>
+    ctx.post('/api/auth/login', {
+      headers: { origin: BASE_URL },
+      data: { username: UTILIZADOR_TESTES, password },
+    });
 
+  let atual: string | null = null;
+  for (const candidata of [PASSWORD_TESTES, PASSWORD_TEMPORARIA]) {
+    if ((await entrar(candidata)).ok()) {
+      atual = candidata;
+      break;
+    }
+  }
+
+  if (atual === null) {
+    await ctx.dispose();
+    throw new Error(
+      'Não consegui repor a palavra-passe de testes: a conta local não está nem ' +
+        'na de testes nem na temporária. Reponha-a com "node tests/repor-admin-local.mjs".'
+    );
+  }
+
+  if (atual === PASSWORD_TEMPORARIA) {
+    const reposicao = await ctx.post('/api/auth/password', {
+      headers: { origin: BASE_URL },
+      data: { atual: PASSWORD_TEMPORARIA, nova: PASSWORD_TESTES },
+    });
+    if (!reposicao.ok()) {
+      await ctx.dispose();
+      throw new Error(`Falha ao repor a palavra-passe de testes: ${await reposicao.text()}`);
+    }
+  }
+
+  await ctx.storageState({ path: SESSAO_ADMIN });
+  await ctx.dispose();
+}
+
+test('mudar a palavra-passe termina as sessões abertas noutros dispositivos', async ({ browser }) => {
   const primeiro = await request.newContext({ baseURL: BASE_URL });
   const segundo = await request.newContext({ baseURL: BASE_URL });
 
-  for (const ctx of [primeiro, segundo]) {
-    const res = await ctx.post('/api/auth/login', {
+  try {
+    for (const ctx of [primeiro, segundo]) {
+      const res = await ctx.post('/api/auth/login', {
+        headers: { origin: BASE_URL },
+        data: { username: UTILIZADOR_TESTES, password: PASSWORD_TESTES },
+      });
+      expect(res.ok()).toBeTruthy();
+    }
+    expect((await segundo.get('/api/auth/me')).status()).toBe(200);
+
+    const mudanca = await primeiro.post('/api/auth/password', {
       headers: { origin: BASE_URL },
-      data: { username: UTILIZADOR_TESTES, password: PASSWORD_TESTES },
+      data: { atual: PASSWORD_TESTES, nova: PASSWORD_TEMPORARIA },
     });
-    expect(res.ok()).toBeTruthy();
+    expect(mudanca.ok(), await mudanca.text()).toBeTruthy();
+
+    // A outra sessão morreu; a que fez a mudança recebeu um cookie novo.
+    expect((await segundo.get('/api/auth/me')).status()).toBe(401);
+    expect((await primeiro.get('/api/auth/me')).status()).toBe(200);
+  } finally {
+    // Tem mesmo de ser num finally: se uma asserção acima falhar, a conta fica na
+    // palavra-passe temporária e todas as execuções seguintes morriam no setup,
+    // até alguém correr o tests/repor-admin-local.mjs à mão.
+    await primeiro.dispose();
+    await segundo.dispose();
+    await reporPasswordDeTestes();
   }
-  expect((await segundo.get('/api/auth/me')).status()).toBe(200);
-
-  const mudanca = await primeiro.post('/api/auth/password', {
-    headers: { origin: BASE_URL },
-    data: { atual: PASSWORD_TESTES, nova: PASSWORD_TEMPORARIA },
-  });
-  expect(mudanca.ok(), await mudanca.text()).toBeTruthy();
-
-  // A outra sessão morreu; a que fez a mudança recebeu um cookie novo.
-  expect((await segundo.get('/api/auth/me')).status()).toBe(401);
-  expect((await primeiro.get('/api/auth/me')).status()).toBe(200);
-
-  // Repõe a palavra-passe para os testes seguintes e para a próxima execução.
-  const reposicao = await primeiro.post('/api/auth/password', {
-    headers: { origin: BASE_URL },
-    data: { atual: PASSWORD_TEMPORARIA, nova: PASSWORD_TESTES },
-  });
-  expect(reposicao.ok(), await reposicao.text()).toBeTruthy();
-
-  await primeiro.dispose();
-  await segundo.dispose();
-
-  // A mudança revogou também a sessão partilhada do storageState — volta a
-  // entrar e reescreve o ficheiro, senão os testes dos outros ficheiros
-  // entravam sem cookie.
-  const novo = await request.newContext({ baseURL: BASE_URL });
-  const reentrada = await novo.post('/api/auth/login', {
-    headers: { origin: BASE_URL },
-    data: { username: UTILIZADOR_TESTES, password: PASSWORD_TESTES },
-  });
-  expect(reentrada.ok()).toBeTruthy();
-  await novo.storageState({ path: SESSAO_ADMIN });
-  await novo.dispose();
 });
 
 test('a política de palavras-passe é imposta no servidor', async ({ page }) => {
