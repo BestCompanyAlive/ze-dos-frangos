@@ -6,7 +6,7 @@
 // aconteceu, e lê-se de fora:
 //
 //   netlify blobs:get auth audit          (produção)
-//   cat .netlify/blobs-serve/entries/unlinked/site:auth/audit   (local)
+//   cat .netlify/blobs-serve/entries/unlinked/site%3Aauth/audit   (local)
 import { getJSON, setJSON } from './store.mjs';
 
 const AUDIT_KEY = 'audit';

@@ -17,8 +17,11 @@ import { join } from 'node:path';
 import { hashPassword } from '../netlify/functions/_shared/crypto.mjs';
 
 const RAIZ = '.netlify/blobs-serve';
-const ENTRADAS = join(RAIZ, 'entries/unlinked/site:auth');
-const METADADOS = join(RAIZ, 'metadata/unlinked/site:auth');
+// O "netlify-cli" grava os dois-pontos do nome do site em URL-encoding no
+// disco (site%3Aauth) — um ":" literal não é válido num nome de pasta no
+// Windows, por isso tem de ser esta forma para funcionar em qualquer SO.
+const ENTRADAS = join(RAIZ, 'entries/unlinked/site%3Aauth');
+const METADADOS = join(RAIZ, 'metadata/unlinked/site%3Aauth');
 
 if (!existsSync(RAIZ)) {
   console.error(
@@ -57,7 +60,7 @@ escrever('user', {
 // corrida de testes anterior continuava a barrar a entrada.
 let limpos = 0;
 for (const ficheiro of readdirSync(ENTRADAS)) {
-  if (ficheiro.startsWith('session:') || ficheiro.startsWith('rl:')) {
+  if (ficheiro.startsWith('session%3A') || ficheiro.startsWith('rl%3A')) {
     rmSync(join(ENTRADAS, ficheiro), { force: true });
     rmSync(join(METADADOS, ficheiro), { force: true });
     limpos += 1;
