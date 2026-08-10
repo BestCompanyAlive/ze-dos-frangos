@@ -17,6 +17,12 @@ export const PASSWORD_TESTES = 'Teste-E2E-Palavra-2026';
 // A que o tests/repor-admin-local.mjs deixa, para trabalhar no painel à mão.
 export const PASSWORD_LOCAL_SIMPLES = 'admin';
 
+// Usada de passagem pelo teste que verifica que mudar a palavra-passe termina as
+// outras sessões (tests/auth.spec.ts). Esse teste repõe-a num finally, mas um
+// Ctrl-C a meio não corre finally nenhum — daí ela também constar da lista
+// abaixo, senão a conta local ficava numa palavra-passe que ninguém conhece.
+export const PASSWORD_TEMPORARIA = 'Temporaria-E2E-2026';
+
 // Os estados em que a conta local pode estar quando os testes arrancam. O
 // armazenamento em .netlify/blobs-serve/ sobrevive entre corridas, por isso o
 // setup tem de aceitar qualquer um destes em vez de assumir só um — senão basta
@@ -25,6 +31,7 @@ export const PASSWORDS_LOCAIS_CONHECIDAS = [
   PASSWORD_TESTES,
   PASSWORD_LOCAL_SIMPLES,
   PASSWORD_ARRANQUE,
+  PASSWORD_TEMPORARIA,
 ];
 
 // Escrever exige sessão de administrador (o cookie vem do storageState) e o
