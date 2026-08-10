@@ -8,6 +8,8 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+This project's `npm run dev` wraps that in a `sh` script (`tests/start-dev.sh`), so on Windows it needs Git Bash or WSL — it won't run under cmd/PowerShell directly.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build
