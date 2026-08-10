@@ -29,6 +29,13 @@ const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || '';
       window.location.href = 'mailto:churrasqueirazedosfrangos@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(mailtoBody);
       return false;
     }
+    // O "define:vars" embrulha este script numa função (é assim que o Astro
+    // injeta a variável), por isso "submeterFormulario" fica local a essa
+    // função — sem isto, os <script> dos formulários (que o Astro processa à
+    // parte, como módulos) não a encontram: ReferenceError, a promise do
+    // "submit" rejeita sem apanhado, e nem a confirmação nem o "mailto" chegam
+    // a correr.
+    window.submeterFormulario = submeterFormulario;
   </script>
 
   <!-- NAV -->
