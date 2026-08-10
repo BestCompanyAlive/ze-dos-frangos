@@ -1,29 +1,33 @@
-# Astro Starter Kit: Minimal
+# Zé dos Frangos
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Site do restaurante Zé dos Frangos: páginas públicas em Astro, backoffice
+autenticado para o cliente gerir o conteúdo, e Netlify Functions/Edge
+Functions como backend (auth, dados via Netlify Blobs).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Site em produção para um cliente real — ver [CLAUDE.md](CLAUDE.md) para as
+regras de trabalho neste repositório (dois colaboradores, Mac e Windows;
+testes só no commit; cuidado ao mergear para `main`) e
+[DEPLOY.md](DEPLOY.md) para autenticação do backoffice e operação em
+produção.
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## 🚀 Estrutura do projeto
 
 ```text
 /
-├── public/
+├── public/               # estáticos + backoffice (admin.html, admin-login.html)
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── layouts/
+│   └── pages/            # index, reservas, ajuda
+├── netlify/
+│   ├── functions/        # auth, dados (Netlify Blobs)
+│   └── edge-functions/   # admin-guard (protege /admin.html)
+├── tests/                # Playwright (site, auth, backoffice, reservas)
+├── CLAUDE.md / AGENTS.md # como trabalhar no repo
+└── DEPLOY.md             # autenticação do backoffice e operação
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
+Astro procura ficheiros `.astro` ou `.md` em `src/pages/`. Cada página fica
+exposta como rota a partir do nome do ficheiro.
 
 ## 🧞 Commands
 
