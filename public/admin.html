@@ -949,7 +949,7 @@ textarea { resize: vertical; min-height: 90px; }
           <div id="sugestao-preview-wrap" style="display:none;margin-bottom:10px;">
             <img id="sugestao-admin-preview" src="" alt="preview" style="max-width:100%;max-height:220px;border-radius:4px;object-fit:cover;border:1px solid #2a2a2a;" />
           </div>
-          <input type="file" id="sugestao-foto-input" accept="image/jpeg,image/png,image/webp" onchange="previewSugestaoFoto(event)" style="display:none;" />
+          <input type="file" id="sugestao-foto-input" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onchange="previewSugestaoFoto(event)" style="display:none;" />
           <button onclick="document.getElementById('sugestao-foto-input').click()" style="background:#fff;border:1px solid #e5e3de;color:#666;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:13px;">
             📷 Escolher foto
           </button>
@@ -1017,7 +1017,7 @@ textarea { resize: vertical; min-height: 90px; }
           <div id="vinho-preview-wrap" style="display:none;margin-bottom:10px;">
             <img id="vinho-admin-preview" src="" alt="preview" style="max-width:100%;max-height:220px;border-radius:4px;object-fit:cover;border:1px solid #2a2a2a;" />
           </div>
-          <input type="file" id="vinho-foto-input" accept="image/jpeg,image/png,image/webp" onchange="previewVinhoFoto(event)" style="display:none;" />
+          <input type="file" id="vinho-foto-input" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onchange="previewVinhoFoto(event)" style="display:none;" />
           <button onclick="document.getElementById('vinho-foto-input').click()" style="background:#fff;border:1px solid #e5e3de;color:#666;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:13px;">
             📷 Escolher foto
           </button>
@@ -1543,7 +1543,7 @@ textarea { resize: vertical; min-height: 90px; }
             <div class="form-row full">
               <div class="field">
                 <label>Mensagem de Apoio</label>
-                <input type="text" value="Confirmaremos a sua reserva por telefone. Também pode ligar para 259 322 212." />
+                <input type="text" maxlength="200" value="Confirmaremos a sua reserva por telefone. Também pode ligar para 259 322 212." />
               </div>
             </div>
           </div>
@@ -1653,7 +1653,7 @@ textarea { resize: vertical; min-height: 90px; }
           <div class="form-row full">
             <div class="field">
               <label>Mensagem para os clientes</label>
-              <input type="text" id="notice-msg" value="Estamos de férias de 14 a 22 de agosto. Reservas retomam a 23 de agosto. Obrigado!" />
+              <input type="text" id="notice-msg" maxlength="200" value="Estamos de férias de 14 a 22 de agosto. Reservas retomam a 23 de agosto. Obrigado!" />
               <div style="font-size:11px;color:var(--muted);margin-top:4px;">Esta mensagem aparece no site junto ao formulário de reservas quando o aviso está ativo</div>
             </div>
           </div>
@@ -2010,10 +2010,10 @@ function showToast(msg = 'Alterações guardadas com sucesso') {
 function saveAll() { showToast('Alterações guardadas com sucesso'); }
 
 // Reduz o tamanho da imagem antes de a guardar (localStorage tem limite ~5MB)
-var FORMATOS_IMAGEM_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
+var FORMATOS_IMAGEM_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 function compressImage(file, callback, maxDim, quality) {
   if (FORMATOS_IMAGEM_PERMITIDOS.indexOf(file.type) === -1) {
-    alert('Formato não suportado (' + (file.type || 'desconhecido') + '). Use JPEG, PNG ou WEBP.');
+    alert('Formato não suportado (' + (file.type || 'desconhecido') + '). Use JPEG, PNG, WEBP ou uma foto do iPhone (HEIC).');
     return;
   }
   maxDim = maxDim || 1000;
@@ -2034,9 +2034,11 @@ function compressImage(file, callback, maxDim, quality) {
       callback(canvas.toDataURL('image/jpeg', quality));
     };
     // Ficheiro passou no filtro de tipo mas o browser não conseguiu
-    // descodificá-lo (corrompido, ou mime-type a mentir sobre o conteúdo) —
-    // antes fazia fallback silencioso a enviar os bytes em bruto.
-    img.onerror = function() { alert('Não foi possível ler esta imagem. Tente outro ficheiro.'); };
+    // descodificá-lo (corrompido, mime-type a mentir sobre o conteúdo, ou
+    // HEIC/HEIF num browser que não o sabe abrir em <canvas> — só o Safari
+    // costuma conseguir) — antes fazia fallback silencioso a enviar os
+    // bytes em bruto.
+    img.onerror = function() { alert('Não foi possível ler esta imagem. Tente outro ficheiro (ou converta para JPEG).'); };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
@@ -2641,8 +2643,8 @@ function buildPratoDiaForm(data) {
         '</label>' +
       '</div>' +
       '<div style="display:flex;flex-direction:column;gap:8px;">' +
-        '<input type="text" data-dia="' + d.key + '" data-idx="0" placeholder="Prato 1" value="' + (pratos[0]||'') + '" style="' + inp + '" />' +
-        '<input type="text" data-dia="' + d.key + '" data-idx="1" placeholder="Prato 2" value="' + (pratos[1]||'') + '" style="' + inp + '" />' +
+        '<input type="text" data-dia="' + d.key + '" data-idx="0" maxlength="100" placeholder="Prato 1" value="' + (pratos[0]||'') + '" style="' + inp + '" />' +
+        '<input type="text" data-dia="' + d.key + '" data-idx="1" maxlength="100" placeholder="Prato 2" value="' + (pratos[1]||'') + '" style="' + inp + '" />' +
       '</div>';
     container.appendChild(block);
   });
@@ -2999,7 +3001,7 @@ function addMvCard(tipo, data) {
     : '<div class="mv-img-placeholder" onclick="this.nextSibling.click()">Clica para foto</div>';
   card.innerHTML =
     '<div style="position:relative;">' + imgHtml +
-      '<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />' +
+      '<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />' +
     '</div>' +
     '<div>' +
       '<input class="mv-nome" type="text" placeholder="Nome do prato" value="' + escHtml(d.nome||'') + '" />' +
@@ -3020,7 +3022,7 @@ function previewMvFoto(event, id) {
     var imgWrap = card.firstElementChild;
     imgWrap.innerHTML =
       '<img src="' + dataUrl + '" onclick="this.nextSibling.click()" style="cursor:pointer;" />' +
-      '<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />';
+      '<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />';
   });
 }
 
@@ -3094,7 +3096,7 @@ function addEventoCard(data) {
     </div>
     <div>
       <label>Fotografia</label>
-      <input type="file" accept="image/jpeg,image/png,image/webp" onchange="previewEventoFoto(event, '${id}')" style="font-size:12px;" />
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onchange="previewEventoFoto(event, '${id}')" style="font-size:12px;" />
       <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
         <img class="ev-preview" src="${escHtml(d.foto||'')}" />
       </div>
@@ -3206,7 +3208,7 @@ function addGaleriaCard(data) {
     </div>
     <div>
       <label>Fotografia</label>
-      <input type="file" accept="image/jpeg,image/png,image/webp" onchange="previewGaleriaFoto(event, '${id}')" style="font-size:12px;" />
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onchange="previewGaleriaFoto(event, '${id}')" style="font-size:12px;" />
       <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
         <img class="ev-preview" src="${escHtml(d.foto||'')}" />
       </div>
@@ -3286,7 +3288,7 @@ function addPerdidoCard(data) {
     </div>
     <div>
       <label>Fotografia</label>
-      <input type="file" accept="image/jpeg,image/png,image/webp" onchange="previewPerdidoFoto(event, '${id}')" style="font-size:12px;" />
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onchange="previewPerdidoFoto(event, '${id}')" style="font-size:12px;" />
       <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
         <img class="ev-preview" src="${escHtml(d.foto||'')}" />
       </div>
