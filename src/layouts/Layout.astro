@@ -83,6 +83,32 @@ const {
           });
         });
       });
+
+      // "Nudge" nos separadores da ementa: desliza um bocadinho e volta,
+      // sempre que entram no ecrã — sem isto, o desvanecimento na margem é
+      // uma pista passiva demais e só se nota depois de já se ter arrastado
+      // por acidente. Limitado (máx. 3 vezes, no mínimo 4s entre cada) para
+      // não ficar irritante em quem faz scroll para trás e para a frente.
+      const ementaTabs = document.getElementById('ementa-tabs');
+      if (ementaTabs) {
+        let nudgeCount = 0;
+        let lastNudge = 0;
+        const nudgeObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const now = Date.now();
+              if (nudgeCount >= 3 || now - lastNudge < 4000) return;
+              nudgeCount += 1;
+              lastNudge = now;
+              ementaTabs.scrollTo({ left: 48, behavior: 'smooth' });
+              setTimeout(() => ementaTabs.scrollTo({ left: 0, behavior: 'smooth' }), 500);
+            });
+          },
+          { threshold: 0.5 }
+        );
+        nudgeObserver.observe(ementaTabs);
+      }
     </script>
   </body>
 </html>
@@ -114,18 +140,6 @@ const {
     /* Notas prato do dia em coluna */
     #prato-dia-box .flex.flex-wrap {
       flex-direction: column;
-    }
-
-    /* Tabs ementa: scroll horizontal */
-    #ementa .flex.justify-center.gap-2 {
-      justify-content: flex-start;
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      padding-bottom: 8px;
-      scrollbar-width: none;
-    }
-    #ementa .flex.justify-center.gap-2::-webkit-scrollbar {
-      display: none;
     }
 
     /* Estatísticas hero: 2 colunas em vez de 3 */

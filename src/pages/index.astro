@@ -347,14 +347,21 @@ const menuData = {
         </div>
       </div>
 
-      <div class="flex gap-2 mb-12" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;flex-wrap:nowrap;justify-content:flex-start;" id="ementa-tabs">
-        <button class="menu-tab active" data-tab="entradas">Entradas</button>
-        <button class="menu-tab" data-tab="principais">Carnes</button>
-        <button class="menu-tab" data-tab="peixe">Peixe</button>
-        <button class="menu-tab" data-tab="sobremesas">Sobremesas</button>
-        <button class="menu-tab" data-tab="fimdesemana">Fim de Semana</button>
-        <button class="menu-tab" data-tab="acompanhamentos">Acompanhamentos</button>
-        <button class="menu-tab" data-tab="grupos">Menus de Grupo</button>
+      <div class="mb-12" style="position:relative;">
+        <div class="flex gap-2" style="overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;flex-wrap:nowrap;justify-content:flex-start;" id="ementa-tabs">
+          <button class="menu-tab active" data-tab="entradas">Entradas</button>
+          <button class="menu-tab" data-tab="principais">Carnes</button>
+          <button class="menu-tab" data-tab="peixe">Peixe</button>
+          <button class="menu-tab" data-tab="sobremesas">Sobremesas</button>
+          <button class="menu-tab" data-tab="fimdesemana">Fim de Semana</button>
+          <button class="menu-tab" data-tab="acompanhamentos">Acompanhamentos</button>
+          <button class="menu-tab" data-tab="grupos">Menus de Grupo</button>
+        </div>
+        <!-- No mobile as barras de scroll ficam escondidas por omissão da
+             plataforma (iOS/Android) — nenhum CSS força uma barra sempre
+             visível de forma fiável. Este desvanecimento é o que sinaliza
+             "há mais separadores para aqui", em qualquer plataforma. -->
+        <div style="position:absolute; top:0; right:0; bottom:4px; width:56px; pointer-events:none; background:linear-gradient(to right, transparent, #0d0d0d 70%);"></div>
       </div>
 
       <div id="ementa-panels">
@@ -1172,13 +1179,18 @@ const menuData = {
         </div>
       </div>
 
-      <!-- Mapa -->
-      <div class="w-full h-56 mb-12" style="border: 1px solid #1a1a1a; overflow: hidden;">
+      <!-- Mapa: sem arrastar/zoom (rouba o gesto de scroll em touch), mas o
+           "Open in Maps" que o próprio Google Maps já desenha no canto
+           superior esquerdo do embed continua clicável — bloqueado só o
+           resto, com dois painéis invisíveis por cima do iframe. -->
+      <div class="w-full h-56 mb-12" style="position:relative; border: 1px solid #1a1a1a; overflow: hidden;">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3008.5!2d-7.7447!3d41.3006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd25a5b0f2e5e5e5%3A0x0!2sLargo+do+Pioledo%2C+Vila+Real!5e0!3m2!1spt!2spt!4v1"
           width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg) saturate(0.3);"
           allowfullscreen loading="lazy"
         ></iframe>
+        <div style="position:absolute; top:46px; left:0; right:0; bottom:0;"></div>
+        <div style="position:absolute; top:0; left:190px; right:0; height:46px;"></div>
       </div>
 
       <!-- Links e copyright -->
