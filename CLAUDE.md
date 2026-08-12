@@ -45,6 +45,26 @@ script de reposição do admin local no Windows). Ter sempre em conta:
   verificar antes de propor (ex.: `sh`/bash existe por omissão no Windows do
   outro colaborador só porque há Git instalado).
 
+## Responsividade: testar em dispositivos reais, não só em DevTools
+
+A simulação de mobile do Chrome DevTools não reproduz o motor de composição
+real do Safari — já aconteceu esconder um bug real (fundo do hero a não
+aparecer de todo em iPhone, causado por `background-attachment: fixed`, um
+problema conhecido do Safari iOS) que passava despercebido em qualquer
+simulação de browser e só aparecia num iPhone a sério. Ter sempre em conta:
+
+- Testar sempre em pelo menos um Android e um iOS reais antes de dar como
+  resolvido um bug "só mobile" — não confiar só no responsive mode do
+  DevTools.
+- Evitar `background-attachment: fixed` em secções com imagem de fundo — não
+  é fiável em Safari iOS. Usar `scroll` (é a escolha já feita em todas as
+  secções com fundo do site).
+- Barras de scroll em elementos com overflow horizontal (ex.: separadores da
+  ementa) ficam escondidas por omissão da plataforma em iOS/Android — nenhum
+  CSS força uma barra sempre visível de forma fiável nesses SO. Para
+  sinalizar "isto desliza", usar uma pista visual (ex.: desvanecimento na
+  margem), não depender da barra de scroll em si.
+
 ## Testes: só no momento do commit
 
 Não correr a suite (`npx playwright test` / `npm test`) a cada edição — é
