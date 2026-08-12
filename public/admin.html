@@ -2011,8 +2011,18 @@ function saveAll() { showToast('Alterações guardadas com sucesso'); }
 
 // Reduz o tamanho da imagem antes de a guardar (localStorage tem limite ~5MB)
 var FORMATOS_IMAGEM_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+var EXTENSOES_IMAGEM_PERMITIDAS = ['.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif'];
 function compressImage(file, callback, maxDim, quality) {
-  if (FORMATOS_IMAGEM_PERMITIDOS.indexOf(file.type) === -1) {
+  // file.type vem do SO, não do conteúdo do ficheiro — fica vazio quando o
+  // SO não tem um "handler" registado para a extensão (ex.: HEIC no
+  // Windows sem as HEIF Image Extensions instaladas). Por isso aceita
+  // também pela extensão do nome do ficheiro; se não for mesmo uma imagem
+  // válida, continua a cair no aviso de "não foi possível ler" ao descodificar.
+  var nomeMinusculo = (file.name || '').toLowerCase();
+  var extensaoValida = EXTENSOES_IMAGEM_PERMITIDAS.some(function(ext) {
+    return nomeMinusculo.endsWith(ext);
+  });
+  if (FORMATOS_IMAGEM_PERMITIDOS.indexOf(file.type) === -1 && !extensaoValida) {
     alert('Formato não suportado (' + (file.type || 'desconhecido') + '). Use JPEG, PNG, WEBP ou uma foto do iPhone (HEIC).');
     return;
   }
