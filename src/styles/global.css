@@ -55,7 +55,10 @@
 
 /* Hero */
 .hero-bg {
-  background-attachment: fixed;
+  /* "fixed" falha a pintar em Safari iOS (não reproduz na simulação de
+     mobile do DevTools, só em iPhone real) — ver #ementa, que já usava
+     "scroll" por este motivo. */
+  background-attachment: scroll;
   background-size: cover;
   background-position: center;
 }

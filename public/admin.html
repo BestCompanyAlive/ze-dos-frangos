@@ -949,7 +949,7 @@ textarea { resize: vertical; min-height: 90px; }
           <div id="sugestao-preview-wrap" style="display:none;margin-bottom:10px;">
             <img id="sugestao-admin-preview" src="" alt="preview" style="max-width:100%;max-height:220px;border-radius:4px;object-fit:cover;border:1px solid #2a2a2a;" />
           </div>
-          <input type="file" id="sugestao-foto-input" accept="image/*" onchange="previewSugestaoFoto(event)" style="display:none;" />
+          <input type="file" id="sugestao-foto-input" accept="image/jpeg,image/png,image/webp" onchange="previewSugestaoFoto(event)" style="display:none;" />
           <button onclick="document.getElementById('sugestao-foto-input').click()" style="background:#fff;border:1px solid #e5e3de;color:#666;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:13px;">
             📷 Escolher foto
           </button>
@@ -985,7 +985,7 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- descricao -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Descrição</label>
-          <textarea id="sugestao-admin-desc" rows="3" placeholder="ex: Marinado com especiarias da casa, grelhado lentamente no carvão..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
+          <textarea id="sugestao-admin-desc" rows="3" maxlength="600" placeholder="ex: Marinado com especiarias da casa, grelhado lentamente no carvão..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
         </div>
 
         <!-- preco -->
@@ -1017,7 +1017,7 @@ textarea { resize: vertical; min-height: 90px; }
           <div id="vinho-preview-wrap" style="display:none;margin-bottom:10px;">
             <img id="vinho-admin-preview" src="" alt="preview" style="max-width:100%;max-height:220px;border-radius:4px;object-fit:cover;border:1px solid #2a2a2a;" />
           </div>
-          <input type="file" id="vinho-foto-input" accept="image/*" onchange="previewVinhoFoto(event)" style="display:none;" />
+          <input type="file" id="vinho-foto-input" accept="image/jpeg,image/png,image/webp" onchange="previewVinhoFoto(event)" style="display:none;" />
           <button onclick="document.getElementById('vinho-foto-input').click()" style="background:#fff;border:1px solid #e5e3de;color:#666;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:13px;">
             📷 Escolher foto
           </button>
@@ -1053,7 +1053,7 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- descricao -->
         <div>
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Descrição</label>
-          <textarea id="vinho-admin-desc" rows="3" placeholder="ex: Vinho tinto do Douro, notas de frutos vermelhos maduros e especiarias..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
+          <textarea id="vinho-admin-desc" rows="3" maxlength="600" placeholder="ex: Vinho tinto do Douro, notas de frutos vermelhos maduros e especiarias..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;resize:vertical;"></textarea>
         </div>
 
         <!-- preco -->
@@ -1081,7 +1081,7 @@ textarea { resize: vertical; min-height: 90px; }
         <!-- Período -->
         <div style="margin-bottom:24px;">
           <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;">Período (ex: 7 a 10 de Julho)</label>
-          <input id="pratoDia-periodo" type="text" placeholder="7 a 10 de Julho"
+          <input id="pratoDia-periodo" type="text" maxlength="100" placeholder="7 a 10 de Julho"
             style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:10px 12px;border-radius:4px;font-size:13px;" />
         </div>
 
@@ -1113,19 +1113,19 @@ textarea { resize: vertical; min-height: 90px; }
           <div class="form-row">
             <div class="field">
               <label>Nome Completo <span style="font-weight:400;color:var(--muted);">(aparece no nav e no hero)</span></label>
-              <input type="text" id="geral-nome" value="Churrasqueira Zé dos Frangos" />
+              <input type="text" id="geral-nome" maxlength="100" value="Churrasqueira Zé dos Frangos" />
             </div>
           </div>
           <div class="form-row">
             <div class="field">
               <label>Tag / Localização (hero)</label>
-              <input type="text" id="geral-tag" value="Vila Real · Trás-os-Montes" />
+              <input type="text" id="geral-tag" maxlength="100" value="Vila Real · Trás-os-Montes" />
             </div>
           </div>
           <div class="form-row full">
             <div class="field">
               <label>Descrição Principal (hero)</label>
-              <textarea id="geral-desc">O melhor frango grelhado no carvão de Vila Real. Uma tradição que se mantém fiel ao sabor autêntico de Trás-os-Montes.</textarea>
+              <textarea id="geral-desc" maxlength="600">O melhor frango grelhado no carvão de Vila Real. Uma tradição que se mantém fiel ao sabor autêntico de Trás-os-Montes.</textarea>
             </div>
           </div>
         </div>
@@ -1142,7 +1142,7 @@ textarea { resize: vertical; min-height: 90px; }
           <div class="form-row full">
             <div class="field">
               <label>Mensagem</label>
-              <input type="text" id="geral-aviso-texto" value="FÉRIAS DE VERÃO — Encerrados de 14 a 22 de agosto. Reabrimos a 23 de agosto. Obrigado pela compreensão." />
+              <input type="text" id="geral-aviso-texto" maxlength="200" value="FÉRIAS DE VERÃO — Encerrados de 14 a 22 de agosto. Reabrimos a 23 de agosto. Obrigado pela compreensão." />
               <div style="font-size:11px;color:var(--muted);margin-top:4px;">Aparece no topo da página inicial. Desmarca a caixa acima para o esconder.</div>
             </div>
           </div>
@@ -1155,30 +1155,30 @@ textarea { resize: vertical; min-height: 90px; }
           <div class="form-row full">
             <div class="field">
               <label>Parágrafo 1</label>
-              <textarea id="geral-sobre1">Há mais de 30 anos que servimos o melhor frango grelhado no carvão de Vila Real. A nossa tradição baseia-se em ingredientes frescos e numa técnica apurada ao longo de décadas.</textarea>
+              <textarea id="geral-sobre1" maxlength="600">Há mais de 30 anos que servimos o melhor frango grelhado no carvão de Vila Real. A nossa tradição baseia-se em ingredientes frescos e numa técnica apurada ao longo de décadas.</textarea>
             </div>
           </div>
           <div class="form-row full">
             <div class="field">
               <label>Parágrafo 2</label>
-              <textarea id="geral-sobre2">A Churrasqueira Zé dos Frangos é uma referência gastronómica em Trás-os-Montes, onde cada refeição é preparada com paixão e respeito pelo produto local.</textarea>
+              <textarea id="geral-sobre2" maxlength="600">A Churrasqueira Zé dos Frangos é uma referência gastronómica em Trás-os-Montes, onde cada refeição é preparada com paixão e respeito pelo produto local.</textarea>
             </div>
           </div>
           <div class="form-row three">
             <div class="field">
               <label>Estatística 1</label>
-              <input type="text" id="geral-stat1-val" value="30+" />
-              <input type="text" id="geral-stat1-lbl" placeholder="Label" value="Anos" style="margin-top:6px;" />
+              <input type="text" id="geral-stat1-val" maxlength="50" value="30+" />
+              <input type="text" id="geral-stat1-lbl" maxlength="50" placeholder="Label" value="Anos" style="margin-top:6px;" />
             </div>
             <div class="field">
               <label>Estatística 2</label>
-              <input type="text" id="geral-stat2-val" value="Vila Real" />
-              <input type="text" id="geral-stat2-lbl" placeholder="Label" value="Localização" style="margin-top:6px;" />
+              <input type="text" id="geral-stat2-val" maxlength="50" value="Vila Real" />
+              <input type="text" id="geral-stat2-lbl" maxlength="50" placeholder="Label" value="Localização" style="margin-top:6px;" />
             </div>
             <div class="field">
               <label>Estatística 3</label>
-              <input type="text" id="geral-stat3-val" value="4.8★ Google" />
-              <input type="text" id="geral-stat3-lbl" placeholder="Label" value="Avaliação" style="margin-top:6px;" />
+              <input type="text" id="geral-stat3-val" maxlength="50" value="4.8★ Google" />
+              <input type="text" id="geral-stat3-lbl" maxlength="50" placeholder="Label" value="Avaliação" style="margin-top:6px;" />
             </div>
           </div>
           <div style="margin-top:16px;">
@@ -1221,15 +1221,15 @@ textarea { resize: vertical; min-height: 90px; }
               <div></div>
             </div>
             <div id="entradas-list">
-              <div class="menu-item-row"><input type="text" value="Pão" /><input type="text" value="" /><input type="text" value="1,85" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Azeitonas e Azeite" /><input type="text" value="" /><input type="text" value="1,95" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Salsicha" /><input type="text" value="" /><input type="text" value="2,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Sopa do Dia" /><input type="text" value="" /><input type="text" value="2,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Tábua Tradicional de Enchidos" /><input type="text" value="" /><input type="text" value="13,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Croquetes de Alheira" /><input type="text" value="Com molho de mostarda e mel" /><input type="text" value="5,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Crocantes de Camarão" /><input type="text" value="Com molho agridoce" /><input type="text" value="5,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Pica-pau" /><input type="text" value="" /><input type="text" value="8,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Moelas" /><input type="text" value="" /><input type="text" value="8,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Pão" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="1,85" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Azeitonas e Azeite" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="1,95" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Salsicha" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="2,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Sopa do Dia" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="2,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Tábua Tradicional de Enchidos" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="13,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Croquetes de Alheira" /><input type="text" maxlength="100" value="Com molho de mostarda e mel" /><input type="text" maxlength="100" value="5,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Crocantes de Camarão" /><input type="text" maxlength="100" value="Com molho agridoce" /><input type="text" maxlength="100" value="5,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Pica-pau" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="8,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Moelas" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="8,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
             </div>
             <button class="btn-add" onclick="addMenuRow('entradas-list')">+ Adicionar Entrada</button>
           </div>
@@ -1250,15 +1250,15 @@ textarea { resize: vertical; min-height: 90px; }
               <div></div>
             </div>
             <div id="carnes-list">
-              <div class="menu-item-row"><input type="text" value="Frango de Churrasco" /><input type="text" value="" /><input type="text" value="9,00 / 14,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Posta à Moda da Casa" /><input type="text" value="" /><input type="text" value="16,00 / 28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Misto de Carne" /><input type="text" value="" /><input type="text" value="15,50 / 19,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Costeletão de Vitela" /><input type="text" value="" /><input type="text" value="28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Medalhões de Vitela" /><input type="text" value="" /><input type="text" value="16,00 / 28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Panados com Arroz Malandrinho" /><input type="text" value="" /><input type="text" value="10,00 / 15,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Bifinhos de Perú com Cogumelos" /><input type="text" value="" /><input type="text" value="10,50 / 15,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Costelinhas de Porco Grelhadas" /><input type="text" value="" /><input type="text" value="10,50 / 16,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Legumes à Brás" /><input type="text" value="Prato vegetariano" /><input type="text" value="12,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Frango de Churrasco" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="9,00 / 14,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Posta à Moda da Casa" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="16,00 / 28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Misto de Carne" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="15,50 / 19,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Costeletão de Vitela" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Medalhões de Vitela" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="16,00 / 28,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Panados com Arroz Malandrinho" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="10,00 / 15,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Bifinhos de Perú com Cogumelos" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="10,50 / 15,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Costelinhas de Porco Grelhadas" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="10,50 / 16,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Legumes à Brás" /><input type="text" maxlength="100" value="Prato vegetariano" /><input type="text" maxlength="100" value="12,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
             </div>
             <button class="btn-add" onclick="addMenuRow('carnes-list')">+ Adicionar Prato</button>
           </div>
@@ -1279,17 +1279,17 @@ textarea { resize: vertical; min-height: 90px; }
               <div></div>
             </div>
             <div id="peixe-list">
-              <div class="menu-item-row"><input type="text" value="Bacalhau com Natas" /><input type="text" value="" /><input type="text" value="12,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Bacalhau na Brasa" /><input type="text" value="" /><input type="text" value="22,50 / 36,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Bacalhau à Moda da Casa" /><input type="text" value="" /><input type="text" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Polvo à Lagareiro" /><input type="text" value="" /><input type="text" value="34,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Filetes de Pescada Dourados" /><input type="text" value="Com arroz malandrinho" /><input type="text" value="10,00 / 15,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Salmão Grelhado" /><input type="text" value="" /><input type="text" value="14,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Dourada Grelhada" /><input type="text" value="" /><input type="text" value="13,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Robalo Grelhado" /><input type="text" value="" /><input type="text" value="14,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Sardinhas" /><input type="text" value="" /><input type="text" value="11,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Chocos" /><input type="text" value="" /><input type="text" value="11,50 / 19,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Espetada de Lulas" /><input type="text" value="" /><input type="text" value="13,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Bacalhau com Natas" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="12,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Bacalhau na Brasa" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="22,50 / 36,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Bacalhau à Moda da Casa" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Polvo à Lagareiro" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="34,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Filetes de Pescada Dourados" /><input type="text" maxlength="100" value="Com arroz malandrinho" /><input type="text" maxlength="100" value="10,00 / 15,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Salmão Grelhado" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="14,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Dourada Grelhada" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="13,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Robalo Grelhado" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="14,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Sardinhas" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="11,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Chocos" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="11,50 / 19,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Espetada de Lulas" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="13,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
             </div>
             <button class="btn-add" onclick="addMenuRow('peixe-list')">+ Adicionar Prato</button>
           </div>
@@ -1310,15 +1310,15 @@ textarea { resize: vertical; min-height: 90px; }
               <div></div>
             </div>
             <div id="sobremesas-list">
-              <div class="menu-item-row"><input type="text" value="Mousse de Chocolate" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Mousse de Oreo" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Bolo de Bolacha" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Doce do Dia" /><input type="text" value="" /><input type="text" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Molotof" /><input type="text" value="" /><input type="text" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Tiramissú" /><input type="text" value="" /><input type="text" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Baba de Camelo" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Cheesecake" /><input type="text" value="" /><input type="text" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Fruta Variada" /><input type="text" value="" /><input type="text" value="2,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Mousse de Chocolate" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Mousse de Oreo" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Bolo de Bolacha" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Doce do Dia" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Molotof" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Tiramissú" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Baba de Camelo" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Cheesecake" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="4,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Fruta Variada" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="2,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
             </div>
             <button class="btn-add" onclick="addMenuRow('sobremesas-list')">+ Adicionar Sobremesa</button>
           </div>
@@ -1339,12 +1339,12 @@ textarea { resize: vertical; min-height: 90px; }
               <div></div>
             </div>
             <div id="fimdesemana-list">
-              <div class="menu-item-row"><input type="text" value="Cabrito Assado no Forno" /><input type="text" value="" /><input type="text" value="28,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Leitão Assado no Forno" /><input type="text" value="" /><input type="text" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Vitela Assada no Forno" /><input type="text" value="" /><input type="text" value="11,00 / 17,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Pernil Assado no Forno" /><input type="text" value="" /><input type="text" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Tripas à Moda da Casa" /><input type="text" value="" /><input type="text" value="12,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Cozido à Portuguesa" /><input type="text" value="" /><input type="text" value="19,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Cabrito Assado no Forno" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="28,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Leitão Assado no Forno" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Vitela Assada no Forno" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="11,00 / 17,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Pernil Assado no Forno" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="24,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Tripas à Moda da Casa" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="12,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Cozido à Portuguesa" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="19,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
             </div>
             <button class="btn-add" onclick="addMenuRow('fimdesemana-list')">+ Adicionar Prato</button>
           </div>
@@ -1365,11 +1365,11 @@ textarea { resize: vertical; min-height: 90px; }
               <div></div>
             </div>
             <div id="acompanhamentos-list">
-              <div class="menu-item-row"><input type="text" value="Salada Mista" /><input type="text" value="" /><input type="text" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Arroz" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Batata Frita" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Feijão Preto" /><input type="text" value="" /><input type="text" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
-              <div class="menu-item-row"><input type="text" value="Legumes Salteados" /><input type="text" value="" /><input type="text" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Salada Mista" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Arroz" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Batata Frita" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Feijão Preto" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,00" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+              <div class="menu-item-row"><input type="text" maxlength="100" value="Legumes Salteados" /><input type="text" maxlength="100" value="" /><input type="text" maxlength="100" value="3,50" /><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
             </div>
             <button class="btn-add" onclick="addMenuRow('acompanhamentos-list')">+ Adicionar Item</button>
           </div>
@@ -1973,9 +1973,9 @@ function addMenuRow(listId) {
   const row = document.createElement('div');
   row.className = 'menu-item-row';
   row.innerHTML = `
-    <input type="text" placeholder="Nome do prato" />
-    <input type="text" placeholder="Descrição" />
-    <input type="text" placeholder="0,00" />
+    <input type="text" placeholder="Nome do prato" maxlength="100" />
+    <input type="text" placeholder="Descrição" maxlength="100" />
+    <input type="text" placeholder="0,00" maxlength="100" />
     <button class="btn-remove" onclick="removeRow(this)">✕</button>
   `;
   list.appendChild(row);
@@ -2010,7 +2010,12 @@ function showToast(msg = 'Alterações guardadas com sucesso') {
 function saveAll() { showToast('Alterações guardadas com sucesso'); }
 
 // Reduz o tamanho da imagem antes de a guardar (localStorage tem limite ~5MB)
+var FORMATOS_IMAGEM_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
 function compressImage(file, callback, maxDim, quality) {
+  if (FORMATOS_IMAGEM_PERMITIDOS.indexOf(file.type) === -1) {
+    alert('Formato não suportado (' + (file.type || 'desconhecido') + '). Use JPEG, PNG ou WEBP.');
+    return;
+  }
   maxDim = maxDim || 1000;
   quality = quality || 0.6;
   var reader = new FileReader();
@@ -2028,7 +2033,10 @@ function compressImage(file, callback, maxDim, quality) {
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       callback(canvas.toDataURL('image/jpeg', quality));
     };
-    img.onerror = function() { callback(e.target.result); };
+    // Ficheiro passou no filtro de tipo mas o browser não conseguiu
+    // descodificá-lo (corrompido, ou mime-type a mentir sobre o conteúdo) —
+    // antes fazia fallback silencioso a enviar os bytes em bruto.
+    img.onerror = function() { alert('Não foi possível ler esta imagem. Tente outro ficheiro.'); };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
@@ -2288,12 +2296,12 @@ function addGrupoCard(g) {
       '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Mínimo de pessoas</label><input class="g-min" type="number" min="1" value="' + (g.minPessoas||'') + '" placeholder="10" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;" /></div>' +
       '<div style="padding-top:20px;"><button onclick="this.closest(\'.grupo-card\').remove()" style="background:none;border:none;color:#c0392b;font-size:18px;cursor:pointer;line-height:1;">✕</button></div>' +
     '</div>' +
-    '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Descrição geral (opcional)</label><textarea class="g-desc" rows="2" placeholder="Ex: Menu fechado para grupos — ideal para eventos e celebrações" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.desc||'') + '</textarea></div>' +
+    '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Descrição geral (opcional)</label><textarea class="g-desc" rows="2" maxlength="600" placeholder="Ex: Menu fechado para grupos — ideal para eventos e celebrações" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.desc||'') + '</textarea></div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
-      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🥗 Entradas</label><textarea class="g-entradas" rows="2" placeholder="Ex: Pataniscas, presunto, azeitonas" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.entradas||'') + '</textarea></div>' +
-      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🍗 Pratos</label><textarea class="g-pratos" rows="2" placeholder="Ex: Frango de churrasco, cabrito assado" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.pratos||'') + '</textarea></div>' +
-      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🥤 Bebidas</label><textarea class="g-bebidas" rows="2" placeholder="Ex: Vinho da casa, água, refrigerantes" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.bebidas||'') + '</textarea></div>' +
-      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🍮 Sobremesas</label><textarea class="g-sobremesas" rows="2" placeholder="Ex: Arroz doce, bolo do dia" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.sobremesas||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🥗 Entradas</label><textarea class="g-entradas" rows="2" maxlength="600" placeholder="Ex: Pataniscas, presunto, azeitonas" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.entradas||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🍗 Pratos</label><textarea class="g-pratos" rows="2" maxlength="600" placeholder="Ex: Frango de churrasco, cabrito assado" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.pratos||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🥤 Bebidas</label><textarea class="g-bebidas" rows="2" maxlength="600" placeholder="Ex: Vinho da casa, água, refrigerantes" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.bebidas||'') + '</textarea></div>' +
+      '<div><label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">🍮 Sobremesas</label><textarea class="g-sobremesas" rows="2" maxlength="600" placeholder="Ex: Arroz doce, bolo do dia" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 10px;border-radius:4px;font-size:13px;resize:vertical;">' + (g.sobremesas||'') + '</textarea></div>' +
     '</div>';
   document.getElementById('grupos-admin-list').appendChild(card);
 }
@@ -2701,21 +2709,21 @@ function vagaCardHTML(v, idx) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div>
         <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Título da vaga</label>
-        <input value="${v.titulo||''}" oninput="updateVaga(${idx},'titulo',this.value)" placeholder="ex: Cozinheiro/a" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:13px;" />
+        <input value="${v.titulo||''}" oninput="updateVaga(${idx},'titulo',this.value)" maxlength="100" placeholder="ex: Cozinheiro/a" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:13px;" />
       </div>
       <div>
         <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">Local / Regime</label>
-        <input value="${v.local||''}" oninput="updateVaga(${idx},'local',this.value)" placeholder="ex: Vila Real · Tempo inteiro · Presencial" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:13px;" />
+        <input value="${v.local||''}" oninput="updateVaga(${idx},'local',this.value)" maxlength="100" placeholder="ex: Vila Real · Tempo inteiro · Presencial" style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:13px;" />
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div>
         <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">O que procuramos <span style="color:#555;">(uma por linha)</span></label>
-        <textarea oninput="updateVaga(${idx},'procura',this.value)" rows="5" placeholder="Experiência mínima de 2 anos..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:12px;resize:vertical;">${v.procura||''}</textarea>
+        <textarea oninput="updateVaga(${idx},'procura',this.value)" rows="5" maxlength="600" placeholder="Experiência mínima de 2 anos..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:12px;resize:vertical;">${v.procura||''}</textarea>
       </div>
       <div>
         <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">O que oferecemos <span style="color:#555;">(uma por linha)</span></label>
-        <textarea oninput="updateVaga(${idx},'oferece',this.value)" rows="5" placeholder="Contrato de trabalho..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:12px;resize:vertical;">${v.oferece||''}</textarea>
+        <textarea oninput="updateVaga(${idx},'oferece',this.value)" rows="5" maxlength="600" placeholder="Contrato de trabalho..." style="width:100%;background:#fff;border:1px solid #e5e3de;color:#1a1a1a;padding:8px 12px;border-radius:4px;font-size:12px;resize:vertical;">${v.oferece||''}</textarea>
       </div>
     </div>
   </div>`;
@@ -2991,7 +2999,7 @@ function addMvCard(tipo, data) {
     : '<div class="mv-img-placeholder" onclick="this.nextSibling.click()">Clica para foto</div>';
   card.innerHTML =
     '<div style="position:relative;">' + imgHtml +
-      '<input type="file" accept="image/*" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />' +
+      '<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />' +
     '</div>' +
     '<div>' +
       '<input class="mv-nome" type="text" placeholder="Nome do prato" value="' + escHtml(d.nome||'') + '" />' +
@@ -3012,7 +3020,7 @@ function previewMvFoto(event, id) {
     var imgWrap = card.firstElementChild;
     imgWrap.innerHTML =
       '<img src="' + dataUrl + '" onclick="this.nextSibling.click()" style="cursor:pointer;" />' +
-      '<input type="file" accept="image/*" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />';
+      '<input type="file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="previewMvFoto(event,\'' + id + '\')" />';
   });
 }
 
@@ -3082,11 +3090,11 @@ function addEventoCard(data) {
     </div>
     <div>
       <label>Descrição</label>
-      <textarea class="ev-desc" rows="3" placeholder="ex: Venha celebrar o Natal connosco com um menu especial de época...">${escHtml(d.desc||'')}</textarea>
+      <textarea class="ev-desc" rows="3" maxlength="600" placeholder="ex: Venha celebrar o Natal connosco com um menu especial de época...">${escHtml(d.desc||'')}</textarea>
     </div>
     <div>
       <label>Fotografia</label>
-      <input type="file" accept="image/*" onchange="previewEventoFoto(event, '${id}')" style="font-size:12px;" />
+      <input type="file" accept="image/jpeg,image/png,image/webp" onchange="previewEventoFoto(event, '${id}')" style="font-size:12px;" />
       <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
         <img class="ev-preview" src="${escHtml(d.foto||'')}" />
       </div>
@@ -3198,7 +3206,7 @@ function addGaleriaCard(data) {
     </div>
     <div>
       <label>Fotografia</label>
-      <input type="file" accept="image/*" onchange="previewGaleriaFoto(event, '${id}')" style="font-size:12px;" />
+      <input type="file" accept="image/jpeg,image/png,image/webp" onchange="previewGaleriaFoto(event, '${id}')" style="font-size:12px;" />
       <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
         <img class="ev-preview" src="${escHtml(d.foto||'')}" />
       </div>
@@ -3278,7 +3286,7 @@ function addPerdidoCard(data) {
     </div>
     <div>
       <label>Fotografia</label>
-      <input type="file" accept="image/*" onchange="previewPerdidoFoto(event, '${id}')" style="font-size:12px;" />
+      <input type="file" accept="image/jpeg,image/png,image/webp" onchange="previewPerdidoFoto(event, '${id}')" style="font-size:12px;" />
       <div class="ev-preview-wrap" style="${d.foto ? '' : 'display:none;'} margin-top:8px;">
         <img class="ev-preview" src="${escHtml(d.foto||'')}" />
       </div>
@@ -3503,9 +3511,9 @@ function renderMenuList(listId, items) {
     var row = document.createElement('div');
     row.className = 'menu-item-row';
     row.innerHTML =
-      '<input type="text" value="' + escHtml(item.nome || '') + '" />' +
-      '<input type="text" value="' + escHtml(item.desc || '') + '" />' +
-      '<input type="text" value="' + escHtml(item.preco || '') + '" />' +
+      '<input type="text" maxlength="100" value="' + escHtml(item.nome || '') + '" />' +
+      '<input type="text" maxlength="100" value="' + escHtml(item.desc || '') + '" />' +
+      '<input type="text" maxlength="100" value="' + escHtml(item.preco || '') + '" />' +
       '<button class="btn-remove" onclick="removeRow(this)">✕</button>';
     list.appendChild(row);
   });
