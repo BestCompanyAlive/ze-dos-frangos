@@ -1907,12 +1907,16 @@ async function reloadPanelData(panelId) {
   }
 }
 
-// Ao sair de uma secção destrancada (em edição) sem guardar, descarta as alterações e volta a trancar
+// Ao sair de uma secção destrancada (em edição) sem guardar, descarta as
+// alterações e volta a trancar. Recarrega sempre — as funções load*
+// (loadGeral, loadPratoDia, ...) já tratam sozinhas de "nada guardado
+// ainda", caindo nos valores por omissão, que é precisamente o que se via
+// no ecrã antes da edição. Um "if" a saltar o reload quando o guardado
+// vinha vazio ("{}", "[]") deixava o campo em branco em vez de voltar ao
+// texto por omissão.
 async function discardUnsavedEdits(panelId) {
   var key = PANEL_STORAGE_KEY[panelId];
   if (!key) return;
-  var raw = await dataGet(key);
-  if (!raw || raw === '{}' || raw === '[]' || raw === 'null') return;
   await reloadPanelData(panelId);
   lockSection(panelId);
 }
@@ -2688,8 +2692,12 @@ async function savePratoDia() {
   setTimeout(function() { fb.style.display = 'none'; fb.textContent = 'Guardado com sucesso!'; }, 3000);
 }
 
-async function clearPratoDia() {
-  await dataSet('pratoDia', JSON.stringify({}));
+// Só limpa o formulário — como clearSugestaoMes/clearVinhoMes, NÃO grava
+// no servidor. A remoção só fica a sério quando se clica "Guardar e
+// publicar"; antes disto, "Limpar" gravava logo, e "Sair sem guardar" no
+// modal de alterações por guardar não conseguia repor nada porque os
+// dados antigos já não existiam.
+function clearPratoDia() {
   document.getElementById('pratoDia-periodo').value = '';
   buildPratoDiaForm({});
 }
